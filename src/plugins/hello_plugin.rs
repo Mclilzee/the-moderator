@@ -6,12 +6,8 @@ pub struct HelloPlugin;
 impl Plugin for HelloPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, add_people)
-            .add_systems(Update, (hello_world, (update_people, greet_people).chain()));
+            .add_systems(Update, (update_people, greet_people).chain());
     }
-}
-
-fn hello_world() {
-    println!("Hello World");
 }
 
 fn add_people(mut commands: Commands) {
