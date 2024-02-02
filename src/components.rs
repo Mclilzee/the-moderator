@@ -7,4 +7,4 @@ pub struct Player;
 pub struct Spammer;
 
 #[derive(Component)]
-pub struct Hp(i32);
+pub struct Hp(pub i32);

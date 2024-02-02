@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::components::Player;
+use crate::components::{Hp, Player};
 
 pub struct PlayerPlugin;
 
@@ -11,5 +11,5 @@ impl Plugin for PlayerPlugin {
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn(Player);
+    commands.spawn((Player, Hp(100)));
 }
