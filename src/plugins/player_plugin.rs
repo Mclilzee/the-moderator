@@ -5,18 +5,25 @@ use crate::components::Hp;
 #[derive(Component)]
 struct Player;
 
+#[derive(Component)]
+struct Velocity {
+    value: Vec2,
+}
+
 #[derive(Bundle)]
 struct PlayerBundle {
     sprite: SpriteBundle,
     player: Player,
     hp: Hp,
+    velocity: Velocity,
 }
 
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.add_systems(Startup, spawn_player);
+        app.add_systems(Startup, spawn_player)
+            .add_systems(Update, move_player);
     }
 }
 
@@ -29,5 +36,22 @@ fn spawn_player(mut commands: Commands) {
         },
         player: Player,
         hp: Hp(100),
+        velocity: Velocity {
+            value: Vec2 { x: 10., y: 0. },
+        },
     });
+}
+
+fn move_player(
+    keys: Res<Input<KeyCode>>,
+    mut query: Query<(&mut Transform, &Velocity), With<Player>>,
+    time: Res<Time>,
+) {
+    let (mut transform, velocity) = query.get_single_mut().expect("Player is not found");
+
+    if keys.pressed(KeyCode::Left) {
+        transform.translation.x -= velocity.value.x * time.delta_seconds();
+    } else if keys.pressed(KeyCode::Right) {
+        transform.translation.x += velocity.value.x * time.delta_seconds();
+    }
 }
