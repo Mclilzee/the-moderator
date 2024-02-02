@@ -1,4 +1,5 @@
-use bevy::prelude::*;
+use bevy::{input::common_conditions::input_toggle_active, prelude::*};
+use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use plugins::player_plugin::PlayerPlugin;
 mod components;
 mod plugins;
