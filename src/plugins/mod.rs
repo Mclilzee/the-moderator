@@ -1,1 +1,1 @@
-pub mod hello_plugin;
+pub mod player_plugin;
