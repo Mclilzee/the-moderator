@@ -16,6 +16,25 @@ struct PlayerBundle {
     player: Player,
     hp: Hp,
     velocity: Velocity,
+    name: Name,
+}
+
+impl PlayerBundle {
+    fn default() -> Self {
+        PlayerBundle {
+            sprite: SpriteBundle {
+                transform: Transform::default(),
+                visibility: Visibility::Visible,
+                ..default()
+            },
+            player: Player,
+            hp: Hp(100),
+            name: Name::from("Fred"),
+            velocity: Velocity {
+                value: Vec2 { x: 50., y: 0. },
+            },
+        }
+    }
 }
 
 pub struct PlayerPlugin;
@@ -28,18 +47,7 @@ impl Plugin for PlayerPlugin {
 }
 
 fn spawn_player(mut commands: Commands) {
-    commands.spawn(PlayerBundle {
-        sprite: SpriteBundle {
-            transform: Transform::default(),
-            visibility: Visibility::Visible,
-            ..default()
-        },
-        player: Player,
-        hp: Hp(100),
-        velocity: Velocity {
-            value: Vec2 { x: 10., y: 0. },
-        },
-    });
+    commands.spawn(PlayerBundle::default());
 }
 
 fn move_player(
