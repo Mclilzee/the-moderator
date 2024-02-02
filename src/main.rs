@@ -9,7 +9,7 @@ fn main() {
     App::new()
         .add_plugins((DefaultPlugins, PlayerPlugin))
         .add_plugins(
-            WorldInspectorPlugin::default().run_if(input_toggle_active(true, KeyCode::Escape)),
+            WorldInspectorPlugin::default().run_if(input_toggle_active(false, KeyCode::Escape)),
         )
         .add_systems(Startup, setup)
         .run();
