@@ -11,5 +11,10 @@ impl Plugin for PlayerPlugin {
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn((Player, Hp(100)));
+    let player_sprite = SpriteBundle {
+        transform: Transform::default(),
+        visibility: Visibility::Visible,
+        ..default()
+    };
+    commands.spawn((player_sprite, Player, Hp(100)));
 }
