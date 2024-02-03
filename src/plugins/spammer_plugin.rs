@@ -1,5 +1,6 @@
 use crate::components::{Hp, Player, Spammer, Velocity};
 use bevy::prelude::*;
+use rand::{self, Rng};
 
 pub struct SpammerPlugins;
 
@@ -27,9 +28,10 @@ fn spawn_spammer(
         return;
     }
 
+    let mut random = rand::thread_rng();
     let player_transform = query.single_mut();
-    let x = player_transform.translation.x + 20.;
-    let y = player_transform.translation.y + 20.;
+    let x = player_transform.translation.x + 20. + random.gen_range(0.0..20.0);
+    let y = player_transform.translation.y;
 
     let sprite = SpriteBundle {
         transform: Transform::from_xyz(x, y, 0.0),
