@@ -4,9 +4,7 @@ use bevy::{ecs::component::Component, math::Vec2};
 pub struct Hp(pub i32);
 
 #[derive(Component)]
-pub struct Velocity {
-    pub value: Vec2,
-}
+pub struct Velocity(pub Vec2);
 
 #[derive(Component)]
 pub struct Player;

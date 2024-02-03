@@ -37,12 +37,5 @@ fn spawn_spammer(
         ..default()
     };
 
-    commands.spawn((
-        sprite,
-        Velocity {
-            value: Vec2::new(50.0, 0.0),
-        },
-        Spammer,
-        Hp(5),
-    ));
+    commands.spawn((sprite, Velocity(Vec2::new(50.0, 0.0)), Spammer, Hp(5)));
 }
