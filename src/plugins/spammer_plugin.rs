@@ -64,7 +64,7 @@ fn track_player(
 
     for (mut transform, speed) in spammer_query.iter_mut() {
         let direction = player_transform.translation - transform.translation;
-        let velocity = direction.truncate().normalize_or_zero() * speed.0;
-        transform.translation += velocity.extend(0.0) * time.delta_seconds();
+        let direction = direction.truncate().normalize_or_zero() * speed.0;
+        transform.translation += direction.extend(0.0) * time.delta_seconds();
     }
 }

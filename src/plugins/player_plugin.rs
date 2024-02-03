@@ -27,7 +27,7 @@ fn move_player(
     }
 
     if keys.pressed(KeyCode::Right) {
-        transform.translation.x += speed.0 * time.delta_seconds();
+        direction.x += speed.0 * time.delta_seconds();
     }
 
     if keys.pressed(KeyCode::Up) {
@@ -38,9 +38,7 @@ fn move_player(
         direction.y -= speed.0 * time.delta_seconds();
     }
 
-    if direction.length() > 0.0 {
-        direction = direction.normalize();
-    }
+    direction = direction.normalize_or_zero();
 
     transform.translation += direction;
 }
