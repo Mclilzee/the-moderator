@@ -1,6 +1,9 @@
-use crate::components::{Hp, Player, Spammer, Speed};
+use crate::components::{Character, Hp, Player, Spammer, Speed};
 use bevy::{prelude::*, window::PrimaryWindow};
 use rand::{self, Rng};
+
+const SPAMMER_STARTING_HP: i32 = 5;
+const SPAMMER_STARTING_SPEED: f32 = 50.0;
 
 pub struct SpammerPlugins;
 
@@ -39,16 +42,21 @@ fn spawn_spammer(
         let screen_offset = window_query.single().width() / 2.0;
         let x = offset + f32::copysign(screen_offset + 5.0, offset);
 
-        let sprite = SpriteBundle {
-            transform: Transform {
-                translation: Vec3::new(x, 0.0, 0.0),
-                ..default()
+        commands.spawn((
+            Character {
+                sprite: SpriteBundle {
+                    transform: Transform {
+                        translation: Vec3::new(x, 0.0, 0.0),
+                        ..default()
+                    },
+                    visibility: Visibility::Visible,
+                    ..default()
+                },
+                speed: Speed(SPAMMER_STARTING_SPEED),
+                hp: Hp(SPAMMER_STARTING_HP),
             },
-            visibility: Visibility::Visible,
-            ..default()
-        };
-
-        commands.spawn((sprite, Speed(50.0), Spammer, Hp(5)));
+            Spammer,
+        ));
     }
 }
 

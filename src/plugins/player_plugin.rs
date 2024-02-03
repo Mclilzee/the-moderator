@@ -1,6 +1,8 @@
-use crate::components::{Hp, Player, Speed};
+use crate::components::{Character, Hp, Player, Speed};
 use bevy::prelude::*;
 
+const PLAYER_STARTING_SPEED: f32 = 60.0;
+const PLAYER_STARING_HP: i32 = 100;
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
@@ -11,7 +13,14 @@ impl Plugin for PlayerPlugin {
 }
 
 fn spawn_player(mut commands: Commands) {
-    commands.spawn((SpriteBundle::default(), Hp(100), Player, Speed(60.0)));
+    commands.spawn((
+        Character {
+            sprite: SpriteBundle::default(),
+            hp: Hp(PLAYER_STARING_HP),
+            speed: Speed(PLAYER_STARTING_SPEED),
+        },
+        Player,
+    ));
 }
 
 fn move_player(
