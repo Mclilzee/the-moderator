@@ -15,7 +15,8 @@ impl Plugin for SpammerPlugins {
             timer: Timer::from_seconds(2.0, TimerMode::Repeating),
         };
         app.insert_resource(timer)
-            .add_systems(Update, spawn_spammer);
+            .add_systems(Update, spawn_spammer)
+            .add_systems(Update, track_player);
     }
 }
 
@@ -45,5 +46,22 @@ fn spawn_spammer(
         };
 
         commands.spawn((sprite, Velocity(Vec2::new(50.0, 0.0)), Spammer, Hp(5)));
+    }
+}
+
+fn track_player(
+    mut spammer_query: Query<(&mut Transform, &Velocity), (With<Spammer>, Without<Player>)>,
+    player_query: Query<&Transform, (With<Player>, Without<Spammer>)>,
+    time: Res<Time>,
+) {
+    let player_transform = player_query.single();
+
+    for (mut transform, velocity) in spammer_query.iter_mut() {
+        let x = if transform.translation.x > player_transform.translation.x {
+            -velocity.0.x
+        } else {
+            velocity.0.x
+        };
+        transform.translation.x += x * time.delta_seconds();
     }
 }
