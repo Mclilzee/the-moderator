@@ -1,5 +1,5 @@
 use crate::components::{Hp, Player, Spammer, Velocity};
-use bevy::prelude::*;
+use bevy::{prelude::*, window::PrimaryWindow};
 use rand::{self, Rng};
 
 pub struct SpammerPlugins;
@@ -12,7 +12,7 @@ struct SpammerSpawnTimer {
 impl Plugin for SpammerPlugins {
     fn build(&self, app: &mut App) {
         let timer = SpammerSpawnTimer {
-            timer: Timer::from_seconds(0.0002, TimerMode::Repeating),
+            timer: Timer::from_seconds(0.2, TimerMode::Repeating),
         };
         app.insert_resource(timer)
             .add_systems(Update, spawn_spammer)
@@ -25,14 +25,16 @@ fn spawn_spammer(
     mut spawn_timer: ResMut<SpammerSpawnTimer>,
     mut query: Query<&Transform, With<Player>>,
     time: Res<Time>,
+    window_query: Query<&Window, With<PrimaryWindow>>,
 ) {
     spawn_timer.timer.tick(time.delta());
     if spawn_timer.timer.just_finished() {
         let mut random = rand::thread_rng();
         let player_transform = query.single_mut();
         let offset = random.gen_range(-50.0..50.0);
+        let screen_offset = window_query.single().width() / 2.0;
         let spammer_pos = Vec2::new(
-            player_transform.translation.x + offset + f32::copysign(20., offset),
+            player_transform.translation.x + offset + f32::copysign(screen_offset, offset),
             player_transform.translation.y,
         );
 
