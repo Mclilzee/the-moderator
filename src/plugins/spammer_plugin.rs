@@ -23,7 +23,6 @@ impl Plugin for SpammerPlugins {
 fn spawn_spammer(
     mut commands: Commands,
     mut spawn_timer: ResMut<SpammerSpawnTimer>,
-    mut query: Query<&Transform, With<Player>>,
     spammers_query: Query<&Spammer>,
     time: Res<Time>,
     window_query: Query<&Window, With<PrimaryWindow>>,
@@ -36,17 +35,13 @@ fn spawn_spammer(
     spawn_timer.timer.tick(time.delta());
     if spawn_timer.timer.just_finished() {
         let mut random = rand::thread_rng();
-        let player_transform = query.single_mut();
         let offset = random.gen_range(-50.0..50.0);
         let screen_offset = window_query.single().width() / 2.0;
-        let spammer_pos = Vec2::new(
-            player_transform.translation.x + offset + f32::copysign(screen_offset, offset),
-            player_transform.translation.y,
-        );
+        let x = offset + f32::copysign(screen_offset + 5.0, offset);
 
         let sprite = SpriteBundle {
             transform: Transform {
-                translation: spammer_pos.extend(0.0),
+                translation: Vec3::new(x, 0.0, 0.0),
                 ..default()
             },
             visibility: Visibility::Visible,
