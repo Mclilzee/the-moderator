@@ -4,6 +4,7 @@ use bevy::{
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use plugins::default_plugins::CustomDefaultPlugin;
 use plugins::player_plugin::PlayerPlugin;
+use plugins::spammer_plugin::SpammerPlugins;
 mod components;
 mod plugins;
 mod resources;
@@ -12,6 +13,7 @@ fn main() {
     App::new()
         .add_plugins(CustomDefaultPlugin)
         .add_plugins(PlayerPlugin)
+        .add_plugins(SpammerPlugins)
         .add_plugins(
             WorldInspectorPlugin::default().run_if(input_toggle_active(false, KeyCode::Escape)),
         )
