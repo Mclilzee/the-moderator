@@ -1,10 +1,10 @@
-use bevy::{ecs::component::Component, math::Vec2};
+use bevy::ecs::component::Component;
 
 #[derive(Component)]
 pub struct Hp(pub i32);
 
 #[derive(Component)]
-pub struct Velocity(pub Vec2);
+pub struct Speed(pub f32);
 
 #[derive(Component)]
 pub struct Player;

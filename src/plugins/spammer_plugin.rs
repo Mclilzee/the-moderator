@@ -1,4 +1,4 @@
-use crate::components::{Hp, Player, Spammer, Velocity};
+use crate::components::{Hp, Player, Spammer, Speed};
 use bevy::{prelude::*, window::PrimaryWindow};
 use rand::{self, Rng};
 
@@ -48,7 +48,7 @@ fn spawn_spammer(
             ..default()
         };
 
-        commands.spawn((sprite, Velocity(Vec2::new(50.0, 0.0)), Spammer, Hp(5)));
+        commands.spawn((sprite, Speed(50.0), Spammer, Hp(5)));
     }
 }
 
@@ -56,15 +56,15 @@ type SpammerQuery = (With<Spammer>, Without<Player>);
 type PlayerQuery = (With<Player>, Without<Spammer>);
 
 fn track_player(
-    mut spammer_query: Query<(&mut Transform, &Velocity), SpammerQuery>,
+    mut spammer_query: Query<(&mut Transform, &Speed), SpammerQuery>,
     player_query: Query<&Transform, PlayerQuery>,
     time: Res<Time>,
 ) {
     let player_transform = player_query.single();
 
-    for (mut transform, velocity) in spammer_query.iter_mut() {
+    for (mut transform, speed) in spammer_query.iter_mut() {
         let direction = player_transform.translation - transform.translation;
-        let velocity = direction.truncate().normalize_or_zero() * velocity.0;
+        let velocity = direction.truncate().normalize_or_zero() * speed.0;
         transform.translation += velocity.extend(0.0) * time.delta_seconds();
     }
 }

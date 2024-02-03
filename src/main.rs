@@ -26,7 +26,7 @@ fn setup(mut commands: Commands) {
 
     camera.projection.scaling_mode = ScalingMode::AutoMin {
         min_width: 800.0,
-        min_height: 250.0,
+        min_height: 600.0,
     };
     commands.spawn(camera);
 }

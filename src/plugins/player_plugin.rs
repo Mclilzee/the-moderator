@@ -1,4 +1,4 @@
-use crate::components::{Hp, Player, Velocity};
+use crate::components::{Hp, Player, Speed};
 use bevy::prelude::*;
 
 pub struct PlayerPlugin;
@@ -11,24 +11,36 @@ impl Plugin for PlayerPlugin {
 }
 
 fn spawn_player(mut commands: Commands) {
-    commands.spawn((
-        SpriteBundle::default(),
-        Hp(100),
-        Player,
-        Velocity(Vec2::new(60.0, 0.0)),
-    ));
+    commands.spawn((SpriteBundle::default(), Hp(100), Player, Speed(60.0)));
 }
 
 fn move_player(
     keys: Res<Input<KeyCode>>,
-    mut query: Query<(&mut Transform, &Velocity), With<Player>>,
+    mut query: Query<(&mut Transform, &Speed), With<Player>>,
     time: Res<Time>,
 ) {
-    let (mut transform, velocity) = query.single_mut();
+    let (mut transform, speed) = query.single_mut();
+    let mut direction = Vec3::ZERO;
 
     if keys.pressed(KeyCode::Left) {
-        transform.translation.x -= velocity.0.x * time.delta_seconds();
-    } else if keys.pressed(KeyCode::Right) {
-        transform.translation.x += velocity.0.x * time.delta_seconds();
+        direction.x -= speed.0 * time.delta_seconds();
     }
+
+    if keys.pressed(KeyCode::Right) {
+        transform.translation.x += speed.0 * time.delta_seconds();
+    }
+
+    if keys.pressed(KeyCode::Up) {
+        direction.y += speed.0 * time.delta_seconds();
+    }
+
+    if keys.pressed(KeyCode::Down) {
+        direction.y -= speed.0 * time.delta_seconds();
+    }
+
+    if direction.length() > 0.0 {
+        direction = direction.normalize();
+    }
+
+    transform.translation += direction;
 }
