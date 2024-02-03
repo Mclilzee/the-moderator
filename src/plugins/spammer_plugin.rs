@@ -3,7 +3,9 @@ use bevy::{prelude::*, window::PrimaryWindow};
 use rand::{self, Rng};
 
 const SPAMMER_STARTING_HP: i32 = 5;
-const SPAMMER_STARTING_SPEED: f32 = 50.0;
+const SPAMMER_STARTING_SPEED: f32 = 150.0;
+const SPAMMER_WIDTH: f32 = 25.0;
+const SPAMMER_HEIGHT: f32 = 40.0;
 
 pub struct SpammerPlugins;
 
@@ -45,6 +47,10 @@ fn spawn_spammer(
         commands.spawn((
             Character {
                 sprite_bundle: SpriteBundle {
+                    sprite: Sprite {
+                        custom_size: Some(Vec2::new(SPAMMER_WIDTH, SPAMMER_HEIGHT)),
+                        ..default()
+                    },
                     transform: Transform {
                         translation: Vec3::new(x, 0.0, 0.0),
                         ..default()
