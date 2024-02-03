@@ -12,7 +12,7 @@ struct SpammerSpawnTimer {
 impl Plugin for SpammerPlugins {
     fn build(&self, app: &mut App) {
         let timer = SpammerSpawnTimer {
-            timer: Timer::from_seconds(2.0, TimerMode::Repeating),
+            timer: Timer::from_seconds(0.0002, TimerMode::Repeating),
         };
         app.insert_resource(timer)
             .add_systems(Update, spawn_spammer)
@@ -30,17 +30,17 @@ fn spawn_spammer(
     if spawn_timer.timer.just_finished() {
         let mut random = rand::thread_rng();
         let player_transform = query.single_mut();
-        let mut x = player_transform.translation.x + random.gen_range(-50.0..50.0);
-        if x > player_transform.translation.x {
-            x += 20.0;
-        } else {
-            x -= 20.0;
-        }
-
-        let y = player_transform.translation.y;
+        let offset = random.gen_range(-50.0..50.0);
+        let spammer_pos = Vec2::new(
+            player_transform.translation.x + offset + f32::copysign(20., offset),
+            player_transform.translation.y,
+        );
 
         let sprite = SpriteBundle {
-            transform: Transform::from_xyz(x, y, 0.0),
+            transform: Transform {
+                translation: spammer_pos.extend(0.0),
+                ..default()
+            },
             visibility: Visibility::Visible,
             ..default()
         };
