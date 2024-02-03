@@ -29,7 +29,13 @@ fn spawn_spammer(
     if spawn_timer.timer.just_finished() {
         let mut random = rand::thread_rng();
         let player_transform = query.single_mut();
-        let x = player_transform.translation.x + 20. + random.gen_range(0.0..20.0);
+        let mut x = player_transform.translation.x + random.gen_range(-50.0..50.0);
+        if x > player_transform.translation.x {
+            x += 20.0;
+        } else {
+            x -= 20.0;
+        }
+
         let y = player_transform.translation.y;
 
         let sprite = SpriteBundle {
