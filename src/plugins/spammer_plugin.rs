@@ -60,11 +60,8 @@ fn track_player(
     let player_transform = player_query.single();
 
     for (mut transform, velocity) in spammer_query.iter_mut() {
-        let x = if transform.translation.x > player_transform.translation.x {
-            -velocity.0.x
-        } else {
-            velocity.0.x
-        };
-        transform.translation.x += x * time.delta_seconds();
+        let direction = player_transform.translation - transform.translation;
+        let velocity = direction.truncate().normalize_or_zero() * velocity.0;
+        transform.translation += velocity.extend(0.0) * time.delta_seconds();
     }
 }
