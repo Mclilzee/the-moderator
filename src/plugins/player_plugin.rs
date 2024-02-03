@@ -1,38 +1,21 @@
+use super::character::Character;
+use crate::components::{Hp, Player, Velocity};
 use bevy::prelude::*;
-
-use crate::components::Hp;
-
-#[derive(Component)]
-struct Player;
-
-#[derive(Component)]
-struct Velocity {
-    value: Vec2,
-}
 
 #[derive(Bundle)]
 struct PlayerBundle {
-    sprite: SpriteBundle,
+    character: Character,
     player: Player,
-    hp: Hp,
-    velocity: Velocity,
-    name: Name,
 }
 
-impl PlayerBundle {
+impl Default for PlayerBundle {
     fn default() -> Self {
-        PlayerBundle {
-            sprite: SpriteBundle {
-                transform: Transform::default(),
-                visibility: Visibility::Visible,
+        Self {
+            character: Character {
+                hp: Hp(100),
                 ..default()
             },
             player: Player,
-            hp: Hp(100),
-            name: Name::from("Fred"),
-            velocity: Velocity {
-                value: Vec2 { x: 50., y: 0. },
-            },
         }
     }
 }
