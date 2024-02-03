@@ -1,10 +1,10 @@
 use crate::components::{Character, Hp, Player, Speed};
 use bevy::prelude::*;
 
-const PLAYER_STARTING_SPEED: f32 = 60.0;
+const PLAYER_STARTING_SPEED: f32 = 150.0;
 const PLAYER_STARING_HP: i32 = 100;
-const PLAYER_WIDTH: f32 = 50.0;
-const PLAYER_HEIGHT: f32 = 100.0;
+const PLAYER_WIDTH: f32 = 30.0;
+const PLAYER_HEIGHT: f32 = 50.0;
 
 pub struct PlayerPlugin;
 
