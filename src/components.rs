@@ -15,6 +15,6 @@ pub struct Spammer;
 #[derive(Bundle)]
 pub struct Character {
     pub speed: Speed,
-    pub sprite: SpriteBundle,
+    pub sprite_bundle: SpriteBundle,
     pub hp: Hp,
 }

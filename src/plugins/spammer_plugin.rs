@@ -44,7 +44,7 @@ fn spawn_spammer(
 
         commands.spawn((
             Character {
-                sprite: SpriteBundle {
+                sprite_bundle: SpriteBundle {
                     transform: Transform {
                         translation: Vec3::new(x, 0.0, 0.0),
                         ..default()

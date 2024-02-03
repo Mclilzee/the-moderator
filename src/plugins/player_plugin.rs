@@ -3,6 +3,9 @@ use bevy::prelude::*;
 
 const PLAYER_STARTING_SPEED: f32 = 60.0;
 const PLAYER_STARING_HP: i32 = 100;
+const PLAYER_WIDTH: f32 = 50.0;
+const PLAYER_HEIGHT: f32 = 100.0;
+
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
@@ -15,7 +18,13 @@ impl Plugin for PlayerPlugin {
 fn spawn_player(mut commands: Commands) {
     commands.spawn((
         Character {
-            sprite: SpriteBundle::default(),
+            sprite_bundle: SpriteBundle {
+                sprite: Sprite {
+                    custom_size: Some(Vec2::new(PLAYER_WIDTH, PLAYER_HEIGHT)),
+                    ..default()
+                },
+                ..default()
+            },
             hp: Hp(PLAYER_STARING_HP),
             speed: Speed(PLAYER_STARTING_SPEED),
         },
