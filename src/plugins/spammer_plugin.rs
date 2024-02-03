@@ -49,9 +49,12 @@ fn spawn_spammer(
     }
 }
 
+type SpammerQuery = (With<Spammer>, Without<Player>);
+type PlayerQuery = (With<Player>, Without<Spammer>);
+
 fn track_player(
-    mut spammer_query: Query<(&mut Transform, &Velocity), (With<Spammer>, Without<Player>)>,
-    player_query: Query<&Transform, (With<Player>, Without<Spammer>)>,
+    mut spammer_query: Query<(&mut Transform, &Velocity), SpammerQuery>,
+    player_query: Query<&Transform, PlayerQuery>,
     time: Res<Time>,
 ) {
     let player_transform = player_query.single();
