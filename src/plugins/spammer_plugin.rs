@@ -24,9 +24,15 @@ fn spawn_spammer(
     mut commands: Commands,
     mut spawn_timer: ResMut<SpammerSpawnTimer>,
     mut query: Query<&Transform, With<Player>>,
+    spammers_query: Query<&Spammer>,
     time: Res<Time>,
     window_query: Query<&Window, With<PrimaryWindow>>,
 ) {
+    // Limit spawn to 10 spammers
+    if spammers_query.iter().count() > 10 {
+        return;
+    }
+
     spawn_timer.timer.tick(time.delta());
     if spawn_timer.timer.just_finished() {
         let mut random = rand::thread_rng();
