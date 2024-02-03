@@ -41,22 +41,20 @@ fn move_player(
     let mut direction = Vec3::ZERO;
 
     if keys.pressed(KeyCode::Left) {
-        direction.x -= speed.0 * time.delta_seconds();
+        direction.x = -1.0;
     }
 
     if keys.pressed(KeyCode::Right) {
-        direction.x += speed.0 * time.delta_seconds();
+        direction.x = 1.0;
     }
 
     if keys.pressed(KeyCode::Up) {
-        direction.y += speed.0 * time.delta_seconds();
+        direction.y = 1.0;
     }
 
     if keys.pressed(KeyCode::Down) {
-        direction.y -= speed.0 * time.delta_seconds();
+        direction.y = -1.0;
     }
 
-    direction = direction.normalize_or_zero();
-
-    transform.translation += direction;
+    transform.translation += direction.normalize_or_zero() * speed.0 * time.delta_seconds();
 }
