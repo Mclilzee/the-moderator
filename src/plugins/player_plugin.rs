@@ -65,6 +65,4 @@ fn movement(
         player_velocity.translation.y = 0.0;
         player_transform.translation.y = 0.0;
     }
-
-    info!("Player velocity: {:?}", player_velocity.translation);
 }
