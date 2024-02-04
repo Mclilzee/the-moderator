@@ -42,7 +42,7 @@ fn movement(
     time: Res<Time>,
 ) {
     let (mut player_transform, mut player_velocity) = query.single_mut();
-    let mut velocity = Vec3::ZERO;
+    let mut velocity = Vec3::new(0.0, player_velocity.translation.y, 0.0);
 
     if keys.pressed(KeyCode::Right) {
         velocity.x = PLAYER_SPEED;
