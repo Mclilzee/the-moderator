@@ -5,7 +5,7 @@ use crate::{
 use bevy::prelude::*;
 
 const PLAYER_SPEED: f32 = 160.0;
-const PLAYER_JUMP_HEIGHT: f32 = 10.0;
+const PLAYER_JUMP_HEIGHT: f32 = 1000.0;
 const PLAYER_STARING_HP: i32 = 100;
 const PLAYER_WIDTH: f32 = 30.0;
 const PLAYER_HEIGHT: f32 = 50.0;
@@ -15,7 +15,7 @@ pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.add_systems(Startup, spawn_player)
-            .add_systems(Update, (player_input, move_player).chain());
+            .add_systems(Update, movement);
     }
 }
 
@@ -36,34 +36,36 @@ fn spawn_player(mut commands: Commands) {
     ));
 }
 
-fn player_input(
+fn movement(
     keys: Res<Input<KeyCode>>,
-    mut query: Query<&mut Velocity, With<Player>>,
+    mut query: Query<(&mut Transform, &mut Velocity), With<Player>>,
     time: Res<Time>,
 ) {
-    let mut player_velocity = query.single_mut();
-    let mut velocity = Vec2::ZERO;
+    let (mut player_transform, mut player_velocity) = query.single_mut();
+    let mut velocity = Vec2::new(0.0, player_velocity.0.y);
+
     if keys.pressed(KeyCode::Right) {
-        velocity.x += PLAYER_SPEED * time.delta_seconds();
+        velocity.x = PLAYER_SPEED;
     }
 
     if keys.pressed(KeyCode::Left) {
-        velocity.x -= PLAYER_SPEED * time.delta_seconds();
+        velocity.x = -PLAYER_SPEED;
     }
 
-    if keys.pressed(KeyCode::Up) {
-        velocity.y += PLAYER_JUMP_HEIGHT * time.delta_seconds();
+    if keys.just_pressed(KeyCode::Up) {
+        velocity.y += PLAYER_JUMP_HEIGHT;
     }
+
+    velocity.y -= GRAVITY_SPEED;
 
     player_velocity.0 = velocity;
-    player_velocity.0.y -= GRAVITY_SPEED;
-}
 
-fn move_player(mut player_query: Query<(&mut Transform, &Velocity), With<Player>>) {
-    let (mut transform, velocity) = player_query.single_mut();
+    player_transform.translation += player_velocity.0.extend(0.0) * time.delta_seconds();
 
-    transform.translation += velocity.0.extend(0.0);
-    if transform.translation.y < 0.0 {
-        transform.translation.y = 0.0;
+    if player_transform.translation.y < 0.0 {
+        player_velocity.0.y = 0.0;
+        player_transform.translation.y = 0.0;
     }
+
+    info!("Player velocity: {:?}", player_velocity.0);
 }
