@@ -1,4 +1,4 @@
-use bevy::{ecs::component::Component, prelude::Bundle, sprite::SpriteBundle};
+use bevy::prelude::*;
 
 #[derive(Component)]
 pub struct Hp(pub i32);
@@ -14,7 +14,10 @@ pub struct Spammer;
 
 #[derive(Bundle)]
 pub struct Character {
-    pub speed: Speed,
+    pub velocity: Velocity,
     pub sprite_bundle: SpriteBundle,
     pub hp: Hp,
 }
+
+#[derive(Component)]
+pub struct Velocity(pub Vec2);
