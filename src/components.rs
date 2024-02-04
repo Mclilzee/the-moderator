@@ -19,5 +19,7 @@ pub struct Character {
     pub hp: Hp,
 }
 
-#[derive(Component)]
-pub struct Velocity(pub Vec2);
+#[derive(Component, Default)]
+pub struct Velocity {
+    pub translation: Vec3,
+}

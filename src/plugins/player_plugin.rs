@@ -5,7 +5,7 @@ use crate::{
 use bevy::prelude::*;
 
 const PLAYER_SPEED: f32 = 160.0;
-const PLAYER_JUMP_HEIGHT: f32 = 1000.0;
+const PLAYER_JUMP_HEIGHT: f32 = 500.0;
 const PLAYER_STARING_HP: i32 = 100;
 const PLAYER_WIDTH: f32 = 30.0;
 const PLAYER_HEIGHT: f32 = 50.0;
@@ -30,7 +30,7 @@ fn spawn_player(mut commands: Commands) {
                 ..default()
             },
             hp: Hp(PLAYER_STARING_HP),
-            velocity: Velocity(Vec2::ZERO),
+            velocity: Velocity::default(),
         },
         Player,
     ));
@@ -42,7 +42,7 @@ fn movement(
     time: Res<Time>,
 ) {
     let (mut player_transform, mut player_velocity) = query.single_mut();
-    let mut velocity = Vec2::new(0.0, player_velocity.0.y);
+    let mut velocity = Vec3::ZERO;
 
     if keys.pressed(KeyCode::Right) {
         velocity.x = PLAYER_SPEED;
@@ -53,19 +53,18 @@ fn movement(
     }
 
     if keys.just_pressed(KeyCode::Up) {
-        velocity.y += PLAYER_JUMP_HEIGHT;
+        velocity.y = PLAYER_JUMP_HEIGHT;
     }
 
     velocity.y -= GRAVITY_SPEED;
+    player_velocity.translation = velocity;
 
-    player_velocity.0 = velocity;
-
-    player_transform.translation += player_velocity.0.extend(0.0) * time.delta_seconds();
+    player_transform.translation += player_velocity.translation * time.delta_seconds();
 
     if player_transform.translation.y < 0.0 {
-        player_velocity.0.y = 0.0;
+        player_velocity.translation.y = 0.0;
         player_transform.translation.y = 0.0;
     }
 
-    info!("Player velocity: {:?}", player_velocity.0);
+    info!("Player velocity: {:?}", player_velocity.translation);
 }

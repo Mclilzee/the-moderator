@@ -58,7 +58,7 @@ fn spawn_spammer(
                     visibility: Visibility::Visible,
                     ..default()
                 },
-                velocity: Velocity(Vec2::ZERO),
+                velocity: Velocity::default(),
                 hp: Hp(SPAMMER_STARTING_HP),
             },
             Spammer,
