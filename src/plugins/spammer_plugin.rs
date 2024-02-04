@@ -70,15 +70,19 @@ type SpammerQuery = (With<Spammer>, Without<Player>);
 type PlayerQuery = (With<Player>, Without<Spammer>);
 
 fn track_player(
-    mut spammer_query: Query<(&mut Transform, &Speed), SpammerQuery>,
+    mut spammer_query: Query<&mut Transform, SpammerQuery>,
     player_query: Query<&Transform, PlayerQuery>,
     time: Res<Time>,
 ) {
     let player_transform = player_query.single();
 
-    for (mut transform, speed) in spammer_query.iter_mut() {
-        let direction = player_transform.translation - transform.translation;
-        let direction = direction.truncate().normalize_or_zero() * speed.0;
-        transform.translation += direction.extend(0.0) * time.delta_seconds();
+    for mut transform in spammer_query.iter_mut() {
+        let velocity = if player_transform.translation.x > transform.translation.x {
+            Vec3::new(SPAMMER_SPEED, 0.0, 0.0)
+        } else {
+            Vec3::new(-SPAMMER_SPEED, 0.0, 0.0)
+        };
+
+        transform.translation += velocity * time.delta_seconds();
     }
 }
