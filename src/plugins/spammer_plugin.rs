@@ -1,4 +1,4 @@
-use crate::components::{Character, Hp, Player, Spammer, Speed, Velocity};
+use crate::components::{Character, Hp, Player, Spammer, Velocity};
 use bevy::{prelude::*, window::PrimaryWindow};
 use rand::{self, Rng};
 

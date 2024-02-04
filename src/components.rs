@@ -4,9 +4,6 @@ use bevy::prelude::*;
 pub struct Hp(pub i32);
 
 #[derive(Component)]
-pub struct Speed(pub f32);
-
-#[derive(Component)]
 pub struct Player;
 
 #[derive(Component)]
