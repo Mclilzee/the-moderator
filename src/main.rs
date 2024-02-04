@@ -7,6 +7,7 @@ use plugins::default_plugins::CustomDefaultPlugin;
 use plugins::player_plugin::PlayerPlugin;
 use plugins::spammer_plugin::SpammerPlugins;
 mod components;
+mod consts;
 mod plugins;
 mod resources;
 

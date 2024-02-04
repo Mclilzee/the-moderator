@@ -1,4 +1,7 @@
-use crate::components::{Character, Hp, Player, Velocity};
+use crate::{
+    components::{Character, Hp, Player, Velocity},
+    consts::GRAVITY_SPEED,
+};
 use bevy::prelude::*;
 
 const PLAYER_SPEED: f32 = 160.0;
@@ -53,10 +56,14 @@ fn player_input(
     }
 
     player_velocity.0 = velocity;
+    player_velocity.0.y -= GRAVITY_SPEED;
 }
 
 fn move_player(mut player_query: Query<(&mut Transform, &Velocity), With<Player>>) {
     let (mut transform, velocity) = player_query.single_mut();
 
     transform.translation += velocity.0.extend(0.0);
+    if transform.translation.y < 0.0 {
+        transform.translation.y = 0.0;
+    }
 }
