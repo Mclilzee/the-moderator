@@ -1,9 +1,9 @@
-use crate::components::{Character, Hp, Player, Spammer, Speed};
+use crate::components::{Character, Hp, Player, Spammer, Speed, Velocity};
 use bevy::{prelude::*, window::PrimaryWindow};
 use rand::{self, Rng};
 
 const SPAMMER_STARTING_HP: i32 = 5;
-const SPAMMER_STARTING_SPEED: f32 = 60.0;
+const SPAMMER_SPEED: f32 = 60.0;
 const SPAMMER_WIDTH: f32 = 25.0;
 const SPAMMER_HEIGHT: f32 = 40.0;
 
@@ -58,7 +58,7 @@ fn spawn_spammer(
                     visibility: Visibility::Visible,
                     ..default()
                 },
-                speed: Speed(SPAMMER_STARTING_SPEED),
+                velocity: Velocity(Vec2::ZERO),
                 hp: Hp(SPAMMER_STARTING_HP),
             },
             Spammer,
