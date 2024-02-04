@@ -19,9 +19,9 @@ impl Plugin for CustomDefaultPlugin {
 
 fn get_window() -> Window {
     Window {
-        title: "Fred's revenge".to_string(),
+        title: "Fred's Revenge".to_string(),
         resolution: (800.0, 600.0).into(),
-        resizable: false,
+        resizable: true,
         ..default()
     }
 }
