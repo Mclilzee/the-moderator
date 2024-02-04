@@ -3,7 +3,7 @@ use bevy::{prelude::*, window::PrimaryWindow};
 use rand::{self, Rng};
 
 const SPAMMER_STARTING_HP: i32 = 5;
-const SPAMMER_STARTING_SPEED: f32 = 120.0;
+const SPAMMER_STARTING_SPEED: f32 = 60.0;
 const SPAMMER_WIDTH: f32 = 25.0;
 const SPAMMER_HEIGHT: f32 = 40.0;
 
