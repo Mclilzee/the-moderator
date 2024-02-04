@@ -38,18 +38,21 @@ fn player_input(
     mut query: Query<&mut Velocity, With<Player>>,
     time: Res<Time>,
 ) {
-    let mut velocity = query.single_mut();
+    let mut player_velocity = query.single_mut();
+    let mut velocity = Vec2::ZERO;
     if keys.pressed(KeyCode::Right) {
-        velocity.0.x += PLAYER_SPEED * time.delta_seconds();
+        velocity.x += PLAYER_SPEED * time.delta_seconds();
     }
 
     if keys.pressed(KeyCode::Left) {
-        velocity.0.x -= PLAYER_SPEED * time.delta_seconds();
+        velocity.x -= PLAYER_SPEED * time.delta_seconds();
     }
 
     if keys.pressed(KeyCode::Up) {
-        velocity.0.y += PLAYER_JUMP_HEIGHT * time.delta_seconds();
+        velocity.y += PLAYER_JUMP_HEIGHT * time.delta_seconds();
     }
+
+    player_velocity.0 = velocity;
 }
 
 fn move_player(mut player_query: Query<(&mut Transform, &Velocity), With<Player>>) {
