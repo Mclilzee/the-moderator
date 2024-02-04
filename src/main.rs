@@ -19,7 +19,7 @@ fn main() {
             WorldInspectorPlugin::default().run_if(input_toggle_active(false, KeyCode::Escape)),
         )
         .add_systems(Startup, setup)
-        .add_systems(Update, follow_player)
+        .add_systems(PostUpdate, follow_player)
         .run();
 }
 
