@@ -39,7 +39,8 @@ fn follow_player(
     player_query: Query<&Transform, (With<Player>, Without<Camera>)>,
 ) {
     let mut camera_transform = camera_query.single_mut();
-    let player_transform = player_query.single();
+    let mut translation = player_query.single().translation;
+    translation.y += 50.0;
 
-    camera_transform.translation = player_transform.translation;
+    camera_transform.translation = translation;
 }
