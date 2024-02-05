@@ -33,7 +33,7 @@ fn spawn_player(
     let texture_atlas = texture_atlases.add(TextureAtlas::from_grid(
         texture,
         Vec2::new(21.0, 38.0),
-        1,
+        10,
         1,
         Some(Vec2::new(99.0, 0.0)),
         None,
