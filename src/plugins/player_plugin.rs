@@ -53,7 +53,7 @@ fn movement(
     }
 
     if keys.just_pressed(KeyCode::Up) && player_velocity.translation.y == 0.0 {
-        velocity.y = PLAYER_JUMP_HEIGHT;
+        velocity.y = PLAYER_JUMP_HEIGHT + GRAVITY_SPEED;
     }
 
     velocity.y -= GRAVITY_SPEED;
