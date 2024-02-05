@@ -9,7 +9,7 @@ const PLAYER_JUMP_HEIGHT: f32 = 500.0;
 const PLAYER_STARING_HP: i32 = 100;
 const PLAYER_WIDTH: f32 = 20.0;
 const PLAYER_HEIGHT: f32 = 40.0;
-const ALLOWED_JUMPS: i32 = 1;
+const ALLOWED_JUMPS: i32 = 3;
 
 #[derive(Component)]
 struct Jumps(i32);
@@ -59,7 +59,7 @@ fn movement(
 
     if keys.just_pressed(KeyCode::Up) && available_jumps.0 >= 1 {
         velocity.y = PLAYER_JUMP_HEIGHT + GRAVITY_SPEED;
-        available_jumps.0 = 0;
+        available_jumps.0 -= 1;
     }
 
     velocity.y -= GRAVITY_SPEED;
