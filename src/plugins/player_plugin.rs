@@ -2,7 +2,7 @@ use crate::{
     components::{Character, Hp, Player, Velocity},
     consts::GRAVITY_SPEED,
 };
-use bevy::prelude::*;
+use bevy::{prelude::*, sprite::Anchor};
 
 const PLAYER_SPEED: f32 = 50.0;
 const PLAYER_JUMP_HEIGHT: f32 = 200.0;
@@ -31,22 +31,21 @@ fn spawn_player(
     asset_server: Res<AssetServer>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
-    let texture: Handle<Image> = asset_server.load("knight/_Idle.png");
+    let texture: Handle<Image> = asset_server.load("knight/idle.png");
     let texture_atlas = texture_atlases.add(TextureAtlas::from_grid(
         texture,
-        Vec2::splat(80.0),
+        Vec2::new(21.0, 38.0),
         1,
         1,
-        Some(Vec2::splat(40.0)),
-        None, // Some(Vec2::new(20.0, 20.0)),
+        Some(Vec2::new(30.0, 0.0)),
+        None,
     ));
 
     commands.spawn(SpriteBundle {
         sprite: Sprite {
-            custom_size: Some(Vec2::splat(2.0)),
+            custom_size: Some(Vec2::new(21.0, 38.0)),
             ..default()
         },
-        transform: Transform::from_xyz(0.0, 0.0, 1.0),
         ..default()
     });
 
@@ -54,10 +53,7 @@ fn spawn_player(
         Character {
             sprite_sheet: SpriteSheetBundle {
                 texture_atlas,
-                sprite: TextureAtlasSprite {
-                    custom_size: Some(Vec2::splat(24.0)),
-                    ..default()
-                },
+                sprite: TextureAtlasSprite::default(),
                 ..default()
             },
             hp: Hp(PLAYER_STARING_HP),

@@ -22,7 +22,7 @@ fn main() {
         .configure_sets(Update, (InGameSet::UserInput, InGameSet::Movement))
         .add_plugins(CustomDefaultPlugin)
         .add_plugins(PlayerPlugin)
-        .add_plugins(SpammerPlugins)
+        // .add_plugins(SpammerPlugins)
         .add_plugins(
             WorldInspectorPlugin::default().run_if(input_toggle_active(false, KeyCode::Escape)),
         )
