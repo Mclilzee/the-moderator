@@ -11,8 +11,15 @@ mod consts;
 mod plugins;
 mod resources;
 
+#[derive(Clone, PartialEq, Eq, Debug, Hash, SystemSet)]
+pub enum InGameSet {
+    Movement,
+    UserInput,
+}
+
 fn main() {
     App::new()
+        .configure_sets(Update, (InGameSet::UserInput, InGameSet::Movement))
         .add_plugins(CustomDefaultPlugin)
         .add_plugins(PlayerPlugin)
         .add_plugins(SpammerPlugins)
