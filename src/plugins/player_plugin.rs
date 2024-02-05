@@ -76,15 +76,15 @@ fn movement(
     let (mut player_velocity, mut available_jumps, mut transform) = query.single_mut();
     let mut velocity = Vec3::new(0.0, player_velocity.translation.y, 0.0);
 
-    if keys.pressed(KeyCode::Right) {
+    if keys.any_pressed([KeyCode::Right, KeyCode::D]) {
         velocity.x = PLAYER_SPEED;
     }
 
-    if keys.pressed(KeyCode::Left) {
+    if keys.any_pressed([KeyCode::Left, KeyCode::A]) {
         velocity.x = -PLAYER_SPEED;
     }
 
-    if keys.just_pressed(KeyCode::Up) && available_jumps.0 >= 1 {
+    if keys.any_just_pressed([KeyCode::Up, KeyCode::W, KeyCode::Space]) && available_jumps.0 >= 1 {
         velocity.y = PLAYER_JUMP_HEIGHT + GRAVITY_SPEED;
         available_jumps.0 -= 1;
     }
