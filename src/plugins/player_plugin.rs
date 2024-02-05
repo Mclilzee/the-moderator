@@ -12,6 +12,9 @@ const PLAYER_HEIGHT: f32 = 40.0;
 const ALLOWED_JUMPS: i32 = 3;
 
 #[derive(Component)]
+struct AnimationTimer(Timer);
+
+#[derive(Component)]
 struct Jumps(i32);
 
 pub struct PlayerPlugin;
@@ -23,12 +26,38 @@ impl Plugin for PlayerPlugin {
     }
 }
 
-fn spawn_player(mut commands: Commands) {
+fn spawn_player(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+) {
+    let texture: Handle<Image> = asset_server.load("knight/_Idle.png");
+    let texture_atlas = texture_atlases.add(TextureAtlas::from_grid(
+        texture,
+        Vec2::splat(80.0),
+        1,
+        1,
+        None,
+        None,
+    ));
+
+    commands.spawn((
+        SpriteSheetBundle {
+            texture_atlas,
+            sprite: TextureAtlasSprite {
+                // custom_size: Some(Vec2::splat(24.0)),
+                ..default()
+            },
+            ..default()
+        },
+        AnimationTimer(Timer::from_seconds(0.1, TimerMode::Repeating)),
+    ));
+
     commands.spawn((
         Character {
             sprite_bundle: SpriteBundle {
                 sprite: Sprite {
-                    custom_size: Some(Vec2::new(PLAYER_WIDTH, PLAYER_HEIGHT)),
+                    // custom_size: Some(Vec2::new(PLAYER_WIDTH, PLAYER_HEIGHT)),
                     ..default()
                 },
                 ..default()
