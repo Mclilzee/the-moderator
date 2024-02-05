@@ -2,13 +2,11 @@ use crate::{
     components::{Character, Hp, Player, Velocity},
     consts::GRAVITY_SPEED,
 };
-use bevy::{prelude::*, sprite::Anchor};
+use bevy::prelude::*;
 
 const PLAYER_SPEED: f32 = 50.0;
 const PLAYER_JUMP_HEIGHT: f32 = 200.0;
 const PLAYER_STARING_HP: i32 = 100;
-const PLAYER_WIDTH: f32 = 20.0;
-const PLAYER_HEIGHT: f32 = 40.0;
 const ALLOWED_JUMPS: i32 = 2;
 
 #[derive(Component)]
@@ -37,7 +35,7 @@ fn spawn_player(
         Vec2::new(21.0, 38.0),
         1,
         1,
-        Some(Vec2::new(30.0, 0.0)),
+        Some(Vec2::new(99.0, 0.0)),
         None,
     ));
 
