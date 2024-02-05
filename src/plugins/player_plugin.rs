@@ -10,6 +10,12 @@ const PLAYER_STARING_HP: i32 = 100;
 const ALLOWED_JUMPS: i32 = 2;
 
 #[derive(Component)]
+struct AnimationIndices {
+    first: usize,
+    last: usize,
+}
+
+#[derive(Component)]
 struct AnimationTimer(Timer);
 
 #[derive(Component)]
@@ -20,7 +26,7 @@ pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.add_systems(Startup, spawn_player)
-            .add_systems(Update, movement);
+            .add_systems(Update, (movement, animate_sprite).chain());
     }
 }
 
@@ -38,6 +44,8 @@ fn spawn_player(
         Some(Vec2::new(99.0, 0.0)),
         None,
     ));
+
+    let animation_indices = AnimationIndices { first: 1, last: 9 };
 
     commands.spawn(SpriteBundle {
         sprite: Sprite {
@@ -57,6 +65,8 @@ fn spawn_player(
             hp: Hp(PLAYER_STARING_HP),
             velocity: Velocity::default(),
         },
+        animation_indices,
+        AnimationTimer(Timer::from_seconds(0.1, TimerMode::Repeating)),
         Player,
         Jumps(ALLOWED_JUMPS),
     ));
@@ -92,5 +102,25 @@ fn movement(
         player_velocity.translation.y = 0.0;
         transform.translation.y = 0.0;
         available_jumps.0 = ALLOWED_JUMPS;
+    }
+}
+
+fn animate_sprite(
+    time: Res<Time>,
+    mut query: Query<(
+        &AnimationIndices,
+        &mut AnimationTimer,
+        &mut TextureAtlasSprite,
+    )>,
+) {
+    for (indices, mut timer, mut sprite) in &mut query {
+        timer.0.tick(time.delta());
+        if timer.0.just_finished() {
+            sprite.index = if sprite.index == indices.last {
+                indices.first
+            } else {
+                sprite.index + 1
+            };
+        }
     }
 }
