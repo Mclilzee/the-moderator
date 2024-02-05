@@ -1,1 +1,1 @@
-pub const GRAVITY_SPEED: f32 = 20.0;
+pub const GRAVITY_SPEED: f32 = 5.0;
