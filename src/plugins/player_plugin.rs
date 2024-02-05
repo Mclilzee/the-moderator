@@ -37,27 +37,25 @@ fn spawn_player(
         Vec2::splat(80.0),
         1,
         1,
-        None,
-        None,
+        Some(Vec2::splat(40.0)),
+        None, // Some(Vec2::new(20.0, 20.0)),
     ));
 
-    commands.spawn((
-        SpriteSheetBundle {
-            texture_atlas,
-            sprite: TextureAtlasSprite {
-                // custom_size: Some(Vec2::splat(24.0)),
-                ..default()
-            },
+    commands.spawn(SpriteBundle {
+        sprite: Sprite {
+            custom_size: Some(Vec2::splat(2.0)),
             ..default()
         },
-        AnimationTimer(Timer::from_seconds(0.1, TimerMode::Repeating)),
-    ));
+        transform: Transform::from_xyz(0.0, 0.0, 1.0),
+        ..default()
+    });
 
     commands.spawn((
         Character {
-            sprite_bundle: SpriteBundle {
-                sprite: Sprite {
-                    // custom_size: Some(Vec2::new(PLAYER_WIDTH, PLAYER_HEIGHT)),
+            sprite_sheet: SpriteSheetBundle {
+                texture_atlas,
+                sprite: TextureAtlasSprite {
+                    custom_size: Some(Vec2::splat(24.0)),
                     ..default()
                 },
                 ..default()

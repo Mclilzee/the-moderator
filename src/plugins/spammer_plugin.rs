@@ -46,8 +46,8 @@ fn spawn_spammer(
 
         commands.spawn((
             Character {
-                sprite_bundle: SpriteBundle {
-                    sprite: Sprite {
+                sprite_sheet: SpriteSheetBundle {
+                    sprite: TextureAtlasSprite {
                         custom_size: Some(Vec2::new(SPAMMER_WIDTH, SPAMMER_HEIGHT)),
                         ..default()
                     },
