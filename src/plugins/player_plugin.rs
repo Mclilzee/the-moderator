@@ -9,6 +9,10 @@ const PLAYER_JUMP_HEIGHT: f32 = 500.0;
 const PLAYER_STARING_HP: i32 = 100;
 const PLAYER_WIDTH: f32 = 20.0;
 const PLAYER_HEIGHT: f32 = 40.0;
+const ALLOWED_JUMPS: i32 = 1;
+
+#[derive(Component)]
+struct Jumps(i32);
 
 pub struct PlayerPlugin;
 
@@ -33,15 +37,16 @@ fn spawn_player(mut commands: Commands) {
             velocity: Velocity::default(),
         },
         Player,
+        Jumps(ALLOWED_JUMPS),
     ));
 }
 
 fn movement(
     keys: Res<Input<KeyCode>>,
-    mut query: Query<(&mut Transform, &mut Velocity), With<Player>>,
+    mut query: Query<(&mut Velocity, &mut Jumps, &mut Transform), With<Player>>,
     time: Res<Time>,
 ) {
-    let (mut player_transform, mut player_velocity) = query.single_mut();
+    let (mut player_velocity, mut available_jumps, mut transform) = query.single_mut();
     let mut velocity = Vec3::new(0.0, player_velocity.translation.y, 0.0);
 
     if keys.pressed(KeyCode::Right) {
@@ -52,17 +57,19 @@ fn movement(
         velocity.x = -PLAYER_SPEED;
     }
 
-    if keys.just_pressed(KeyCode::Up) && player_velocity.translation.y == 0.0 {
+    if keys.just_pressed(KeyCode::Up) && available_jumps.0 >= 1 {
         velocity.y = PLAYER_JUMP_HEIGHT + GRAVITY_SPEED;
+        available_jumps.0 = 0;
     }
 
     velocity.y -= GRAVITY_SPEED;
     player_velocity.translation = velocity;
 
-    player_transform.translation += player_velocity.translation * time.delta_seconds();
+    transform.translation += player_velocity.translation * time.delta_seconds();
 
-    if player_transform.translation.y < 0.0 {
+    if transform.translation.y < 0.0 {
         player_velocity.translation.y = 0.0;
-        player_transform.translation.y = 0.0;
+        transform.translation.y = 0.0;
+        available_jumps.0 = ALLOWED_JUMPS;
     }
 }
