@@ -16,7 +16,7 @@ pub struct AssetsLoader {
 #[derive(Component)]
 pub struct AnimationCollection {
     pub timer: Timer,
-    texture_atlas: Handle<TextureAtlas>,
+    pub texture_atlas: Handle<TextureAtlas>,
 }
 
 impl AnimationCollection {
