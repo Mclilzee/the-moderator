@@ -1,3 +1,4 @@
+use super::assets_plugin::{AnimationType, AssetsLoader};
 use crate::{
     components::{Character, Hp, Player, Velocity},
     consts::GRAVITY_SPEED,
@@ -10,43 +11,18 @@ const PLAYER_STARING_HP: i32 = 100;
 const ALLOWED_JUMPS: i32 = 2;
 
 #[derive(Component)]
-struct AnimationIndices {
-    first: usize,
-    last: usize,
-}
-
-#[derive(Component)]
-struct AnimationTimer(Timer);
-
-#[derive(Component)]
 struct Jumps(i32);
 
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.add_systems(Startup, spawn_player)
+        app.add_systems(PostStartup, spawn_player)
             .add_systems(Update, (movement, animate_sprite).chain());
     }
 }
 
-fn spawn_player(
-    mut commands: Commands,
-    asset_server: Res<AssetServer>,
-    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
-) {
-    let texture: Handle<Image> = asset_server.load("knight/idle.png");
-    let texture_atlas = texture_atlases.add(TextureAtlas::from_grid(
-        texture,
-        Vec2::new(21.0, 38.0),
-        10,
-        1,
-        Some(Vec2::new(99.0, 0.0)),
-        None,
-    ));
-
-    let animation_indices = AnimationIndices { first: 1, last: 9 };
-
+fn spawn_player(mut commands: Commands) {
     commands.spawn(SpriteBundle {
         sprite: Sprite {
             custom_size: Some(Vec2::new(21.0, 38.0)),
@@ -56,17 +32,7 @@ fn spawn_player(
     });
 
     commands.spawn((
-        Character {
-            sprite_sheet: SpriteSheetBundle {
-                texture_atlas,
-                sprite: TextureAtlasSprite::default(),
-                ..default()
-            },
-            hp: Hp(PLAYER_STARING_HP),
-            velocity: Velocity::default(),
-        },
-        animation_indices,
-        AnimationTimer(Timer::from_seconds(0.1, TimerMode::Repeating)),
+        Character::new(PLAYER_STARING_HP),
         Player,
         Jumps(ALLOWED_JUMPS),
     ));
@@ -106,21 +72,10 @@ fn movement(
 }
 
 fn animate_sprite(
-    time: Res<Time>,
-    mut query: Query<(
-        &AnimationIndices,
-        &mut AnimationTimer,
-        &mut TextureAtlasSprite,
-    )>,
+    mut player_query: Query<&mut TextureAtlasSprite, With<Player>>,
+    input: Res<Input<KeyCode>>,
+    asset_loader: Res<AssetsLoader>,
 ) {
-    for (indices, mut timer, mut sprite) in &mut query {
-        timer.0.tick(time.delta());
-        if timer.0.just_finished() {
-            sprite.index = if sprite.index == indices.last {
-                indices.first
-            } else {
-                sprite.index + 1
-            };
-        }
-    }
+    let player_texture = player_query.single_mut();
+    if input.any_pressed([KeyCode::Left, KeyCode::D]) {}
 }
