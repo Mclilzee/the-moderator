@@ -17,13 +17,15 @@ pub struct AssetsLoader {
 pub struct AnimationCollection {
     pub timer: Timer,
     pub len: i32,
+    texture_atlas: Handle<TextureAtlas>,
 }
 
 impl AnimationCollection {
-    fn new(len: i32, interval: f32) -> Self {
+    fn new(texture_atlas: Handle<TextureAtlas>, len: i32, interval: f32) -> Self {
         Self {
             len,
-            timer: Timer::from_seconds(0.2, TimerMode::Repeating),
+            timer: Timer::from_seconds(interval, TimerMode::Repeating),
+            texture_atlas,
         }
     }
 }
@@ -55,7 +57,8 @@ fn load_assets(
         None,
     ));
 
-    loader
-        .player_textures
-        .insert(AnimationType::Idle, AnimationCollection::new(10, 0.2));
+    loader.player_textures.insert(
+        AnimationType::Idle,
+        AnimationCollection::new(texture_atlas, 10, 0.2),
+    );
 }
