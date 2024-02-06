@@ -2,8 +2,10 @@ use crate::{
     bundles::{character::Character, movable_object::MovableObject},
     components::{Hp, Player, Spammer, Velocity},
 };
-use bevy::{prelude::*, window::PrimaryWindow};
+use bevy::{asset::AssetLoader, prelude::*, window::PrimaryWindow};
 use rand::{self, Rng};
+
+use super::assets_plugin::{AnimationType, AssetsLoader};
 
 const SPAMMER_STARTING_HP: i32 = 5;
 const SPAMMER_SPEED: f32 = 60.0;
@@ -33,7 +35,7 @@ fn spawn_spammer(
     mut spawn_timer: ResMut<SpammerSpawnTimer>,
     spammers_query: Query<&Spammer>,
     time: Res<Time>,
-    window_query: Query<&Window, With<PrimaryWindow>>,
+    camera_query: Query<&OrthographicProjection, (With<Camera>, Without<Player>)>,
 ) {
     // Limit spawn to 10 spammers
     if spammers_query.iter().count() > 10 {
@@ -42,27 +44,26 @@ fn spawn_spammer(
 
     spawn_timer.timer.tick(time.delta());
     if spawn_timer.timer.just_finished() {
+        let camera = camera_query.single();
         let mut random = rand::thread_rng();
         let offset = random.gen_range(-50.0..50.0);
-        let screen_offset = window_query.single().width() / 2.0;
-        let x = offset + f32::copysign(screen_offset + 5.0, offset);
+        let camera_offset = camera.area.width() / 2.0;
+
+        let spawn_x = offset + f32::copysign(camera_offset + 5.0, offset);
+        let spawn_y = camera.area.height() / 2.0;
 
         commands.spawn((
             Character {
                 movable_object: MovableObject {
                     sprite_sheet: SpriteSheetBundle {
-                        sprite: TextureAtlasSprite {
-                            custom_size: Some(Vec2::new(SPAMMER_WIDTH, SPAMMER_HEIGHT)),
-                            ..default()
-                        },
                         transform: Transform {
-                            translation: Vec3::new(x, 0.0, 0.0),
+                            translation: Vec3::new(spawn_x, spawn_y, 0.0),
                             ..default()
                         },
                         visibility: Visibility::Visible,
                         ..default()
                     },
-                    velocity: Velocity::default(),
+                    ..default()
                 },
                 hp: Hp(SPAMMER_STARTING_HP),
                 ..default()
@@ -72,12 +73,12 @@ fn spawn_spammer(
     }
 }
 
-type SpammerQuery = (With<Spammer>, Without<Player>);
-type PlayerQuery = (With<Player>, Without<Spammer>);
+type WithSpammer = (With<Spammer>, Without<Player>);
+type WithPlayer = (With<Player>, Without<Spammer>);
 
 fn track_player(
-    mut spammer_query: Query<&mut Transform, SpammerQuery>,
-    player_query: Query<&Transform, PlayerQuery>,
+    mut spammer_query: Query<&mut Transform, WithSpammer>,
+    player_query: Query<&Transform, WithPlayer>,
     time: Res<Time>,
 ) {
     let player_transform = player_query.single();

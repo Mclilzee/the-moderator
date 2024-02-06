@@ -5,7 +5,6 @@ use bevy::prelude::*;
 #[derive(Bundle, Default)]
 pub struct Character {
     pub movable_object: MovableObject,
-    pub sprite_sheet: SpriteSheetBundle,
     pub hp: Hp,
     pub hitbox: HitBox,
 }

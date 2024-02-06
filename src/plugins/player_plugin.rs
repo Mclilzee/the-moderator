@@ -25,14 +25,14 @@ impl Plugin for PlayerPlugin {
 
 fn spawn_player(mut commands: Commands, asset_loader: Res<AssetsLoader>) {
     let mut char = (
-        Character::new(PLAYER_STARING_HP, None),
+        Character::new(PLAYER_STARING_HP, Some(Vec2::splat(30.0))),
         Player,
         Jumps(ALLOWED_JUMPS),
     );
 
     let animation_atlas = asset_loader.player_textures.get(&AnimationType::Idle);
     if let Some(sheet) = animation_atlas {
-        char.0.sprite_sheet.texture_atlas = sheet.texture_atlas.to_owned();
+        char.0.movable_object.sprite_sheet.texture_atlas = sheet.texture_atlas.to_owned();
     }
 
     commands.spawn(char);
