@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::components::Player;
+use crate::components::{HitBox, Player};
 
 #[derive(Component)]
 struct DebugBox;
@@ -32,10 +32,13 @@ type WithDebugBox = (With<DebugBox>, Without<Player>);
 type WithPlayer = (With<Player>, Without<DebugBox>);
 
 fn follow_player_shape(
-    player: Query<&Transform, WithPlayer>,
-    mut debug_box: Query<&mut Transform, WithDebugBox>,
+    player: Query<(&Transform, &HitBox), WithPlayer>,
+    mut debug_box: Query<(&mut Sprite, &mut Transform), WithDebugBox>,
 ) {
-    let player_transform = player.single();
-    let mut box_trasnform = debug_box.single_mut();
+    let (player_transform, player_hitbox) = player.single();
+    let (mut box_sprite, mut box_trasnform) = debug_box.single_mut();
     box_trasnform.translation = player_transform.translation;
+
+    box_sprite.custom_size.unwrap().x = player_hitbox.0.x;
+    box_sprite.custom_size.unwrap().y = player_hitbox.0.y;
 }
