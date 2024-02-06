@@ -23,14 +23,6 @@ impl Plugin for PlayerPlugin {
 }
 
 fn spawn_player(mut commands: Commands) {
-    commands.spawn(SpriteBundle {
-        sprite: Sprite {
-            custom_size: Some(Vec2::new(21.0, 38.0)),
-            ..default()
-        },
-        ..default()
-    });
-
     commands.spawn((
         Character::new(PLAYER_STARING_HP),
         Player,

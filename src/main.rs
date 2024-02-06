@@ -3,9 +3,11 @@ use bevy::{
 };
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use components::Player;
+use debugging::player_box::PlayerBoxPlugin;
 use plugins::{assets_plugin, default_plugins, player_plugin, spammer_plugin};
 mod components;
 mod consts;
+mod debugging;
 mod plugins;
 mod resources;
 
@@ -25,6 +27,7 @@ fn main() {
         .add_plugins(
             WorldInspectorPlugin::default().run_if(input_toggle_active(false, KeyCode::Escape)),
         )
+        .add_plugins(PlayerBoxPlugin)
         .add_systems(Startup, spawn_camera)
         .add_systems(PostUpdate, follow_player)
         .run();
