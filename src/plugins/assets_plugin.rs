@@ -45,15 +45,18 @@ fn load_assets(
 ) {
     loader.player_textures = HashMap::new();
 
-    let texture: Handle<Image> = asset_server.load("knight/idle.png");
-    let texture_atlas = texture_atlases.add(TextureAtlas::from_grid(
+    let texture: Handle<Image> = asset_server.load("knight/full_slide.png");
+    let mut atlas = TextureAtlas::from_grid(
         texture,
-        Vec2::new(21.0, 38.0),
-        10,
+        Vec2::new(38.0, 24.0),
+        3,
         1,
-        Some(Vec2::new(99.0, 0.0)),
-        None,
-    ));
+        Some(Vec2::new(82.0, 0.0)),
+        Some(Vec2::new(45.0, 56.0)),
+    );
+    atlas.add_texture(Rect::new(409.0, 53.0, 434.0, 80.0));
+
+    let texture_atlas = texture_atlases.add(atlas);
 
     println!("{:?}", texture_atlas);
 
