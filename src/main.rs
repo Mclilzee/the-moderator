@@ -49,7 +49,7 @@ fn follow_player(
 ) {
     let mut camera_transform = camera_query.single_mut();
     let mut translation = player_query.single().translation;
-    translation.y += 20.0;
+    translation.y += 40.0;
 
     camera_transform.translation = translation;
 }
