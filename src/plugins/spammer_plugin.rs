@@ -1,4 +1,7 @@
-use crate::components::{Character, Hp, Player, Spammer, Velocity};
+use crate::{
+    bundles::{character::Character, movable_object::MovableObject},
+    components::{Hp, Player, Spammer, Velocity},
+};
 use bevy::{prelude::*, window::PrimaryWindow};
 use rand::{self, Rng};
 
@@ -46,20 +49,23 @@ fn spawn_spammer(
 
         commands.spawn((
             Character {
-                sprite_sheet: SpriteSheetBundle {
-                    sprite: TextureAtlasSprite {
-                        custom_size: Some(Vec2::new(SPAMMER_WIDTH, SPAMMER_HEIGHT)),
+                movable_object: MovableObject {
+                    sprite_sheet: SpriteSheetBundle {
+                        sprite: TextureAtlasSprite {
+                            custom_size: Some(Vec2::new(SPAMMER_WIDTH, SPAMMER_HEIGHT)),
+                            ..default()
+                        },
+                        transform: Transform {
+                            translation: Vec3::new(x, 0.0, 0.0),
+                            ..default()
+                        },
+                        visibility: Visibility::Visible,
                         ..default()
                     },
-                    transform: Transform {
-                        translation: Vec3::new(x, 0.0, 0.0),
-                        ..default()
-                    },
-                    visibility: Visibility::Visible,
-                    ..default()
+                    velocity: Velocity::default(),
                 },
-                velocity: Velocity::default(),
                 hp: Hp(SPAMMER_STARTING_HP),
+                ..default()
             },
             Spammer,
         ));

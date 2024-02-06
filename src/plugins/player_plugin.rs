@@ -1,6 +1,7 @@
 use super::assets_plugin::{AnimationType, AssetsLoader};
+use crate::bundles::character::Character;
 use crate::{
-    components::{Character, Hp, Player, Velocity},
+    components::{Player, Velocity},
     consts::GRAVITY_SPEED,
 };
 use bevy::prelude::*;
@@ -24,10 +25,11 @@ impl Plugin for PlayerPlugin {
 
 fn spawn_player(mut commands: Commands, asset_loader: Res<AssetsLoader>) {
     let mut char = (
-        Character::new(PLAYER_STARING_HP),
+        Character::new(PLAYER_STARING_HP, None),
         Player,
         Jumps(ALLOWED_JUMPS),
     );
+
     let animation_atlas = asset_loader.player_textures.get(&AnimationType::Idle);
     if let Some(sheet) = animation_atlas {
         char.0.sprite_sheet.texture_atlas = sheet.texture_atlas.to_owned();

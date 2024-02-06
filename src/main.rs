@@ -5,6 +5,7 @@ use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use components::Player;
 use debugging::player_box::PlayerBoxPlugin;
 use plugins::{assets_plugin, default_plugins, player_plugin, spammer_plugin};
+mod bundles;
 mod components;
 mod consts;
 mod debugging;
