@@ -3,9 +3,7 @@ use bevy::{
 };
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use components::Player;
-use plugins::default_plugins::CustomDefaultPlugin;
-use plugins::player_plugin::PlayerPlugin;
-use plugins::spammer_plugin::SpammerPlugins;
+use plugins::{assets_plugin, default_plugins, player_plugin, spammer_plugin};
 mod components;
 mod consts;
 mod plugins;
@@ -20,9 +18,10 @@ pub enum InGameSet {
 fn main() {
     App::new()
         .configure_sets(Update, (InGameSet::UserInput, InGameSet::Movement))
-        .add_plugins(CustomDefaultPlugin)
-        .add_plugins(PlayerPlugin)
-        .add_plugins(SpammerPlugins)
+        .add_plugins(default_plugins::CustomDefaultPlugin)
+        .add_plugins(player_plugin::PlayerPlugin)
+        .add_plugins(spammer_plugin::SpammerPlugins)
+        .add_plugins(assets_plugin::AssetsLoaderPlugin)
         .add_plugins(
             WorldInspectorPlugin::default().run_if(input_toggle_active(false, KeyCode::Escape)),
         )
