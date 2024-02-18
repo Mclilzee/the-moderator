@@ -10,16 +10,11 @@ pub struct Character {
 }
 
 impl Character {
-    pub fn new(hp_value: i32, hitbox: Option<Vec2>) -> Self {
-        let mut char = Self {
+    pub fn new(hp_value: i32, hitbox: Vec2) -> Self {
+        Self {
             hp: Hp(hp_value),
+            hitbox: HitBox(hitbox),
             ..default()
-        };
-
-        if let Some(hitbox) = hitbox {
-            char.hitbox = HitBox(hitbox);
         }
-
-        char
     }
 }
