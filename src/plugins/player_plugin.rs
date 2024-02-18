@@ -6,7 +6,7 @@ use crate::{
 };
 use bevy::prelude::*;
 
-const PLAYER_SPEED: f32 = 50.0;
+const PLAYER_SPEED: f32 = 60.0;
 const PLAYER_JUMP_HEIGHT: f32 = 200.0;
 const PLAYER_STARING_HP: i32 = 100;
 const ALLOWED_JUMPS: i32 = 2;
