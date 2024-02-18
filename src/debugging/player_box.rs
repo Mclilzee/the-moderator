@@ -22,7 +22,7 @@ impl Plugin for PlayerBoxPlugin {
                 toggle_state.run_if(input_just_pressed(KeyCode::ControlLeft)),
             )
             .add_systems(OnEnter(BoxDebugState::On), spawn_debug_boxes)
-            .add_systems(OnExit(BoxDebugState::Off), dispawn_debug_boxes);
+            .add_systems(OnExit(BoxDebugState::On), dispawn_debug_boxes);
     }
 }
 
