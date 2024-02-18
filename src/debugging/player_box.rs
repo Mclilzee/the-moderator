@@ -16,17 +16,13 @@ pub struct PlayerBoxPlugin;
 
 impl Plugin for PlayerBoxPlugin {
     fn build(&self, app: &mut App) {
-        app.add_state()
+        app.add_state::<BoxDebugState>()
             .add_systems(Update, spawn_debug_boxes)
-            .add_systems(Update, dispawn_debug_boxes)
+            .add_systems(Update, dispawn_debug_boxes);
     }
 }
 
-fn spawn_debug_boxes(
-    mut commands: Commands,
-    hitbox_query: Query<(Entity, &HitBox)>,
-    debugbox_query: Query<Entity, With<DebugBox>>,
-) {
+fn spawn_debug_boxes(mut commands: Commands, hitbox_query: Query<(Entity, &HitBox)>) {
     for (parent, hitbox) in hitbox_query.iter() {
         let child = commands
             .spawn((
