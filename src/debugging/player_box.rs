@@ -9,14 +9,14 @@ pub struct PlayerBoxPlugin;
 
 impl Plugin for PlayerBoxPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, spawn_hitboxes)
-            .add_systems(Update, dispawn_hitboxes);
+        app.add_systems(Update, toggle_boxes)
     }
 }
 
-fn spawn_hitboxes(
+fn debug_boxes_control(
     mut commands: Commands,
-    query: Query<(Entity, &HitBox)>,
+    hitbox_query: Query<(Entity, &HitBox)>,
+    debugbox_query: Query<Entity, With<DebugBox>>,
     keys: Res<Input<KeyCode>>,
 ) {
     if !keys.pressed(KeyCode::ControlLeft) || !keys.pressed(KeyCode::H) {
@@ -24,7 +24,7 @@ fn spawn_hitboxes(
     }
 
     info!("Pressed for debugging");
-    for (parent, hitbox) in query.iter() {
+    for (parent, hitbox) in hitbox_query.iter() {
         let child = commands
             .spawn((
                 SpriteBundle {
@@ -43,4 +43,8 @@ fn spawn_hitboxes(
     }
 }
 
-fn dispawn_hitboxes(mut commands: Commands, query: Query<(Entity, &DebugBox)>) {}
+fn spawn_boxes(
+
+fn dispawn_boxes(boxes: ) {
+    for entity in boxes
+}
