@@ -5,9 +5,11 @@ use crate::components::HitBox;
 #[derive(Component)]
 struct DebugBox;
 
-#[derive(Resource)]
-struct DebugState {
-    on: bool,
+#[derive(States, Debug, Clone, Copy, Default, Eq, PartialEq, Hash)]
+enum BoxDebug {
+    #[default]
+    Off,
+    On,
 }
 
 pub struct PlayerBoxPlugin;
@@ -24,7 +26,6 @@ fn spawn_debug_boxes(
     mut commands: Commands,
     hitbox_query: Query<(Entity, &HitBox)>,
     debugbox_query: Query<Entity, With<DebugBox>>,
-    debug_state: Res<DebugState>,
 ) {
     for (parent, hitbox) in hitbox_query.iter() {
         let child = commands
@@ -45,11 +46,7 @@ fn spawn_debug_boxes(
     }
 }
 
-fn dispawn_debug_boxes(
-    mut commands: Commands,
-    query: Query<Entity, With<DebugBox>>,
-    debug_state: Res<DebugState>,
-) {
+fn dispawn_debug_boxes(mut commands: Commands, query: Query<Entity, With<DebugBox>>) {
     for entity in query.iter() {
         commands.entity(entity).despawn();
     }
