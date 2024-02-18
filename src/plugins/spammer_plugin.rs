@@ -52,8 +52,7 @@ fn spawn_spammer(
         let spawn_x = offset + f32::copysign(camera_offset + 5.0, offset);
 
         let mut spammer = Character::new(SPAMMER_STARTING_HP, Vec2::splat(32.0));
-        spammer.movable_object.sprite_sheet.transform.translation =
-            Vec3::new(spawn_x, spawn_y, 0.0);
+        spammer.movable_object.sprite_sheet.transform.translation = Vec3::new(spawn_x, 0.0, 0.0);
 
         commands.spawn((spammer, Spammer));
     }
