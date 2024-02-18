@@ -6,7 +6,7 @@ use crate::components::HitBox;
 struct DebugBox;
 
 #[derive(States, Debug, Clone, Copy, Default, Eq, PartialEq, Hash)]
-enum BoxDebug {
+enum BoxDebugState {
     #[default]
     Off,
     On,
