@@ -35,7 +35,7 @@ fn spawn_player(mut commands: Commands, asset_loader: Res<AssetsLoader>) {
         char.0.movable_object.sprite_sheet.texture_atlas = sheet.texture_atlas.to_owned();
     }
 
-    commands.spawn(char);
+    commands.spawn((char, Name::new("Player")));
 }
 
 fn movement(
