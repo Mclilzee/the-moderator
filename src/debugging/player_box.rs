@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{input::common_conditions::input_toggle_active, prelude::*};
 
 use crate::components::HitBox;
 
@@ -9,7 +9,10 @@ pub struct PlayerBoxPlugin;
 
 impl Plugin for PlayerBoxPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, toggle_boxes);
+        app.add_systems(
+            Update,
+            toggle_boxes.run_if(input_toggle_active(false, KeyCode::ControlLeft)),
+        );
     }
 }
 
@@ -17,12 +20,7 @@ fn toggle_boxes(
     mut commands: Commands,
     hitbox_query: Query<(Entity, &HitBox)>,
     debugbox_query: Query<Entity, With<DebugBox>>,
-    keys: Res<Input<KeyCode>>,
 ) {
-    if !keys.just_pressed(KeyCode::ControlLeft) || !keys.just_pressed(KeyCode::H) {
-        return;
-    }
-
     let mut respawn = true;
 
     for entity in debugbox_query.iter() {
