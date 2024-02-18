@@ -1,4 +1,4 @@
-use bevy::{input::common_conditions::input_toggle_active, prelude::*};
+use bevy::{input::common_conditions::input_just_pressed, prelude::*};
 
 use crate::components::HitBox;
 
@@ -14,8 +14,17 @@ pub struct PlayerBoxPlugin;
 
 impl Plugin for PlayerBoxPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, spawn_debug_boxes);
+        app.add_systems(Update, spawn_debug_boxes)
+            .add_systems(Update, dispawn_debug_boxes)
+            .add_systems(
+                Update,
+                toggle_state.run_if(input_just_pressed(KeyCode::ControlLeft)),
+            );
     }
+}
+
+fn toggle_state(mut state: ResMut<DebugState>) {
+    state.on = !state.on;
 }
 
 fn spawn_debug_boxes(
