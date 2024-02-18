@@ -50,7 +50,6 @@ fn spawn_spammer(
         let camera_offset = camera.area.width() / 2.0;
 
         let spawn_x = offset + f32::copysign(camera_offset + 5.0, offset);
-        let spawn_y = camera.area.height() / 2.0;
 
         let mut spammer = Character::new(SPAMMER_STARTING_HP, Vec2::splat(32.0));
         spammer.movable_object.sprite_sheet.transform.translation =
