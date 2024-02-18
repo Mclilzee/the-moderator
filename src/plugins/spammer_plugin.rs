@@ -52,24 +52,11 @@ fn spawn_spammer(
         let spawn_x = offset + f32::copysign(camera_offset + 5.0, offset);
         let spawn_y = camera.area.height() / 2.0;
 
-        commands.spawn((
-            Character {
-                movable_object: MovableObject {
-                    sprite_sheet: SpriteSheetBundle {
-                        transform: Transform {
-                            translation: Vec3::new(spawn_x, spawn_y, 0.0),
-                            ..default()
-                        },
-                        visibility: Visibility::Visible,
-                        ..default()
-                    },
-                    ..default()
-                },
-                hp: Hp(SPAMMER_STARTING_HP),
-                ..default()
-            },
-            Spammer,
-        ));
+        let mut spammer = Character::new(SPAMMER_STARTING_HP, Vec2::splat(32.0));
+        spammer.movable_object.sprite_sheet.transform.translation =
+            Vec3::new(spawn_x, spawn_y, 0.0);
+
+        commands.spawn((spammer, Spammer));
     }
 }
 
