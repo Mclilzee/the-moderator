@@ -26,15 +26,11 @@ impl Plugin for PlayerBoxPlugin {
     }
 }
 
-fn toggle_state(mut state: ResMut<NextState<BoxDebugState>>) {
-    if let Some(current) = state.0 {
-        let next = if current == BoxDebugState::On {
-            BoxDebugState::Off
-        } else {
-            BoxDebugState::On
-        };
-
-        state.set(next);
+fn toggle_state(mut next: ResMut<NextState<BoxDebugState>>, current: Res<State<BoxDebugState>>) {
+    info!("Current state: {:?}", current);
+    match current.get() {
+        BoxDebugState::On => next.set(BoxDebugState::Off),
+        BoxDebugState::Off => next.set(BoxDebugState::On),
     }
 }
 
