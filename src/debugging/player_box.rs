@@ -9,28 +9,33 @@ pub struct PlayerBoxPlugin;
 
 impl Plugin for PlayerBoxPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, spawn_box)
-            .add_systems(Update, follow_player_shape);
+        app.add_systems(Update, spawn_hitboxes)
+            .add_systems(Update, dispawn_hitboxes);
     }
 }
 
-fn spawn_box(mut commands: Commands) {
-    commands.spawn((
-        SpriteBundle::default(),
-        Name::new("Player Boundary"),
-        DebugBox,
-    ));
-}
-
-type WithDebugBox = (With<DebugBox>, Without<Player>);
-type WithPlayer = (With<Player>, Without<DebugBox>);
-
-fn follow_player_shape(
-    player: Query<(&Transform, &HitBox), WithPlayer>,
-    mut debug_box: Query<(&mut Sprite, &mut Transform), WithDebugBox>,
+fn spawn_hitboxes(
+    mut commands: Commands,
+    query: Query<(Entity, &HitBox)>,
+    keys: Res<Input<KeyCode>>,
 ) {
-    let (player_transform, player_hitbox) = player.single();
-    let (mut box_sprite, mut box_trasnform) = debug_box.single_mut();
-    box_trasnform.translation = player_transform.translation;
-    box_sprite.custom_size = Some(player_hitbox.0);
+    for (parent, hitbox) in query.iter() {
+        let child = commands
+            .spawn((
+                SpriteBundle {
+                    sprite: Sprite {
+                        custom_size: Some(hitbox.0),
+                        ..default()
+                    },
+                    ..default()
+                },
+                Name::new("HitBox Debug"),
+                DebugBox,
+            ))
+            .id();
+
+        commands.entity(parent).add_child(child);
+    }
 }
+
+fn dispawn_hitboxes(mut commands: Commands, query: Query<(Entity, &DebugBox)>) {}
