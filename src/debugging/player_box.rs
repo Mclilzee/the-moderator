@@ -30,11 +30,7 @@ fn follow_player_shape(
     mut debug_box: Query<(&mut Sprite, &mut Transform), WithDebugBox>,
 ) {
     let (player_transform, player_hitbox) = player.single();
-    let (box_sprite, mut box_trasnform) = debug_box.single_mut();
+    let (mut box_sprite, mut box_trasnform) = debug_box.single_mut();
     box_trasnform.translation = player_transform.translation;
-
-    if let Some(mut size) = box_sprite.custom_size {
-        size.x = player_hitbox.0.x;
-        size.y = player_hitbox.0.y;
-    }
+    box_sprite.custom_size = Some(player_hitbox.0);
 }
