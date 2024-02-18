@@ -19,10 +19,11 @@ fn spawn_hitboxes(
     query: Query<(Entity, &HitBox)>,
     keys: Res<Input<KeyCode>>,
 ) {
-    if !keys.pressed(KeyCode::AltLeft) || !keys.pressed(KeyCode::H) {
+    if !keys.pressed(KeyCode::ControlLeft) || !keys.pressed(KeyCode::H) {
         return;
     }
 
+    info!("Pressed for debugging");
     for (parent, hitbox) in query.iter() {
         let child = commands
             .spawn((
