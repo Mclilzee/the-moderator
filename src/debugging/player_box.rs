@@ -16,13 +16,7 @@ impl Plugin for PlayerBoxPlugin {
 
 fn spawn_box(mut commands: Commands) {
     commands.spawn((
-        SpriteBundle {
-            sprite: Sprite {
-                custom_size: Some(Vec2::new(2.0, 2.0)),
-                ..default()
-            },
-            ..default()
-        },
+        SpriteBundle::default(),
         Name::new("Player Boundary"),
         DebugBox,
     ));
@@ -36,9 +30,11 @@ fn follow_player_shape(
     mut debug_box: Query<(&mut Sprite, &mut Transform), WithDebugBox>,
 ) {
     let (player_transform, player_hitbox) = player.single();
-    let (mut box_sprite, mut box_trasnform) = debug_box.single_mut();
+    let (box_sprite, mut box_trasnform) = debug_box.single_mut();
     box_trasnform.translation = player_transform.translation;
 
-    box_sprite.custom_size.unwrap().x = player_hitbox.0.x;
-    box_sprite.custom_size.unwrap().y = player_hitbox.0.y;
+    if let Some(mut size) = box_sprite.custom_size {
+        size.x = player_hitbox.0.x;
+        size.y = player_hitbox.0.y;
+    }
 }
