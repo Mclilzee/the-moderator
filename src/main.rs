@@ -23,24 +23,26 @@ fn main() {
         .configure_sets(Update, (InGameSet::UserInput, InGameSet::Movement))
         .add_plugins(default_plugins::CustomDefaultPlugin)
         .add_plugins(player_plugin::PlayerPlugin)
-        .add_plugins(spammer_plugin::SpammerPlugins)
-        // .add_plugins(
-        //     WorldInspectorPlugin::default().run_if(input_toggle_active(false, KeyCode::Escape)),
-        // )
+        // .add_plugins(spammer_plugin::SpammerPlugins)
+        .add_plugins(
+            WorldInspectorPlugin::default().run_if(input_toggle_active(false, KeyCode::Escape)),
+        )
         .add_plugins(PlayerBoxPlugin)
         .add_systems(Startup, spawn_camera)
-        .add_systems(PostUpdate, follow_player)
+        // .add_systems(PostUpdate, follow_player)
         .run();
 }
 
 fn spawn_camera(mut commands: Commands) {
-    let mut camera = Camera2dBundle::default();
+    // let mut camera = Camera2dBundle::default();
 
-    camera.projection.scaling_mode = ScalingMode::AutoMin {
-        min_width: 200.0,
-        min_height: 100.0,
-    };
-    commands.spawn(camera);
+    // camera.projection.scaling_mode = ScalingMode::AutoMin {
+    //     min_width: 200.0,
+    //     min_height: 100.0,
+    // };
+
+    // commands.spawn(camera);
+    commands.spawn(Camera2dBundle::default());
 }
 
 fn follow_player(
