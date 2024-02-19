@@ -16,11 +16,11 @@ pub struct AssetsLoader {
 #[derive(Component)]
 pub struct AnimationCollection {
     pub timer: Timer,
-    pub texture_atlas: Handle<TextureAtlas>,
+    pub texture_atlas: Handle<TextureAtlasLayout>,
 }
 
 impl AnimationCollection {
-    fn new(texture_atlas: Handle<TextureAtlas>, interval: f32) -> Self {
+    fn new(texture_atlas: Handle<TextureAtlasLayout>, interval: f32) -> Self {
         Self {
             timer: Timer::from_seconds(interval, TimerMode::Repeating),
             texture_atlas,
@@ -40,7 +40,7 @@ impl Plugin for AssetsLoaderPlugin {
 
 fn load_assets(
     asset_server: Res<AssetServer>,
-    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+    mut texture_atlases: ResMut<Assets<TextureAtlasLayout>>,
     mut loader: ResMut<AssetsLoader>,
 ) {
     loader.player_textures = HashMap::new();
