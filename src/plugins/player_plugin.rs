@@ -1,4 +1,3 @@
-use super::assets_plugin::{AnimationType, AssetsLoader};
 use crate::bundles::character::Character;
 use crate::{
     components::{Player, Velocity},
@@ -18,22 +17,16 @@ pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.add_systems(PostStartup, spawn_player)
-            .add_systems(Update, (movement, animate_sprite).chain());
+        app.add_systems(PostStartup, spawn_player);
     }
 }
 
-fn spawn_player(mut commands: Commands, asset_loader: Res<AssetsLoader>) {
+fn spawn_player(mut commands: Commands) {
     let mut char = (
         Character::new(PLAYER_STARING_HP, Vec2::splat(30.0)),
         Player,
         Jumps(ALLOWED_JUMPS),
     );
-
-    let animation_atlas = asset_loader.player_textures.get(&AnimationType::Idle);
-    if let Some(sheet) = animation_atlas {
-        char.0.movable_object.sprite_sheet.atlas.layout = sheet.texture_atlas.to_owned();
-    }
 
     commands.spawn((char, Name::new("Player")));
 }
@@ -71,13 +64,4 @@ fn movement(
         transform.translation.y = 0.0;
         available_jumps.0 = ALLOWED_JUMPS;
     }
-}
-
-fn animate_sprite(
-    mut player_query: Query<&mut TextureAtlas, With<Player>>,
-    input: Res<ButtonInput<KeyCode>>,
-    asset_loader: Res<AssetsLoader>,
-) {
-    let player_texture = player_query.single_mut();
-    if input.any_pressed([KeyCode::ArrowLeft, KeyCode::KeyD]) {}
 }

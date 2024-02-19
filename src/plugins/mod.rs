@@ -1,4 +1,3 @@
-pub mod assets_plugin;
 pub mod default_plugins;
 pub mod physics;
 pub mod player_plugin;
