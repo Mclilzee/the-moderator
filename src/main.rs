@@ -25,9 +25,9 @@ fn main() {
         .add_plugins(player_plugin::PlayerPlugin)
         .add_plugins(spammer_plugin::SpammerPlugins)
         .add_plugins(assets_plugin::AssetsLoaderPlugin)
-        .add_plugins(
-            WorldInspectorPlugin::default().run_if(input_toggle_active(false, KeyCode::Escape)),
-        )
+        // .add_plugins(
+        //     WorldInspectorPlugin::default().run_if(input_toggle_active(false, KeyCode::Escape)),
+        // )
         .add_plugins(PlayerBoxPlugin)
         .add_systems(Startup, spawn_camera)
         .add_systems(PostUpdate, follow_player)
