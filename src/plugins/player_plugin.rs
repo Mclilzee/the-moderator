@@ -17,7 +17,8 @@ pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.add_systems(PostStartup, spawn_player);
+        app.add_systems(PostStartup, spawn_player)
+            .add_systems(Update, movement);
     }
 }
 
