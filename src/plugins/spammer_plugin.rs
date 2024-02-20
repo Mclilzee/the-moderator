@@ -1,9 +1,9 @@
 use crate::{
-    bundles::{character::Character},
+    bundles::character::Character,
     components::{Player, Spammer},
 };
 use bevy::prelude::*;
-use rand::{self, Rng};
+use rand::Rng;
 
 const SPAMMER_STARTING_HP: i32 = 5;
 const SPAMMER_SPEED: f32 = 40.0;
