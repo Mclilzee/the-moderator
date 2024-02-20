@@ -12,9 +12,9 @@ enum BoxDebugState {
     On,
 }
 
-pub struct PlayerBoxPlugin;
+pub struct DebugBoxPlugin;
 
-impl Plugin for PlayerBoxPlugin {
+impl Plugin for DebugBoxPlugin {
     fn build(&self, app: &mut App) {
         app.init_state::<BoxDebugState>()
             .add_systems(

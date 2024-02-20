@@ -1,6 +1,6 @@
 use crate::{
-    bundles::{character::Character, movable_object::MovableObject},
-    components::{Hp, Player, Spammer, Velocity},
+    bundles::{character::Character},
+    components::{Player, Spammer},
 };
 use bevy::prelude::*;
 use rand::{self, Rng};

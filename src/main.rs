@@ -1,6 +1,6 @@
 use bevy::{prelude::*, render::camera::ScalingMode};
 use components::Player;
-use debugging::player_box::PlayerBoxPlugin;
+use debugging::debug_boxes::DebugBoxPlugin;
 use plugins::{default_plugins, player_plugin, spammer_plugin};
 mod bundles;
 mod components;
@@ -21,7 +21,7 @@ fn main() {
         .add_plugins(default_plugins::CustomDefaultPlugin)
         .add_plugins(player_plugin::PlayerPlugin)
         .add_plugins(spammer_plugin::SpammerPlugins)
-        .add_plugins(PlayerBoxPlugin)
+        .add_plugins(DebugBoxPlugin)
         .add_systems(Startup, spawn_camera)
         .add_systems(PostUpdate, follow_player)
         .run();

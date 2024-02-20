@@ -1,1 +1,1 @@
-pub mod player_box;
+pub mod debug_boxes;
