@@ -1,4 +1,5 @@
 use crate::bundles::character::Character;
+use crate::components::Jumps;
 use crate::{
     components::{Player, Velocity},
     consts::GRAVITY_SPEED,
@@ -9,9 +10,6 @@ const PLAYER_SPEED: f32 = 60.0;
 const PLAYER_JUMP_HEIGHT: f32 = 200.0;
 const PLAYER_STARING_HP: i32 = 100;
 const ALLOWED_JUMPS: i32 = 2;
-
-#[derive(Component)]
-struct Jumps(i32);
 
 pub struct PlayerPlugin;
 
