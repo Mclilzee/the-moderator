@@ -11,5 +11,7 @@ impl Plugin for PhysicsPlugin {
 }
 
 fn update_movement(mut query: Query<(&mut Transform, &Velocity)>) {
-    query.for_each_mut(|(mut transform, velocity)| transform.translation += velocity.translation);
+    query
+        .iter_mut()
+        .for_each(|(mut transform, velocity)| transform.translation += velocity.translation);
 }
