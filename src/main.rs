@@ -1,7 +1,4 @@
-use bevy::{
-    input::common_conditions::input_toggle_active, prelude::*, render::camera::ScalingMode,
-};
-// use bevy_inspector_egui::quick::WorldInspectorPlugin;
+use bevy::{prelude::*, render::camera::ScalingMode};
 use components::Player;
 use debugging::player_box::PlayerBoxPlugin;
 use plugins::{default_plugins, player_plugin, spammer_plugin};
@@ -24,9 +21,6 @@ fn main() {
         .add_plugins(default_plugins::CustomDefaultPlugin)
         .add_plugins(player_plugin::PlayerPlugin)
         .add_plugins(spammer_plugin::SpammerPlugins)
-        // .add_plugins(
-        //     WorldInspectorPlugin::default().run_if(input_toggle_active(false, KeyCode::Escape)),
-        // )
         .add_plugins(PlayerBoxPlugin)
         .add_systems(Startup, spawn_camera)
         .add_systems(PostUpdate, follow_player)
@@ -35,11 +29,6 @@ fn main() {
 
 fn spawn_camera(mut commands: Commands) {
     let mut camera = Camera2dBundle::default();
-    let value = [1, 2, 3, 4, 5]
-        .iter()
-        .map(|n| n * 2)
-        .map(|n| n + n)
-        .sum::<i32>();
 
     camera.projection.scaling_mode = ScalingMode::AutoMin {
         min_width: 200.0,
