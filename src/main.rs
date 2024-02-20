@@ -7,7 +7,6 @@ mod components;
 mod consts;
 mod debugging;
 mod plugins;
-mod resources;
 
 #[derive(Clone, PartialEq, Eq, Debug, Hash, SystemSet)]
 pub enum InGameSet {
