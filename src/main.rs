@@ -1,3 +1,10 @@
+mod asset_loader;
+mod bundles;
+mod components;
+mod consts;
+mod debugging;
+mod plugins;
+
 use bevy::{prelude::*, render::camera::ScalingMode};
 use components::Player;
 use debugging::debug_boxes::DebugBoxPlugin;
