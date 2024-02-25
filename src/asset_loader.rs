@@ -3,5 +3,5 @@ pub enum PlayerAnimation {
 }
 
 pub struct AssetLoader {
-    atlas: Handle<AtlasTexture>,
+    pub atlas: Handle<AtlasTexture>,
 }
