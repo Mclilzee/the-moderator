@@ -10,6 +10,7 @@ use crate::{
 };
 
 use self::constants::*;
+use self::player_movement::movement;
 
 pub struct PlayerPlugin;
 
