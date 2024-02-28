@@ -20,3 +20,12 @@ impl Animation {
         }
     }
 }
+
+pub fn load_animation(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut texture_atlas: ResMut<Assets<TextureAtlasLayout>>,
+) {
+    let atlas_handle: Handle<Image> = asset_server.load("knight/idle.png");
+    let texture_atlas = TextureAtlasLayout::from_grid(Vec2::new(32, 32), 7, 4, None, None));
+}
