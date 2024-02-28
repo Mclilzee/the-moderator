@@ -1,5 +1,4 @@
 pub mod constants;
-pub mod player_animation;
 pub mod player_movement;
 
 use bevy::prelude::*;
@@ -21,12 +20,14 @@ impl Plugin for PlayerPlugin {
     }
 }
 
-fn spawn_player(mut commands: Commands) {
+fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>) {
     let char = (
         Character::new(PLAYER_STARING_HP, Vec2::splat(30.0)),
         Player,
         Jumps(ALLOWED_JUMPS),
     );
+
+    let model: Handle<Image> = asset_server.load("knight/all.png");
 
     commands.spawn((char, Name::new("Player")));
 }
