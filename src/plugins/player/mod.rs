@@ -31,7 +31,7 @@ fn spawn_player(
         Jumps(ALLOWED_JUMPS),
     );
 
-    let texture: Handle<Image> = asset_server.load("knight/all.png");
+    let texture: Handle<Image> = asset_server.load("knight/Knight-Sheet.png");
     let layout = atlas_server.add(TextureAtlasLayout::from_grid(
         Vec2::new(31.0, 38.0),
         5,
@@ -44,4 +44,7 @@ fn spawn_player(
     char.0.movable_object.sprite_sheet.atlas = TextureAtlas { layout, index: 1 };
 
     commands.spawn((char, Name::new("Player")));
+}
+
+fn full_animation() -> HashMap<Animation, Range(u32)> {
 }
