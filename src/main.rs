@@ -7,7 +7,7 @@ mod plugins;
 use bevy::{prelude::*, render::camera::ScalingMode};
 use components::Player;
 use debugging::debug_boxes::DebugBoxPlugin;
-use plugins::{default_plugins, player_plugin, spammer_plugin};
+use plugins::{default_plugins, player, spammer_plugin};
 
 #[derive(Clone, PartialEq, Eq, Debug, Hash, SystemSet)]
 pub enum InGameSet {

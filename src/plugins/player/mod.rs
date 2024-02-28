@@ -1,4 +1,15 @@
-pub mod player_plugin;
+pub mod constants;
+pub mod player_animation;
+pub mod player_movement;
+
+use bevy::prelude::*;
+
+use crate::{
+    bundles::character::Character,
+    components::{Jumps, Player},
+};
+
+use self::constants::*;
 
 pub struct PlayerPlugin;
 
