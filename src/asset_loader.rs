@@ -1,7 +1,20 @@
-pub enum PlayerAnimation {
-    Idle(Range),
+use bevy::prelude::*;
+
+#[derive(Resource)]
+pub struct PlayerAnimation {
+    atlas: TextureAtlas,
 }
 
-pub struct AssetLoader {
-    pub atlas: Handle<AtlasTexture>,
+pub struct Animation {
+    first_frame: u32,
+    last_frame: u32,
+}
+
+impl Animation {
+    fn new(first_frame: u32, last_frame: u32) -> Self {
+        Animation {
+            first_frame,
+            last_frame,
+        }
+    }
 }
