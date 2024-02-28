@@ -19,7 +19,7 @@ fn main() {
     App::new()
         .configure_sets(Update, (InGameSet::UserInput, InGameSet::Movement))
         .add_plugins(default_plugins::CustomDefaultPlugin)
-        .add_plugins(player_plugin::PlayerPlugin)
+        .add_plugins(player::PlayerPlugin)
         .add_plugins(spammer_plugin::SpammerPlugins)
         .add_plugins(DebugBoxPlugin)
         .add_systems(Startup, spawn_camera)

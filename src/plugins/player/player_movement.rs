@@ -1,9 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{
-    components::{Jumps, Player, Velocity},
-    consts::GRAVITY_SPEED,
-};
+use crate::{components::Velocity, consts::GRAVITY_SPEED};
 
 use super::*;
 
