@@ -31,7 +31,7 @@ fn spawn_player(
         Jumps(ALLOWED_JUMPS),
     );
 
-    let texture: Handle<Image> = asset_server.load("knight/Knight-Sheet.png");
+    let texture: Handle<Image> = asset_server.load("knight/Knight.png");
     let layout = atlas_server.add(TextureAtlasLayout::from_grid(
         Vec2::new(31.0, 38.0),
         18,
