@@ -1,5 +1,4 @@
-use bevy::{prelude::*, utils::HashMap};
-use std::ops::Range;
+use bevy::prelude::*;
 
 use crate::components::Velocity;
 
