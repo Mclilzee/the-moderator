@@ -18,6 +18,7 @@ pub enum AnimationType {
 }
 
 pub struct Animation {
+    pub texture: Handle<Image>,
     pub atlas: Handle<TextureAtlasLayout>,
     pub range: HashMap<AnimationType, Range<u32>>,
 }
@@ -47,6 +48,7 @@ fn load_assets(
     range.insert(AnimationType::Idle, 1..7);
 
     let range = Animation {
+        texture,
         atlas: layout,
         range,
     };
