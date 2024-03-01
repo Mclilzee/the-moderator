@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{components::Velocity, consts::GRAVITY_SPEED};
+use crate::{components::Velocity, consts::GRAVITY_ACCELERATION};
 
 use super::*;
 
@@ -23,11 +23,11 @@ pub fn movement(
     if keys.any_just_pressed([KeyCode::ArrowUp, KeyCode::KeyW, KeyCode::Space])
         && available_jumps.0 >= 1
     {
-        velocity.y = PLAYER_JUMP_HEIGHT + GRAVITY_SPEED;
+        velocity.y = PLAYER_JUMP_HEIGHT + GRAVITY_ACCELERATION;
         available_jumps.0 -= 1;
     }
 
-    velocity.y -= GRAVITY_SPEED;
+    velocity.y -= GRAVITY_ACCELERATION;
     player_velocity.translation = velocity;
 
     transform.translation += player_velocity.translation * time.delta_seconds();
