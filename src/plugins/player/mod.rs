@@ -45,6 +45,3 @@ fn spawn_player(
 
     commands.spawn((char, Name::new("Player")));
 }
-
-fn full_animation() -> HashMap<Animation, Range(u32)> {
-}
