@@ -4,6 +4,8 @@ mod consts;
 mod debugging;
 mod plugins;
 
+use std::time::Duration;
+
 use bevy::{prelude::*, render::camera::ScalingMode};
 use components::Player;
 use debugging::debug_boxes::DebugBoxPlugin;
@@ -15,9 +17,16 @@ pub enum InGameSet {
     UserInput,
 }
 
+#[derive(Resource)]
+pub struct AnimationTimer(pub Timer);
+
 fn main() {
     App::new()
         .configure_sets(Update, (InGameSet::UserInput, InGameSet::Movement))
+        .insert_resource(AnimationTimer(Timer::new(
+            Duration::from_millis(200),
+            TimerMode::Repeating,
+        )))
         .add_plugins(default_plugins::CustomDefaultPlugin)
         .add_plugins(player::PlayerPlugin)
         .add_plugins(spammer_plugin::SpammerPlugins)

@@ -14,7 +14,6 @@ pub fn movement(
 ) {
     let (mut player_velocity, mut available_jumps, mut transform) = query.single_mut();
     let mut velocity = Vec3::new(0.0, player_velocity.translation.y, 0.0);
-
     if keys.any_pressed([KeyCode::ArrowRight, KeyCode::KeyD]) {
         velocity.x = PLAYER_SPEED;
     }
@@ -44,4 +43,12 @@ pub fn movement(
         transform.translation.y = 0.0;
         available_jumps.0 = ALLOWED_JUMPS;
     }
+}
+
+fn animation(
+    mut atlas_query: Query<&mut TextureAtlas, With<Player>>,
+    keys: Res<ButtonInput<KeyCode>>,
+    time: Res<Time>,
+    mut timer: ResMut<AnimationTimer>,
+) {
 }
