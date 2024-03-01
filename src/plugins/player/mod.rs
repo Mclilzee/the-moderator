@@ -8,15 +8,16 @@ use crate::{
     components::{Jumps, Player},
 };
 
-use self::constants::*;
 use self::player_movement::movement;
+use self::{constants::*, player_movement::animate};
 
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.add_systems(PostStartup, spawn_player)
-            .add_systems(Update, movement);
+            .add_systems(Update, movement)
+            .add_systems(Update, animate);
     }
 }
 
