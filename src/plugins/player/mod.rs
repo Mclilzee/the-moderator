@@ -34,8 +34,8 @@ fn spawn_player(
     let texture: Handle<Image> = asset_server.load("knight/Knight-Sheet.png");
     let layout = atlas_server.add(TextureAtlasLayout::from_grid(
         Vec2::new(31.0, 38.0),
-        5,
-        4,
+        18,
+        1,
         None,
         None,
     ));
