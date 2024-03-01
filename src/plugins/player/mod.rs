@@ -11,8 +11,6 @@ use crate::{
 use self::constants::*;
 use self::player_movement::movement;
 
-use super::animation_loader::{AnimationKey, AnimationMap};
-
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
@@ -22,20 +20,28 @@ impl Plugin for PlayerPlugin {
     }
 }
 
-fn spawn_player(mut commands: Commands, animation_map: Res<AnimationMap>) {
+fn spawn_player(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut atlas_server: ResMut<Assets<TextureAtlasLayout>>,
+) {
     let mut char = (
         Character::new(PLAYER_STARING_HP, Vec2::splat(30.0)),
         Player,
         Jumps(ALLOWED_JUMPS),
     );
 
-    let animation = animation_map
-        .0
-        .get(&AnimationKey::Player)
-        .expect("To find player animation");
+    let texture: Handle<Image> = asset_server.load("knight/Knight-Sheet.png");
+    let layout = atlas_server.add(TextureAtlasLayout::from_grid(
+        Vec2::new(31.0, 38.0),
+        18,
+        1,
+        None,
+        None,
+    ));
 
-    char.0.movable_object.sprite_sheet.texture = animation.texture.clone();
-    // char.0.movable_object.sprite_sheet.atlas = animation.atlas.clone().atlas;
+    char.0.movable_object.sprite_sheet.texture = texture;
+    char.0.movable_object.sprite_sheet.atlas = TextureAtlas { layout, index: 1 };
 
     commands.spawn((char, Name::new("Player")));
 }
