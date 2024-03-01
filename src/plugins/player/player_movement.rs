@@ -1,6 +1,9 @@
 use bevy::prelude::*;
 
-use crate::{components::Velocity, consts::GRAVITY_ACCELERATION};
+use crate::{
+    components::Velocity,
+    consts::{GRAVITY_ACCELERATION, GRAVITY_MAX_SPEED},
+};
 
 use super::*;
 
@@ -28,6 +31,10 @@ pub fn movement(
     }
 
     velocity.y -= GRAVITY_ACCELERATION;
+    if velocity.y == GRAVITY_MAX_SPEED {
+        velocity.y = GRAVITY_MAX_SPEED;
+    }
+
     player_velocity.translation = velocity;
 
     transform.translation += player_velocity.translation * time.delta_seconds();
