@@ -1,15 +1,18 @@
-pub mod constants;
-pub mod player_movement;
+mod animation;
+mod constants;
+mod player_movement;
 
-use bevy::prelude::*;
-
+use self::{
+    animation::animate,
+    constants::{ALLOWED_JUMPS, PLAYER_STARING_HP},
+    player_movement::movement,
+};
+use super::asset_loader::{AnimationKey, AnimationMap};
 use crate::{
     bundles::character::Character,
     components::{Jumps, Player},
 };
-
-use self::player_movement::movement;
-use self::{constants::*, player_movement::animate};
+use bevy::prelude::*;
 
 pub struct PlayerPlugin;
 
@@ -21,28 +24,23 @@ impl Plugin for PlayerPlugin {
     }
 }
 
-fn spawn_player(
-    mut commands: Commands,
-    asset_server: Res<AssetServer>,
-    mut atlas_server: ResMut<Assets<TextureAtlasLayout>>,
-) {
+fn spawn_player(mut commands: Commands, asset_loader: Res<AnimationMap>) {
     let mut char = (
         Character::new(PLAYER_STARING_HP, Vec2::splat(30.0)),
         Player,
         Jumps(ALLOWED_JUMPS),
     );
 
-    let texture: Handle<Image> = asset_server.load("knight/Knight.png");
-    let layout = atlas_server.add(TextureAtlasLayout::from_grid(
-        Vec2::new(31.0, 38.0),
-        18,
-        1,
-        None,
-        None,
-    ));
+    let animation = asset_loader
+        .0
+        .get(&AnimationKey::Player)
+        .expect("Player animation to be found");
 
-    char.0.movable_object.sprite_sheet.texture = texture;
-    char.0.movable_object.sprite_sheet.atlas = TextureAtlas { layout, index: 1 };
+    char.0.movable_object.sprite_sheet.texture = animation.texture.clone();
+    char.0.movable_object.sprite_sheet.atlas = TextureAtlas {
+        layout: animation.atlas.clone(),
+        index: 1,
+    };
 
     commands.spawn((char, Name::new("Player")));
 }

@@ -1,3 +1,7 @@
+use bevy::prelude::*;
+
+use crate::{components::Player, AnimationTimer};
+
 pub fn animate(
     mut atlas_query: Query<&mut TextureAtlas, With<Player>>,
     keys: Res<ButtonInput<KeyCode>>,

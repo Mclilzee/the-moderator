@@ -3,8 +3,9 @@ use bevy::prelude::*;
 use crate::{
     components::Velocity,
     consts::{GRAVITY_ACCELERATION, GRAVITY_MAX_SPEED},
-    AnimationTimer,
 };
+
+use self::constants::{PLAYER_JUMP_HEIGHT, PLAYER_SPEED};
 
 use super::*;
 
