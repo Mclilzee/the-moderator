@@ -11,7 +11,7 @@ pub struct MovableObject {
 }
 
 #[derive(Component, Default)]
-pub struct AnimationMap(HashMap<Animation, Range<u32>>);
+pub struct AnimationMap(pub HashMap<Animation, Range<u32>>);
 
 pub enum Animation {
     Idle,

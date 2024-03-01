@@ -34,8 +34,8 @@ impl AnimationIndices {
     }
 }
 
-pub struct AnimationLoaderPlugin;
-impl Plugin for AnimationLoaderPlugin {
+pub struct AssetLoaderPlugin;
+impl Plugin for AssetLoaderPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.insert_resource(AnimationMap::default())
             .add_systems(PreStartup, load_assets);
