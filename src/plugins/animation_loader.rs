@@ -3,7 +3,7 @@ use std::ops::Range;
 use bevy::{prelude::*, utils::HashMap};
 
 #[derive(Resource, Default)]
-pub struct AnimationMap(HashMap<AnimationKey, Animation>);
+pub struct AnimationMap(pub HashMap<AnimationKey, Animation>);
 
 #[derive(Eq, Hash, PartialEq)]
 pub enum AnimationKey {
@@ -27,7 +27,7 @@ pub struct AssetLoaderPlugin;
 impl Plugin for AssetLoaderPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.insert_resource(AnimationMap::default())
-            .add_systems(PreStartup, load_assets);
+            .add_systems(Startup, load_assets);
     }
 }
 
