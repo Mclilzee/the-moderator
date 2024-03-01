@@ -9,7 +9,7 @@ use std::time::Duration;
 use bevy::{prelude::*, render::camera::ScalingMode};
 use components::Player;
 use debugging::debug_boxes::DebugBoxPlugin;
-use plugins::{default_plugins, player, spammer_plugin};
+use plugins::{animation_loader::AnimationLoaderPlugin, default_plugins, player, spammer_plugin};
 
 #[derive(Clone, PartialEq, Eq, Debug, Hash, SystemSet)]
 pub enum InGameSet {
@@ -28,6 +28,7 @@ fn main() {
             TimerMode::Repeating,
         )))
         .add_plugins(default_plugins::CustomDefaultPlugin)
+        .add_plugins(AnimationLoaderPlugin)
         .add_plugins(player::PlayerPlugin)
         .add_plugins(spammer_plugin::SpammerPlugins)
         .add_plugins(DebugBoxPlugin)

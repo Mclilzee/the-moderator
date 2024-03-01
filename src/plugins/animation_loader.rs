@@ -1,5 +1,3 @@
-use std::ops::Range;
-
 use bevy::{prelude::*, utils::HashMap};
 
 #[derive(Resource, Default)]
@@ -8,7 +6,6 @@ pub struct AnimationMap(pub HashMap<AnimationKey, Animation>);
 #[derive(Eq, Hash, PartialEq)]
 pub enum AnimationKey {
     Player,
-    Spammer,
 }
 
 #[derive(Eq, Hash, PartialEq)]
@@ -20,14 +17,28 @@ pub enum AnimationType {
 pub struct Animation {
     pub texture: Handle<Image>,
     pub atlas: Handle<TextureAtlasLayout>,
-    pub range: HashMap<AnimationType, Range<u32>>,
+    pub range: HashMap<AnimationType, AnimationIndices>,
 }
 
-pub struct AssetLoaderPlugin;
-impl Plugin for AssetLoaderPlugin {
+pub struct AnimationIndices {
+    pub first_frame: u32,
+    pub last_frame: u32,
+}
+
+impl AnimationIndices {
+    fn new(first_frame: u32, last_frame: u32) -> Self {
+        AnimationIndices {
+            first_frame,
+            last_frame,
+        }
+    }
+}
+
+pub struct AnimationLoaderPlugin;
+impl Plugin for AnimationLoaderPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.insert_resource(AnimationMap::default())
-            .add_systems(Startup, load_assets);
+            .add_systems(PreStartup, load_assets);
     }
 }
 
@@ -44,8 +55,9 @@ fn load_assets(
         None,
         None,
     ));
-    let mut range: HashMap<AnimationType, Range<u32>> = HashMap::new();
-    range.insert(AnimationType::Idle, 1..7);
+    let mut range: HashMap<AnimationType, AnimationIndices> = HashMap::new();
+    range.insert(AnimationType::Idle, AnimationIndices::new(1, 7));
+    range.insert(AnimationType::Running, AnimationIndices::new(8, 16));
 
     let range = Animation {
         texture,
