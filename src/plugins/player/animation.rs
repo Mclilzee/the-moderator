@@ -1,25 +1,25 @@
 use bevy::prelude::*;
 
-use crate::{components::Player, AnimationTimer};
+use crate::{
+    components::{Player, Velocity},
+    AnimationTimer,
+};
 
 pub fn animate(
-    mut atlas_query: Query<(&mut TextureAtlas, &mut Sprite), With<Player>>,
+    mut sprite_query: Query<(&Velocity, &mut TextureAtlas, &mut Sprite), With<Player>>,
     keys: Res<ButtonInput<KeyCode>>,
     time: Res<Time>,
     mut timer: ResMut<AnimationTimer>,
 ) {
-    let (mut atlas, mut sprite) = atlas_query.single_mut();
+    let (velocity, mut atlas, mut sprite) = sprite_query.single_mut();
+
     let first_frame;
     let last_frame;
-    if keys.any_pressed([
-        KeyCode::ArrowLeft,
-        KeyCode::KeyA,
-        KeyCode::ArrowRight,
-        KeyCode::KeyD,
-    ]) {
+
+    if velocity.translation.x != 0.0 {
+        sprite.flip_x = keys.any_pressed([KeyCode::ArrowLeft, KeyCode::KeyA]);
         first_frame = 8;
         last_frame = 17;
-        sprite.flip_x = keys.any_pressed([KeyCode::ArrowLeft, KeyCode::KeyA]);
     } else {
         first_frame = 1;
         last_frame = 7;
