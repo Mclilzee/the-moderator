@@ -27,11 +27,12 @@ pub fn animate(
 
     timer.0.tick(time.delta());
     if timer.0.finished() {
-        let mut index = (atlas.index + 1) % last_frame;
+        let mut index = atlas.index + 1;
 
-        if index > last_frame || index < first_frame {
+        if atlas.index >= last_frame || atlas.index < first_frame {
             index = first_frame;
         }
+
         atlas.index = index;
         info!(
             "First Frame {}, Last Frame {}, Index {}",
