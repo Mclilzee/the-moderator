@@ -38,7 +38,7 @@ fn collision(
             transform.translation.y = platform_y + height;
             velocity.translation.y = 0.0;
             if let Some(mut jumps) = jumps {
-                jumps.0 = 2;
+                jumps.current = jumps.max;
             }
         }
     }

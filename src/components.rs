@@ -1,7 +1,10 @@
 use bevy::prelude::*;
 
 #[derive(Component)]
-pub struct Jumps(pub i32);
+pub struct Jumps {
+    pub current: u16,
+    pub max: u16,
+}
 
 #[derive(Component, Default)]
 pub struct Hp(pub i32);
