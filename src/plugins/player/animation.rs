@@ -34,9 +34,5 @@ pub fn animate(
         }
 
         atlas.index = index;
-        info!(
-            "First Frame {}, Last Frame {}, Index {}",
-            first_frame, last_frame, atlas.index
-        );
     }
 }
