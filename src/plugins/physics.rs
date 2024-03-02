@@ -13,11 +13,15 @@ impl Plugin for PhysicsPlugin {
     }
 }
 
+type Entities<'a> = (
+    &'a HitBox,
+    &'a mut Transform,
+    &'a mut Velocity,
+    Option<&'a mut Jumps>,
+);
+
 fn collision(
-    mut entities_query: Query<
-        (&HitBox, &mut Transform, &mut Velocity, Option<&mut Jumps>),
-        (With<HitBox>, Without<Platform>),
-    >,
+    mut entities_query: Query<Entities, Without<Platform>>,
     platform_query: Query<(&Transform, &Sprite), With<Platform>>,
 ) {
     let (platform_transform, platform_sprite) = platform_query.single();
