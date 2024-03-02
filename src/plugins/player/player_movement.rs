@@ -39,10 +39,4 @@ pub fn movement(
     player_velocity.translation = velocity;
 
     transform.translation += player_velocity.translation * time.delta_seconds();
-
-    if transform.translation.y < 0.0 {
-        player_velocity.translation.y = 0.0;
-        transform.translation.y = 0.0;
-        available_jumps.0 = ALLOWED_JUMPS;
-    }
 }
