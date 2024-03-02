@@ -17,7 +17,7 @@ use bevy::{prelude::*, render::camera::ScalingMode};
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
-    fn build(&self, app: &mut bevy::prelude::App) {
+    fn build(&self, app: &mut App) {
         app.add_systems(PostStartup, spawn_player)
             .add_systems(Update, movement)
             .add_systems(Update, animate);
