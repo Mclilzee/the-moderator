@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+use crate::components::Platform;
+
 pub struct PlatformPlugin;
 
 impl Plugin for PlatformPlugin {
@@ -9,12 +11,15 @@ impl Plugin for PlatformPlugin {
 }
 
 fn spawn_ground(mut commands: Commands) {
-    commands.spawn(SpriteBundle {
-        sprite: Sprite {
-            color: Color::PURPLE,
-            custom_size: Some(Vec2::new(400.0, 200.0)),
+    commands.spawn((
+        SpriteBundle {
+            sprite: Sprite {
+                color: Color::PURPLE,
+                custom_size: Some(Vec2::new(400.0, 200.0)),
+                ..default()
+            },
             ..default()
         },
-        ..default()
-    });
+        Platform,
+    ));
 }

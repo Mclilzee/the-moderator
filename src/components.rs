@@ -12,6 +12,9 @@ pub struct Player;
 #[derive(Component)]
 pub struct Spammer;
 
+#[derive(Component)]
+pub struct Platform;
+
 #[derive(Component, Default)]
 pub struct Velocity {
     pub translation: Vec3,
