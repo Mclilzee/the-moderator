@@ -22,7 +22,7 @@ fn main() {
     App::new()
         .configure_sets(Update, (InGameSet::UserInput, InGameSet::Movement))
         .insert_resource(AnimationTimer(Timer::new(
-            Duration::from_millis(200),
+            Duration::from_millis(100),
             TimerMode::Repeating,
         )))
         .add_plugins(default_plugins::CustomDefaultPlugin)
