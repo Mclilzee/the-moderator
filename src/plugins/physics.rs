@@ -30,7 +30,7 @@ fn collision(
 
     for (hitbox, mut transform, mut velocity, jumps) in entities_query.iter_mut() {
         let height = hitbox.0.y / 2.0;
-        if transform.translation.y + height < platform_y {
+        if transform.translation.y - height < platform_y {
             transform.translation.y = platform_y + height;
             velocity.translation.y = 0.0;
             if let Some(mut jumps) = jumps {
