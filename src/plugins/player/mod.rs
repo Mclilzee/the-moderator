@@ -26,7 +26,7 @@ impl Plugin for PlayerPlugin {
 
 fn spawn_player(mut commands: Commands, asset_loader: Res<AnimationMap>) {
     let mut char = (
-        Character::new(PLAYER_STARING_HP, Vec2::splat(30.0)),
+        Character::new(PLAYER_STARING_HP, Vec2::new(15.0, 35.0)),
         Player,
         Jumps(ALLOWED_JUMPS),
     );
