@@ -46,13 +46,22 @@ fn collision(
         info!("Player: l {}, r {}", entity_left, entity_right);
         info!("Platform: l {}, r {}", platform_left, platform_right);
 
-        if (entity_right > platform_left && entity_left < platform_right)
-            && entity_bottom < platform_top
-        {
-            transform.translation.y = platform_top + height;
-            velocity.translation.y = 0.0;
-            if let Some(mut jumps) = jumps {
-                jumps.current = jumps.max;
+        if entity_right > platform_left && entity_left < platform_right {
+            if entity_bottom < platform_top {
+                transform.translation.y = platform_top + height;
+                velocity.translation.y = 0.0;
+                if let Some(mut jumps) = jumps {
+                    jumps.current = jumps.max;
+                }
+            } else if entity_top > platform_bottom {
+                transform.translation.y = platform_top - height;
+                velocity.translation.y = 0.0;
+            }
+        } else if entity_bottom < platform_top && entity_top > platform_bottom {
+            if entity_left < platform_right {
+                transform.translation.x = platform_right + width;
+            } else if entity_right > platform_left {
+                transform.translation.x = platform_left - width;
             }
         }
     }
