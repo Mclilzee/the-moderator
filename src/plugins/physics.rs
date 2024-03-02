@@ -21,7 +21,7 @@ type Entities<'a> = (
 );
 
 fn collision(
-    mut entities_query: Query<Entities, (Without<Platform>, With<Player>)>,
+    mut entities_query: Query<Entities, Without<Platform>>,
     platform_query: Query<(&Transform, &Sprite), With<Platform>>,
 ) {
     let (platform_transform, platform_sprite) = platform_query.single();
