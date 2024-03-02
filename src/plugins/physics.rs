@@ -43,9 +43,6 @@ fn collision(
         let entity_top = transform.translation.y + height;
         let entity_bottom = transform.translation.y - height;
 
-        info!("Player: l {}, r {}", entity_left, entity_right);
-        info!("Platform: l {}, r {}", platform_left, platform_right);
-
         if entity_right > platform_left && entity_left < platform_right {
             if (entity_top < platform_top && entity_bottom > platform_bottom)
                 || (entity_bottom < platform_top && entity_top > platform_top)
