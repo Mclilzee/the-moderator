@@ -12,7 +12,7 @@ use crate::{
     bundles::character::Character,
     components::{Jumps, Player},
 };
-use bevy::prelude::*;
+use bevy::{prelude::*, render::camera::ScalingMode};
 
 pub struct PlayerPlugin;
 
@@ -42,5 +42,14 @@ fn spawn_player(mut commands: Commands, asset_loader: Res<AnimationMap>) {
         index: 1,
     };
 
-    commands.spawn((char, Name::new("Player")));
+    let mut camera = Camera2dBundle::default();
+
+    camera.projection.scaling_mode = ScalingMode::AutoMin {
+        min_width: 500.0,
+        min_height: 400.0,
+    };
+
+    let player_id = commands.spawn((char, Name::new("Player"))).id();
+    let mut camera = commands.spawn(camera);
+    camera.set_parent(player_id);
 }
