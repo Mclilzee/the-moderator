@@ -1,7 +1,8 @@
+mod collider;
 use bevy::prelude::*;
 
 use crate::{
-    components::{HitBox, Jumps, Platform, Player, Velocity},
+    components::{HitBox, Jumps, Platform, Velocity},
     InGameSet,
 };
 
@@ -56,13 +57,12 @@ fn collision(
                 transform.translation.y = platform_bottom - height;
                 velocity.translation.y = 0.0;
             }
+        } else if entity_bottom < platform_top && entity_top > platform_bottom {
+            if entity_left < platform_right {
+                transform.translation.x = platform_right + width;
+            } else if entity_right > platform_left {
+                transform.translation.x = platform_left - width;
+            }
         }
-        // else if entity_bottom < platform_top && entity_top > platform_bottom {
-        //     if entity_left < platform_right {
-        //         transform.translation.x = platform_right + width;
-        //     } else if entity_right > platform_left {
-        //         transform.translation.x = platform_left - width;
-        //     }
-        // }
     }
 }
