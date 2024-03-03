@@ -1,10 +1,10 @@
 use bevy::math::{Vec2, Vec3};
 
 pub enum CollidePosition {
-    Top,
-    Bottom,
-    Left,
-    Right,
+    Top(Vec3),
+    Bottom(Vec3),
+    Left(Vec3),
+    Right(Vec3),
     None,
 }
 
@@ -38,19 +38,19 @@ impl PlatformCollider {
 
         if self.between_left_and_right(left, right) {
             if self.between_top_and_bottom(top, bottom) || self.colliding_top(top, bottom) {
-                CollidePosition::Top;
+                CollidePosition::Top(Vec3::new(0.0, self.top + height, 0.0));
             }
 
             if self.colliding_bottom(top, bottom) {
-                CollidePosition::Bottom;
+                CollidePosition::Bottom(Vec3::new(0.0, self.bottom - height, 0.0));
             }
         } else if self.between_top_and_bottom(top, bottom) {
             if self.colliding_left(left, right) {
-                CollidePosition::Left;
+                CollidePosition::Left(Vec3::new(self.left - width, 0.0, 0.0));
             }
 
             if self.colliding_right(left, right) {
-                CollidePosition::Right;
+                CollidePosition::Right(Vec3::new(self.right + width, 0.0, 0.0));
             }
         }
 
