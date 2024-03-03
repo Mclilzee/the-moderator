@@ -22,6 +22,10 @@ impl PlatformCollider {
         }
     }
 
+    pub fn entity(&mut self, transform: &Vec2, size: &Vec2) {
+        self.entity = Some(Bounderies::new(transform, size));
+    }
+
     pub fn entity_position(&self) -> Vec2 {}
 
     fn between_left_and_right(&self) -> bool {
