@@ -1,4 +1,5 @@
 mod collider;
+use self::collider::PlatformCollider;
 use bevy::prelude::*;
 
 use crate::{
@@ -31,18 +32,11 @@ fn collision(
         None => return,
     };
 
-    let platform_left = platform_transform.translation.x - (platform_size.x / 2.0);
-    let platform_right = platform_transform.translation.x + (platform_size.x / 2.0);
-    let platform_top = platform_transform.translation.y + (platform_size.y / 2.0);
-    let platform_bottom = platform_transform.translation.y - (platform_size.y / 2.0);
+    let collider = PlatformCollider::new(&platform_transform.translation, &platform_size);
 
     for (hitbox, mut transform, mut velocity, jumps) in entities_query.iter_mut() {
         let height = hitbox.0.y / 2.0;
         let width = hitbox.0.x / 2.0;
-        let entity_left = transform.translation.x - width;
-        let entity_right = transform.translation.x + width;
-        let entity_top = transform.translation.y + height;
-        let entity_bottom = transform.translation.y - height;
 
         if entity_right > platform_left && entity_left < platform_right {
             if (entity_top < platform_top && entity_bottom > platform_bottom)

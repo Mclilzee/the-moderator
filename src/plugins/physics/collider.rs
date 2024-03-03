@@ -1,4 +1,4 @@
-use bevy::math::Vec2;
+use bevy::math::{Vec2, Vec3};
 
 pub enum CollidePosition {
     Top,
@@ -15,7 +15,7 @@ pub struct PlatformCollider {
 }
 
 impl PlatformCollider {
-    pub fn new(transform: &Vec2, size: &Vec2) -> Self {
+    pub fn new(transform: &Vec3, size: &Vec2) -> Self {
         let height_offset = size.x / 2.0;
         let width_offset = size.y / 2.0;
 
@@ -27,7 +27,7 @@ impl PlatformCollider {
         }
     }
 
-    pub fn position(&self, transform: &Vec2, size: &Vec2) -> Option<CollidePosition> {
+    pub fn position(&self, transform: &Vec3, size: &Vec2) -> Option<CollidePosition> {
         let height = size.y / 2.0;
         let width = size.x / 2.0;
         let left = transform.x - width;
@@ -36,7 +36,21 @@ impl PlatformCollider {
         let bottom = transform.y - height;
 
         if self.between_left_and_right(left, right) {
-            if self.between_top_and_bottom(top, bottom) || self.colliding_top(top, bottom) {}
+            if self.between_top_and_bottom(top, bottom) || self.colliding_top(top, bottom) {
+                return Some(CollidePosition::Top);
+            }
+
+            if self.colliding_bottom(top, bottom) {
+                return Some(CollidePosition::Bottom);
+            }
+        } else if self.between_top_and_bottom(top, bottom) {
+            if self.colliding_left(left, right) {
+                return Some(CollidePosition::Left);
+            }
+
+            if self.colliding_right(left, right) {
+                return Some(CollidePosition::Right);
+            }
         }
 
         None
