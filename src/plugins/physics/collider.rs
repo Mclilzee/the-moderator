@@ -9,91 +9,79 @@ pub enum CollidePosition {
 }
 
 pub struct PlatformCollider {
-    left: f32,
-    right: f32,
-    top: f32,
-    bottom: f32,
+    top_left: Vec2,
+    top_right: Vec2,
+    bottom_left: Vec2,
+    bottom_right: Vec2,
 }
 
 impl PlatformCollider {
-    pub fn new(transform: &Vec3, size: &Vec2) -> Self {
-        let width_offset = size.x / 2.0;
-        let height_offset = size.y / 2.0;
+    pub fn new(translation: &Vec3, size: &Vec2) -> Self {
+        let width = size.x / 2.0;
+        let height = size.y / 2.0;
 
         PlatformCollider {
-            left: transform.x - width_offset,
-            right: transform.x + width_offset,
-            top: transform.y + height_offset,
-            bottom: transform.y - height_offset,
+            top_left: Vec2::new(translation.x - width, translation.y + height),
+            top_right: Vec2::new(translation.x + width, translation.y + height),
+            bottom_left: Vec2::new(translation.x - width, translation.y - height),
+            bottom_right: Vec2::new(translation.x + width, translation.y - height),
         }
     }
 
     pub fn position(&self, translation: &Vec3, size: &Vec2) -> CollidePosition {
         let height = size.y / 2.0;
         let width = size.x / 2.0;
-        let left = translation.x - width;
-        let right = translation.x + width;
-        let top = translation.y + height;
-        let bottom = translation.y - height;
+        let top_left = Vec2::new(translation.x - width, translation.y + height);
+        let top_right = Vec2::new(translation.x + width, translation.y + height);
+        let bottom_left = Vec2::new(translation.x - width, translation.y - height);
+        let bottom_right = Vec2::new(translation.x + width, translation.y - height);
 
-        if self.between_left_and_right(left, right) {
-            if self.between_top_and_bottom(top, bottom) || self.colliding_top(top, bottom) {
-                return CollidePosition::Top(Vec3::new(
-                    translation.x,
-                    self.top + height,
-                    translation.z,
-                ));
-            }
+        if self.colliding_left(&top_right, &bottom_right) {
+            return CollidePosition::Left(Vec3::new(self.top_left.x, translation.y, translation.z));
+        }
 
-            if self.colliding_bottom(top, bottom) {
-                return CollidePosition::Bottom(Vec3::new(
-                    translation.x,
-                    self.bottom - height,
-                    translation.x,
-                ));
-            }
-        } else if self.between_top_and_bottom(top, bottom) {
-            if self.colliding_left(left, right) {
-                return CollidePosition::Left(Vec3::new(
-                    self.left - width,
-                    translation.y,
-                    translation.z,
-                ));
-            }
+        if self.colliding_right(&top_left, &bottom_left) {
+            return CollidePosition::Right(Vec3::new(
+                self.top_right.x,
+                translation.y,
+                translation.z,
+            ));
+        }
 
-            if self.colliding_right(left, right) {
-                return CollidePosition::Right(Vec3::new(
-                    self.right + width,
-                    translation.y,
-                    translation.z,
-                ));
-            }
+        if self.colliding_top(&bottom_left, &bottom_right) {
+            return CollidePosition::Top(Vec3::new(
+                translation.x,
+                self.top_left.y + height,
+                translation.z,
+            ));
+        }
+
+        if self.colliding_bottom(&top_left, &top_right) {
+            return CollidePosition::Bottom(Vec3::new(
+                translation.x,
+                self.bottom_left.y - height,
+                translation.z,
+            ));
         }
 
         CollidePosition::None
     }
 
-    fn between_left_and_right(&self, left: f32, right: f32) -> bool {
-        right > self.left && left < self.right
+    fn colliding_top(&self, bottom_left: &Vec2, bottom_right: &Vec2) -> bool {
+        (bottom_left.x < self.top_right.x && bottom_left.y < self.top_right.y)
+            || (bottom_right.x > self.top_left.x && bottom_right.y < self.top_left.y)
     }
 
-    fn between_top_and_bottom(&self, top: f32, bottom: f32) -> bool {
-        top > self.bottom && bottom < self.top
+    fn colliding_bottom(&self, top_left: &Vec2, top_right: &Vec2) -> bool {
+        (top_left.x < self.bottom_right.x && top_left.y > self.bottom_right.y)
+            || (top_right.x > self.bottom_left.x && top_right.y > self.bottom_left.y)
     }
 
-    fn colliding_top(&self, top: f32, bottom: f32) -> bool {
-        bottom < self.top && top > self.top
+    fn colliding_left(&self, top_right: &Vec2, bottom_right: &Vec2) -> bool {
+        false
     }
 
-    fn colliding_bottom(&self, top: f32, bottom: f32) -> bool {
-        top > self.bottom && bottom < self.bottom
-    }
-
-    fn colliding_left(&self, left: f32, right: f32) -> bool {
-        right > self.left && left < self.left
-    }
-
-    fn colliding_right(&self, left: f32, right: f32) -> bool {
-        left < self.right && right > self.right
+    fn colliding_right(&self, top_left: &Vec2, bottom_left: &Vec2) -> bool {
+        false
     }
 }
