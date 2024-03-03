@@ -1,4 +1,4 @@
-use bevy::math::{Vec2, Vec3};
+use bevy::math::{bounding::Aabb2d, Vec2, Vec3};
 
 pub enum CollidePosition {
     Top(Vec3),
@@ -8,39 +8,16 @@ pub enum CollidePosition {
     None,
 }
 
-struct Aabb {
-    top_left: Vec2,
-    top_right: Vec2,
-    bottom_left: Vec2,
-    bottom_right: Vec2,
-    center: Vec2,
-}
-
-impl Aabb {
-    pub fn new(translation: &Vec3, size: &Vec2) -> Self {
-        let width = size.x / 2.0;
-        let height = size.y / 2.0;
-
-        Aabb {
-            top_left: Vec2::new(translation.x - width, translation.y + height),
-            top_right: Vec2::new(translation.x + width, translation.y + height),
-            bottom_left: Vec2::new(translation.x - width, translation.y - height),
-            bottom_right: Vec2::new(translation.x + width, translation.y - height),
-            center: translation.truncate(),
-        }
-    }
-}
-
 pub struct PlatformCollider {
-    entity: Option<Aabb>,
-    platform: Aabb,
+    entity: Option<Aabb2d>,
+    platform: Aabb2d,
 }
 
 impl PlatformCollider {
     pub fn new(translation: &Vec3, size: &Vec2) -> Self {
         PlatformCollider {
             entity: None,
-            platform: Aabb::new(translation, size),
+            platform: Aabb2d::new(translation.truncate(), *size / Vec2::new(2.0, 2.0)),
         }
     }
 
@@ -48,37 +25,37 @@ impl PlatformCollider {
         let height = size.y / 2.0;
         let width = size.x / 2.0;
 
-        if self.colliding_left() {
-            return CollidePosition::Left(Vec3::new(
-                self.platform.top_left.x,
-                translation.y,
-                translation.z,
-            ));
-        }
-
-        if self.colliding_right() {
-            return CollidePosition::Right(Vec3::new(
-                self.platform.top_right.x,
-                translation.y,
-                translation.z,
-            ));
-        }
-
-        if self.colliding_top() {
-            return CollidePosition::Top(Vec3::new(
-                translation.x,
-                self.platform.top_left.y + height,
-                translation.z,
-            ));
-        }
-
-        if self.colliding_bottom() {
-            return CollidePosition::Bottom(Vec3::new(
-                translation.x,
-                self.platform.bottom_left.y - height,
-                translation.z,
-            ));
-        }
+        // if self.colliding_left() {
+        //     return CollidePosition::Left(Vec3::new(
+        //         self.platform.top_left.x,
+        //         translation.y,
+        //         translation.z,
+        //     ));
+        // }
+        //
+        // if self.colliding_right() {
+        //     return CollidePosition::Right(Vec3::new(
+        //         self.platform.top_right.x,
+        //         translation.y,
+        //         translation.z,
+        //     ));
+        // }
+        //
+        // if self.colliding_top() {
+        //     return CollidePosition::Top(Vec3::new(
+        //         translation.x,
+        //         self.platform.top_left.y + height,
+        //         translation.z,
+        //     ));
+        // }
+        //
+        // if self.colliding_bottom() {
+        //     return CollidePosition::Bottom(Vec3::new(
+        //         translation.x,
+        //         self.platform.bottom_left.y - height,
+        //         translation.z,
+        //     ));
+        // }
 
         CollidePosition::None
     }
@@ -97,8 +74,9 @@ impl PlatformCollider {
     }
 
     fn colliding_bottom(&self) -> bool {
-        (top_left.x < self.bottom_right.x && top_left.y > self.bottom_right.y)
-            || (top_right.x > self.bottom_left.x && top_right.y > self.bottom_left.y)
+        // (top_left.x < self.bottom_right.x && top_left.y > self.bottom_right.y)
+        //     || (top_right.x > self.bottom_left.x && top_right.y > self.bottom_left.y)
+        false
     }
 
     fn colliding_left(&self) -> bool {
