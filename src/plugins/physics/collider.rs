@@ -28,29 +28,45 @@ impl PlatformCollider {
         }
     }
 
-    pub fn position(&self, transform: &Vec3, size: &Vec2) -> CollidePosition {
+    pub fn position(&self, translation: &Vec3, size: &Vec2) -> CollidePosition {
         let height = size.y / 2.0;
         let width = size.x / 2.0;
-        let left = transform.x - width;
-        let right = transform.x + width;
-        let top = transform.y + height;
-        let bottom = transform.y - height;
+        let left = translation.x - width;
+        let right = translation.x + width;
+        let top = translation.y + height;
+        let bottom = translation.y - height;
 
         if self.between_left_and_right(left, right) {
             if self.between_top_and_bottom(top, bottom) || self.colliding_top(top, bottom) {
-                CollidePosition::Top(Vec3::new(transform.x, self.top + height, transform.z));
+                return CollidePosition::Top(Vec3::new(
+                    translation.x,
+                    self.top + height,
+                    translation.z,
+                ));
             }
 
             if self.colliding_bottom(top, bottom) {
-                CollidePosition::Bottom(Vec3::new(transform.x, self.bottom - height, transform.x));
+                return CollidePosition::Bottom(Vec3::new(
+                    translation.x,
+                    self.bottom - height,
+                    translation.x,
+                ));
             }
         } else if self.between_top_and_bottom(top, bottom) {
             if self.colliding_left(left, right) {
-                CollidePosition::Left(Vec3::new(self.left - width, transform.y, transform.z));
+                return CollidePosition::Left(Vec3::new(
+                    self.left - width,
+                    translation.y,
+                    translation.z,
+                ));
             }
 
             if self.colliding_right(left, right) {
-                CollidePosition::Right(Vec3::new(self.right + width, transform.y, transform.z));
+                return CollidePosition::Right(Vec3::new(
+                    self.right + width,
+                    translation.y,
+                    translation.z,
+                ));
             }
         }
 
