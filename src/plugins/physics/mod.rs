@@ -37,17 +37,17 @@ fn collision(
     for (hitbox, mut transform, mut velocity, jumps) in entities_query.iter_mut() {
         let height = hitbox.0.y / 2.0;
         let width = hitbox.0.x / 2.0;
+        let position = collider.position(&transform.translation, &hitbox.0);
+        if position.is_none() {
+            continue;
+        }
 
-        if entity_right > platform_left && entity_left < platform_right {
-            if (entity_top < platform_top && entity_bottom > platform_bottom)
-                || (entity_bottom < platform_top && entity_top > platform_top)
-            {
                 transform.translation.y = platform_top + height;
                 velocity.translation.y = 0.0;
                 if let Some(mut jumps) = jumps {
                     jumps.current = jumps.max;
                 }
-            } else if entity_top > platform_bottom && entity_bottom < platform_bottom {
+        // bottom
                 transform.translation.y = platform_bottom - height;
                 velocity.translation.y = 0.0;
             }

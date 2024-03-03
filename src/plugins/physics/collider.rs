@@ -5,6 +5,7 @@ pub enum CollidePosition {
     Bottom,
     Left,
     Right,
+    None,
 }
 
 pub struct PlatformCollider {
@@ -27,7 +28,7 @@ impl PlatformCollider {
         }
     }
 
-    pub fn position(&self, transform: &Vec3, size: &Vec2) -> Option<CollidePosition> {
+    pub fn position(&self, transform: &Vec3, size: &Vec2) -> CollidePosition {
         let height = size.y / 2.0;
         let width = size.x / 2.0;
         let left = transform.x - width;
@@ -37,23 +38,23 @@ impl PlatformCollider {
 
         if self.between_left_and_right(left, right) {
             if self.between_top_and_bottom(top, bottom) || self.colliding_top(top, bottom) {
-                return Some(CollidePosition::Top);
+                CollidePosition::Top;
             }
 
             if self.colliding_bottom(top, bottom) {
-                return Some(CollidePosition::Bottom);
+                CollidePosition::Bottom;
             }
         } else if self.between_top_and_bottom(top, bottom) {
             if self.colliding_left(left, right) {
-                return Some(CollidePosition::Left);
+                CollidePosition::Left;
             }
 
             if self.colliding_right(left, right) {
-                return Some(CollidePosition::Right);
+                CollidePosition::Right;
             }
         }
 
-        None
+        CollidePosition::None
     }
 
     fn between_left_and_right(&self, left: f32, right: f32) -> bool {
