@@ -17,8 +17,8 @@ pub struct PlatformCollider {
 
 impl PlatformCollider {
     pub fn new(transform: &Vec3, size: &Vec2) -> Self {
-        let height_offset = size.x / 2.0;
-        let width_offset = size.y / 2.0;
+        let width_offset = size.x / 2.0;
+        let height_offset = size.y / 2.0;
 
         PlatformCollider {
             left: transform.x - width_offset,
