@@ -35,23 +35,21 @@ fn collision(
     let collider = PlatformCollider::new(&platform_transform.translation, &platform_size);
 
     for (hitbox, mut transform, mut velocity, jumps) in entities_query.iter_mut() {
-        let height = hitbox.0.y / 2.0;
-        let width = hitbox.0.x / 2.0;
         let position = collider.position(&transform.translation, &hitbox.0);
         match position {
             CollidePosition::Top(position) => {
-                transform.translation.y = platform_top + height;
+                transform.translation = position;
                 velocity.translation.y = 0.0;
                 if let Some(mut jumps) = jumps {
                     jumps.current = jumps.max;
                 }
             }
-            CollidePosition::Bottom => {
-                transform.translation.y = platform_bottom - height;
+            CollidePosition::Bottom(position) => {
+                transform.translation = position;
                 velocity.translation.y = 0.0;
             }
-            CollidePosition::Left => transform.translation.x = platform_right + width,
-            CollidePosition::Right => transform.translation.x = platform_left - width,
+            CollidePosition::Left(position) => transform.translation = position,
+            CollidePosition::Right(position) => transform.translation = position,
             CollidePosition::None => return,
         }
     }
