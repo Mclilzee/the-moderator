@@ -1,5 +1,5 @@
 mod collider;
-use self::collider::PlatformCollider;
+use self::collider::{CollidePosition, PlatformCollider};
 use bevy::prelude::*;
 
 use crate::{
@@ -38,25 +38,21 @@ fn collision(
         let height = hitbox.0.y / 2.0;
         let width = hitbox.0.x / 2.0;
         let position = collider.position(&transform.translation, &hitbox.0);
-        if position.is_none() {
-            continue;
-        }
-
+        match position {
+            CollidePosition::Top => {
                 transform.translation.y = platform_top + height;
                 velocity.translation.y = 0.0;
                 if let Some(mut jumps) = jumps {
                     jumps.current = jumps.max;
                 }
-        // bottom
+            }
+            CollidePosition::Bottom => {
                 transform.translation.y = platform_bottom - height;
                 velocity.translation.y = 0.0;
             }
-        } else if entity_bottom < platform_top && entity_top > platform_bottom {
-            if entity_left < platform_right {
-                transform.translation.x = platform_right + width;
-            } else if entity_right > platform_left {
-                transform.translation.x = platform_left - width;
-            }
+            CollidePosition::Left => transform.translation.x = platform_right + width,
+            CollidePosition::Right => transform.translation.x = platform_left - width,
+            CollidePosition::None => return,
         }
     }
 }
