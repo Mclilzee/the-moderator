@@ -1,6 +1,6 @@
-use bevy::{math::Vec2, transform::components::Transform};
+use bevy::math::Vec2;
 
-pub struct Collider {
+pub struct PlatformCollider {
     first: Bounderies,
     second: Bounderies,
 }
@@ -10,6 +10,20 @@ struct Bounderies {
     right: f32,
     top: f32,
     bottom: f32,
+}
+
+impl PlatformCollider {
+    pub fn new(
+        entity_transform: &Vec2,
+        entity_size: &Vec2,
+        platform_transform: &Vec2,
+        platform_size: &Vec2,
+    ) -> Self {
+        PlatformCollider {
+            first: Bounderies::new(entity_transform, entity_size),
+            second: Bounderies::new(platform_transform, platform_size),
+        }
+    }
 }
 
 impl Bounderies {
