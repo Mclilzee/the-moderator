@@ -1,8 +1,8 @@
 use bevy::math::Vec2;
 
 pub struct PlatformCollider {
-    first: Bounderies,
-    second: Bounderies,
+    entity: Bounderies,
+    platform: Bounderies,
 }
 
 struct Bounderies {
@@ -20,9 +20,23 @@ impl PlatformCollider {
         platform_size: &Vec2,
     ) -> Self {
         PlatformCollider {
-            first: Bounderies::new(entity_transform, entity_size),
-            second: Bounderies::new(platform_transform, platform_size),
+            entity: Bounderies::new(entity_transform, entity_size),
+            platform: Bounderies::new(platform_transform, platform_size),
         }
+    }
+
+    pub fn entity_position(&self) -> Vec2 {}
+
+    fn entity_between_left_and_right(&self) -> bool {
+        self.entity.right > self.platform.left && self.entity.left < self.platform.right
+    }
+
+    fn entity_between_top_and_bottom(&self) -> bool {
+        self.entity.top > self.platform.bottom && self.entity.bottom < self.platform.top
+    }
+
+    fn entity_colliding_top(&self) -> bool {
+        self.entity.bottom < self.platform.top && self.entity.top > self.platform.top
     }
 }
 
