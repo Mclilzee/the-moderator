@@ -38,19 +38,19 @@ impl PlatformCollider {
 
         if self.between_left_and_right(left, right) {
             if self.between_top_and_bottom(top, bottom) || self.colliding_top(top, bottom) {
-                CollidePosition::Top(Vec3::new(0.0, self.top + height, 0.0));
+                CollidePosition::Top(Vec3::new(transform.x, self.top + height, transform.z));
             }
 
             if self.colliding_bottom(top, bottom) {
-                CollidePosition::Bottom(Vec3::new(0.0, self.bottom - height, 0.0));
+                CollidePosition::Bottom(Vec3::new(transform.x, self.bottom - height, transform.x));
             }
         } else if self.between_top_and_bottom(top, bottom) {
             if self.colliding_left(left, right) {
-                CollidePosition::Left(Vec3::new(self.left - width, 0.0, 0.0));
+                CollidePosition::Left(Vec3::new(self.left - width, transform.y, transform.z));
             }
 
             if self.colliding_right(left, right) {
-                CollidePosition::Right(Vec3::new(self.right + width, 0.0, 0.0));
+                CollidePosition::Right(Vec3::new(self.right + width, transform.y, transform.z));
             }
         }
 

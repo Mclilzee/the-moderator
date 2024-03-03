@@ -39,7 +39,7 @@ fn collision(
         let width = hitbox.0.x / 2.0;
         let position = collider.position(&transform.translation, &hitbox.0);
         match position {
-            CollidePosition::Top => {
+            CollidePosition::Top(position) => {
                 transform.translation.y = platform_top + height;
                 velocity.translation.y = 0.0;
                 if let Some(mut jumps) = jumps {
