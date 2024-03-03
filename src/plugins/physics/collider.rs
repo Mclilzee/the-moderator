@@ -10,6 +10,8 @@ struct Bounderies {
     right: f32,
     top: f32,
     bottom: f32,
+    height_offset: f32,
+    width_offset: f32,
 }
 
 impl PlatformCollider {
@@ -27,29 +29,43 @@ impl PlatformCollider {
 
     pub fn entity_position(&self) -> Vec2 {}
 
-    fn entity_between_left_and_right(&self) -> bool {
+    fn between_left_and_right(&self) -> bool {
         self.entity.right > self.platform.left && self.entity.left < self.platform.right
     }
 
-    fn entity_between_top_and_bottom(&self) -> bool {
+    fn between_top_and_bottom(&self) -> bool {
         self.entity.top > self.platform.bottom && self.entity.bottom < self.platform.top
     }
 
-    fn entity_colliding_top(&self) -> bool {
+    fn colliding_top(&self) -> bool {
         self.entity.bottom < self.platform.top && self.entity.top > self.platform.top
+    }
+
+    fn colliding_bottom(&self) -> bool {
+        self.entity.top > self.platform.bottom && self.entity.bottom < self.platform.bottom
+    }
+
+    fn colliding_left(&self) -> bool {
+        self.entity.right > self.platform.left && self.entity.left < self.platform.left
+    }
+
+    fn colliding_right(&self) -> bool {
+        self.entity.left < self.platform.right && self.entity.right > self.platform.right
     }
 }
 
 impl Bounderies {
     fn new(transform: &Vec2, size: &Vec2) -> Self {
-        let height = size.x / 2.0;
-        let width = size.y / 2.0;
+        let height_offset = size.x / 2.0;
+        let width_offset = size.y / 2.0;
 
         Bounderies {
-            left: transform.x - width,
-            right: transform.x + width,
-            top: transform.y + height,
-            bottom: transform.y - height,
+            left: transform.x - width_offset,
+            right: transform.x + width_offset,
+            top: transform.y + height_offset,
+            bottom: transform.y - height_offset,
+            height_offset,
+            width_offset,
         }
     }
 }
