@@ -15,7 +15,7 @@ impl Plugin for PhysicsPlugin {
     }
 }
 
-type Entities<'a> = (
+type Actors<'a> = (
     &'a HitBox,
     &'a mut Transform,
     &'a mut Velocity,
@@ -23,7 +23,7 @@ type Entities<'a> = (
 );
 
 fn collision(
-    mut entities_query: Query<Entities, Without<Platform>>,
+    mut entities_query: Query<Actors, Without<Platform>>,
     platform_query: Query<(&Transform, &Sprite), With<Platform>>,
 ) {
     let (platform_transform, platform_sprite) = platform_query.single();
