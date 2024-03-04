@@ -1,7 +1,7 @@
 use bevy::{
     log::info,
     math::{
-        bounding::{Aabb2d, BoundingVolume},
+        bounding::{Aabb2d, BoundingVolume, IntersectsVolume},
         Vec2, Vec3,
     },
 };
@@ -26,22 +26,27 @@ impl PlatformCollider {
     }
 
     pub fn position(&self, translation: &Vec3, size: &Vec2) -> CollidePosition {
+        let entity = Aabb2d::new(translation.truncate(), *size / Vec2::new(2.0, 2.0));
+        if !entity.intersects(&self.platform) {
+            return CollidePosition::None;
+        }
+
         let height = size.y / 2.0;
         let width = size.x / 2.0;
-        let entity = Aabb2d::new(translation.truncate(), *size / Vec2::new(2.0, 2.0));
-
         let closest = self.platform.closest_point(entity.center());
         let offset = entity.center() - closest;
-        if offset.x.abs() > offset.y.abs() {
+
+        println!("Closest: {closest}, Offset: {offset}");
+        if offset.y == 0.0 {
             if offset.x < 0.0 {
-                info!("Colliding top");
+                info!("Colliding Left");
             } else {
-                info!("Colliding bottom");
+                info!("Colliding Right");
             }
         } else if offset.y > 0.0 {
-            info!("Colliding left");
+            info!("Colliding Top");
         } else {
-            info!("Colliding right");
+            info!("Colliding Bottom");
         };
 
         CollidePosition::None
