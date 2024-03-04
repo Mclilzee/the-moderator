@@ -4,6 +4,7 @@ use bevy::prelude::*;
 
 use crate::{
     components::{HitBox, Jumps, Platform, Velocity},
+    consts::{GRAVITY_ACCELERATION, GRAVITY_MAX_SPEED},
     InGameSet,
 };
 
@@ -15,7 +16,7 @@ impl Plugin for PhysicsPlugin {
     }
 }
 
-type Actors<'a> = (
+type CollidingActors<'a> = (
     &'a HitBox,
     &'a mut Transform,
     &'a mut Velocity,
@@ -23,7 +24,7 @@ type Actors<'a> = (
 );
 
 fn collision(
-    mut actors_query: Query<Actors, Without<Platform>>,
+    mut actors_query: Query<CollidingActors, Without<Platform>>,
     platform_query: Query<(&Transform, &Sprite), With<Platform>>,
 ) {
     let (platform_transform, platform_sprite) = platform_query.single();
@@ -39,18 +40,31 @@ fn collision(
         match position {
             CollidePosition::Top(position) => {
                 transform.translation = position;
-                velocity.translation.y = 0.0;
+                velocity.0.y = 0.0;
                 if let Some(mut jumps) = jumps {
                     jumps.current = jumps.max;
                 }
             }
             CollidePosition::Bottom(position) => {
                 transform.translation = position;
-                velocity.translation.y = 0.0;
+                velocity.0.y = 0.0;
             }
             CollidePosition::Left(position) => transform.translation = position,
             CollidePosition::Right(position) => transform.translation = position,
             CollidePosition::None => (),
         }
+    }
+}
+
+type MovingActors<'a> = (&'a mut Transform, &'a mut Velocity);
+
+fn movement(mut actors_query: Query<MovingActors>, time: Res<Time>) {
+    for (mut transform, mut velocity) in actors_query.iter_mut() {
+        velocity.0.y -= GRAVITY_ACCELERATION;
+        if velocity.0.y == GRAVITY_MAX_SPEED {
+            velocity.0.y = GRAVITY_MAX_SPEED;
+        }
+
+        transform.translation += velocity.0.extend(0.0) * time.delta_seconds();
     }
 }

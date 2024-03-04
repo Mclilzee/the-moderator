@@ -19,9 +19,7 @@ pub struct Spammer;
 pub struct Platform;
 
 #[derive(Component, Default)]
-pub struct Velocity {
-    pub translation: Vec3,
-}
+pub struct Velocity(pub Vec2);
 
 #[derive(Component, Default)]
 pub struct HitBox(pub Vec2);
