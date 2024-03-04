@@ -9,6 +9,7 @@ const SPAMMER_STARTING_HP: i32 = 5;
 const SPAMMER_SPEED: f32 = 40.0;
 const SPAMMER_WIDTH: f32 = 25.0;
 const SPAMMER_HEIGHT: f32 = 40.0;
+const SPAMMER_LIMIT: u32 = 10;
 
 pub struct SpammerPlugins;
 
@@ -35,8 +36,7 @@ fn spawn_spammer(
     time: Res<Time>,
     camera_query: Query<&OrthographicProjection, (With<Camera>, Without<Player>)>,
 ) {
-    // Limit spawn to 10 spammers
-    if spammers_query.iter().count() > 10 {
+    if spammers_query.iter().count() > SPAMMER_LIMIT {
         return;
     }
 
