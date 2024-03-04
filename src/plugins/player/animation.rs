@@ -16,7 +16,7 @@ pub fn animate(
     let first_frame;
     let last_frame;
 
-    if velocity.translation.x != 0.0 {
+    if velocity.0.x.abs() > 0.0 {
         sprite.flip_x = keys.any_pressed([KeyCode::ArrowLeft, KeyCode::KeyA]);
         first_frame = 8;
         last_frame = 17;

@@ -12,6 +12,7 @@ pub fn movement(
     mut query: Query<(&mut Velocity, &mut Jumps), With<Player>>,
 ) {
     let (mut velocity, mut jumps) = query.single_mut();
+    velocity.0.x = 0.0;
     if keys.any_pressed([KeyCode::ArrowRight, KeyCode::KeyD]) {
         velocity.0.x = PLAYER_SPEED;
     }

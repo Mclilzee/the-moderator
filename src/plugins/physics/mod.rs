@@ -12,7 +12,10 @@ pub struct PhysicsPlugin;
 
 impl Plugin for PhysicsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, collision.in_set(InGameSet::Play));
+        app.add_systems(
+            Update,
+            (movement, collision).chain().in_set(InGameSet::Play),
+        );
     }
 }
 
