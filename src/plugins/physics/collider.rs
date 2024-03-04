@@ -31,24 +31,39 @@ impl PlatformCollider {
             return CollidePosition::None;
         }
 
-        let height = size.y / 2.0;
-        let width = size.x / 2.0;
+        let half_height = size.y / 2.0;
+        let half_width = size.x / 2.0;
         let closest = self.platform.closest_point(entity.center());
         let offset = entity.center() - closest;
 
-        println!("Closest: {closest}, Offset: {offset}");
         if offset.y == 0.0 {
             if offset.x < 0.0 {
-                info!("Colliding Left");
-            } else {
-                info!("Colliding Right");
+                return CollidePosition::Left(Vec3::new(
+                    self.platform.min.x - half_width,
+                    translation.y,
+                    translation.z,
+                ));
             }
-        } else if offset.y > 0.0 {
-            info!("Colliding Top");
-        } else {
-            info!("Colliding Bottom");
-        };
 
-        CollidePosition::None
+            return CollidePosition::Right(Vec3::new(
+                self.platform.max.x + half_width,
+                translation.y,
+                translation.z,
+            ));
+        }
+
+        if offset.y < 0.0 {
+            return CollidePosition::Bottom(Vec3::new(
+                translation.x,
+                self.platform.min.y - half_height,
+                translation.z,
+            ));
+        }
+
+        CollidePosition::Top(Vec3::new(
+            translation.x,
+            self.platform.max.y + half_height,
+            translation.z,
+        ))
     }
 }
