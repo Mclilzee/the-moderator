@@ -30,29 +30,28 @@ impl PlatformCollider {
         // if !entity.intersects(&self.platform) {
         //     return CollidePosition::None;
         // }
-
-        let half_height = size.y / 2.0;
-        let half_width = size.x / 2.0;
         let closest = self.platform.closest_point(entity.center());
         let offset = entity.center() - closest;
 
         println!("Closest: {closest}, Offset: {offset}");
         println!("Abs x {}, Abs y {}", offset.x.abs(), offset.y.abs());
+        println!("Half Size {}", entity.half_size());
 
         if !entity.intersects(&self.platform) {
             return CollidePosition::None;
         }
-        if offset.x.abs() > offset.y.abs() {
-            if offset.x < 0.0 {
-                return CollidePosition::Left(Vec3::new(
-                    self.platform.min.x - half_width,
-                    translation.y,
-                    translation.z,
-                ));
-            }
 
+        if offset.x < 0.0 {
+            return CollidePosition::Left(Vec3::new(
+                self.platform.min.x - entity.half_size().x,
+                translation.y,
+                translation.z,
+            ));
+        }
+
+        if offset.x > 0.0 {
             return CollidePosition::Right(Vec3::new(
-                self.platform.max.x + half_width,
+                self.platform.max.x + entity.half_size().x,
                 translation.y,
                 translation.z,
             ));
@@ -61,14 +60,14 @@ impl PlatformCollider {
         if offset.y < 0.0 {
             return CollidePosition::Bottom(Vec3::new(
                 translation.x,
-                self.platform.min.y - half_height,
+                self.platform.min.y - entity.half_size().y,
                 translation.z,
             ));
         }
 
         CollidePosition::Top(Vec3::new(
             translation.x,
-            self.platform.max.y + half_height,
+            self.platform.max.y + entity.half_size().y,
             translation.z,
         ))
     }
