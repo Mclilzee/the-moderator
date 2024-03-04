@@ -1,6 +1,6 @@
 use crate::{
     bundles::character::Character,
-    components::{Player, Spammer},
+    components::{Player, Spammer, Velocity},
 };
 use bevy::prelude::*;
 use rand::Rng;
@@ -63,16 +63,16 @@ type WithSpammer = (With<Spammer>, Without<Player>);
 type WithPlayer = (With<Player>, Without<Spammer>);
 
 fn track_player(
-    mut spammer_query: Query<&Transform, WithSpammer>,
+    mut spammer_query: Query<(&Transform, &mut Velocity), WithSpammer>,
     player_query: Query<&Transform, WithPlayer>,
 ) {
     let player_transform = player_query.single();
 
-    for transform in spammer_query.iter_mut() {
-        if player_transform.translation.x > transform.translation.x {
-            Vec3::new(SPAMMER_SPEED, 0.0, 0.0)
+    for (transform, mut velocity) in spammer_query.iter_mut() {
+        velocity.0.x = if player_transform.translation.x > transform.translation.x {
+            SPAMMER_SPEED
         } else {
-            Vec3::new(-SPAMMER_SPEED, 0.0, 0.0)
+            -SPAMMER_SPEED
         };
     }
 }
