@@ -23,7 +23,7 @@ impl Plugin for SpammerPlugins {
             timer: Timer::from_seconds(0.2, TimerMode::Repeating),
         };
         app.insert_resource(timer)
-            // .add_systems(Update, spawn_spammer)
+            .add_systems(Update, spawn_spammer)
             .add_systems(Update, track_player);
     }
 }
