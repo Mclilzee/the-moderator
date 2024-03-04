@@ -23,7 +23,7 @@ type Actors<'a> = (
 );
 
 fn collision(
-    mut entities_query: Query<Actors, Without<Platform>>,
+    mut actors_query: Query<Actors, Without<Platform>>,
     platform_query: Query<(&Transform, &Sprite), With<Platform>>,
 ) {
     let (platform_transform, platform_sprite) = platform_query.single();
@@ -34,7 +34,7 @@ fn collision(
 
     let collider = PlatformCollider::new(&platform_transform.translation, &platform_size);
 
-    for (hitbox, mut transform, mut velocity, jumps) in entities_query.iter_mut() {
+    for (hitbox, mut transform, mut velocity, jumps) in actors_query.iter_mut() {
         let position = collider.position(&transform.translation, &hitbox.0);
         match position {
             CollidePosition::Top(position) => {
