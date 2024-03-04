@@ -30,22 +30,20 @@ impl PlatformCollider {
         if !entity.intersects(&self.platform) {
             return CollidePosition::None;
         }
+
         let closest = self.platform.closest_point(entity.center());
         let offset = entity.center() - closest;
+        let abs = offset.abs() - entity.half_size();
 
-        println!("Closest: {closest}, Offset: {offset}");
-        println!("Abs x {}, Abs y {}", offset.x.abs(), offset.y.abs());
-        println!("Half Size {}", entity.half_size());
+        if abs.x > abs.y {
+            if offset.x < 0.0 {
+                return CollidePosition::Left(Vec3::new(
+                    self.platform.min.x - entity.half_size().x,
+                    translation.y,
+                    translation.z,
+                ));
+            }
 
-        if offset.x < 0.0 {
-            return CollidePosition::Left(Vec3::new(
-                self.platform.min.x - entity.half_size().x,
-                translation.y,
-                translation.z,
-            ));
-        }
-
-        if offset.x > 0.0 {
             return CollidePosition::Right(Vec3::new(
                 self.platform.max.x + entity.half_size().x,
                 translation.y,
