@@ -15,8 +15,7 @@ pub fn movement(
     time: Res<Time>,
 ) {
     let (mut player_velocity, mut jumps, mut transform) = query.single_mut();
-    // let mut velocity = Vec3::new(0.0, player_velocity.translation.y, 0.0);
-    let mut velocity = Vec3::new(0.0, 0.0, 0.0);
+    let mut velocity = Vec3::new(0.0, player_velocity.translation.y, 0.0);
     if keys.any_pressed([KeyCode::ArrowRight, KeyCode::KeyD]) {
         velocity.x = PLAYER_SPEED;
     }
@@ -25,12 +24,10 @@ pub fn movement(
         velocity.x = -PLAYER_SPEED;
     }
 
-    // if keys.any_just_pressed([KeyCode::ArrowUp, KeyCode::KeyW, KeyCode::Space])
-    //     && jumps.current >= 1
-    // {
-    //     velocity.y = PLAYER_JUMP_HEIGHT + GRAVITY_ACCELERATION;
-    //     jumps.current -= 1;
-    // }
+    if keys.any_just_pressed([KeyCode::ArrowUp, KeyCode::Space]) && jumps.current >= 1 {
+        velocity.y = PLAYER_JUMP_HEIGHT + GRAVITY_ACCELERATION;
+        jumps.current -= 1;
+    }
 
     if keys.pressed(KeyCode::KeyW) {
         velocity.y = PLAYER_SPEED;
@@ -40,7 +37,7 @@ pub fn movement(
         velocity.y = -PLAYER_SPEED;
     }
 
-    // velocity.y -= GRAVITY_ACCELERATION;
+    velocity.y -= GRAVITY_ACCELERATION;
     if velocity.y == GRAVITY_MAX_SPEED {
         velocity.y = GRAVITY_MAX_SPEED;
     }
