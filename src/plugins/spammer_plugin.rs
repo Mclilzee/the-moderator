@@ -63,19 +63,16 @@ type WithSpammer = (With<Spammer>, Without<Player>);
 type WithPlayer = (With<Player>, Without<Spammer>);
 
 fn track_player(
-    mut spammer_query: Query<&mut Transform, WithSpammer>,
+    mut spammer_query: Query<&Transform, WithSpammer>,
     player_query: Query<&Transform, WithPlayer>,
-    time: Res<Time>,
 ) {
     let player_transform = player_query.single();
 
-    for mut transform in spammer_query.iter_mut() {
-        let velocity = if player_transform.translation.x > transform.translation.x {
+    for transform in spammer_query.iter_mut() {
+        if player_transform.translation.x > transform.translation.x {
             Vec3::new(SPAMMER_SPEED, 0.0, 0.0)
         } else {
             Vec3::new(-SPAMMER_SPEED, 0.0, 0.0)
         };
-
-        transform.translation += velocity * time.delta_seconds();
     }
 }
