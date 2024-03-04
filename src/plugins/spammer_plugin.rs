@@ -9,7 +9,7 @@ const SPAMMER_STARTING_HP: i32 = 5;
 const SPAMMER_SPEED: f32 = 40.0;
 const SPAMMER_WIDTH: f32 = 25.0;
 const SPAMMER_HEIGHT: f32 = 40.0;
-const SPAMMER_LIMIT: u32 = 10;
+const SPAMMER_LIMIT: usize = 10;
 
 pub struct SpammerPlugins;
 
