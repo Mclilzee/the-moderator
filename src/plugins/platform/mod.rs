@@ -15,7 +15,7 @@ fn spawn_ground(mut commands: Commands) {
         SpriteBundle {
             sprite: Sprite {
                 color: Color::PURPLE,
-                custom_size: Some(Vec2::new(400.0, 200.0)),
+                custom_size: Some(Vec2::new(1000.0, 200.0)),
                 ..default()
             },
             ..default()

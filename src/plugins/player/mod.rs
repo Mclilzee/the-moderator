@@ -1,16 +1,17 @@
 mod animation;
 mod constants;
-mod player_movement;
+mod player_input;
 
 use self::{
     animation::animate,
     constants::{ALLOWED_JUMPS, PLAYER_STARING_HP},
-    player_movement::movement,
+    player_input::input,
 };
 use super::asset_loader::{AnimationKey, AnimationMap};
 use crate::{
     bundles::character::Character,
     components::{Jumps, Player},
+    InGameSet,
 };
 use bevy::{prelude::*, render::camera::ScalingMode};
 
@@ -19,7 +20,7 @@ pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(PostStartup, spawn_player)
-            .add_systems(Update, movement)
+            .add_systems(Update, input.in_set(InGameSet::Input))
             .add_systems(Update, animate);
     }
 }

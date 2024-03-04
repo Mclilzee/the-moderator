@@ -14,7 +14,7 @@ use std::time::Duration;
 
 #[derive(Clone, PartialEq, Eq, Debug, Hash, SystemSet)]
 pub enum InGameSet {
-    UserInput,
+    Input,
     Play,
 }
 
@@ -23,7 +23,7 @@ pub struct AnimationTimer(pub Timer);
 
 fn main() {
     App::new()
-        .configure_sets(Update, (InGameSet::UserInput, InGameSet::Play))
+        .configure_sets(Update, (InGameSet::Input, InGameSet::Play))
         .insert_resource(AnimationTimer(Timer::new(
             Duration::from_millis(100),
             TimerMode::Repeating,

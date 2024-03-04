@@ -7,7 +7,7 @@ use self::constants::{PLAYER_JUMP_HEIGHT, PLAYER_SPEED};
 
 use super::*;
 
-pub fn movement(
+pub fn input(
     keys: Res<ButtonInput<KeyCode>>,
     mut query: Query<(&mut Velocity, &mut Jumps), With<Player>>,
 ) {
