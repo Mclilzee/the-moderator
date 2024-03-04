@@ -50,7 +50,7 @@ fn collision(
             }
             CollidePosition::Left(position) => transform.translation = position,
             CollidePosition::Right(position) => transform.translation = position,
-            CollidePosition::None => return,
+            CollidePosition::None => (),
         }
     }
 }
