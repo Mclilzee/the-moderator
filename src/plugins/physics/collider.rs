@@ -1,9 +1,6 @@
-use bevy::{
-    log::info,
-    math::{
-        bounding::{Aabb2d, BoundingVolume, IntersectsVolume},
-        Vec2, Vec3,
-    },
+use bevy::math::{
+    bounding::{Aabb2d, BoundingVolume, IntersectsVolume},
+    Vec2, Vec3,
 };
 
 pub enum CollidePosition {
