@@ -31,7 +31,11 @@ pub fn movement(
         jumps.current -= 1;
     }
 
-    velocity.y -= GRAVITY_ACCELERATION;
+    if keys.pressed(KeyCode::KeyF) {
+        velocity.y = PLAYER_SPEED;
+    }
+
+    // velocity.y -= GRAVITY_ACCELERATION;
     if velocity.y == GRAVITY_MAX_SPEED {
         velocity.y = GRAVITY_MAX_SPEED;
     }
