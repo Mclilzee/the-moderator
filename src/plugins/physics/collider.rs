@@ -27,16 +27,22 @@ impl PlatformCollider {
 
     pub fn position(&self, translation: &Vec3, size: &Vec2) -> CollidePosition {
         let entity = Aabb2d::new(translation.truncate(), *size / Vec2::new(2.0, 2.0));
-        if !entity.intersects(&self.platform) {
-            return CollidePosition::None;
-        }
+        // if !entity.intersects(&self.platform) {
+        //     return CollidePosition::None;
+        // }
 
         let half_height = size.y / 2.0;
         let half_width = size.x / 2.0;
         let closest = self.platform.closest_point(entity.center());
         let offset = entity.center() - closest;
 
-        if offset.y == 0.0 {
+        println!("Closest: {closest}, Offset: {offset}");
+        println!("Abs x {}, Abs y {}", offset.x.abs(), offset.y.abs());
+
+        if !entity.intersects(&self.platform) {
+            return CollidePosition::None;
+        }
+        if offset.x.abs() > offset.y.abs() {
             if offset.x < 0.0 {
                 return CollidePosition::Left(Vec3::new(
                     self.platform.min.x - half_width,
