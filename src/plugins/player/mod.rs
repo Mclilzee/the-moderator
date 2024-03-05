@@ -9,7 +9,7 @@ use self::{
 };
 use super::asset_loader::{AnimationKey, AnimationMap};
 use crate::{
-    bundles::character::Actor,
+    bundles::actors::Actor,
     components::{Jumps, Player},
     InGameSet,
 };

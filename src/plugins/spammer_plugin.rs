@@ -1,5 +1,5 @@
 use crate::{
-    bundles::character::Actor,
+    bundles::actors::Actor,
     components::{Player, Spammer, Velocity},
 };
 use bevy::prelude::*;
