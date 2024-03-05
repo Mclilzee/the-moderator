@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::components::Collider;
+use crate::components::{Collider, EntityState};
 
 pub struct PlatformPlugin;
 

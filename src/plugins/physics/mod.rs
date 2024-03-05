@@ -30,7 +30,7 @@ type Colliders<'a> = (
 fn collision(mut colliders_query: Query<Colliders>) {
     let mut combination = colliders_query.iter_combinations_mut();
     while let Some(
-        [(collider1, state1, mut transform1, velocity1), (collider2, state2, mut transform2, velocity2)],
+        [(collider1, mut state1, mut transform1, mut velocity1), (collider2, mut state2, mut transform2, mut velocity2)],
     ) = combination.fetch_next()
     {
         let first = Aabb2d::new(
@@ -48,10 +48,29 @@ fn collision(mut colliders_query: Query<Colliders>) {
 
         if *state1 == EntityState::Solid {
             match find_collision_side(&first, &second) {
-                CollisionSide::Left => transform2.translation.x = transform1.translation.x - 5.0,
-                CollisionSide::Right => todo!(),
-                CollisionSide::Top => todo!(),
-                CollisionSide::Bottom => todo!(),
+                CollisionSide::Left => {
+                    transform2.translation.x = transform1.translation.x - (collider2.0.x / 2.0);
+                    info!("Left");
+                }
+                CollisionSide::Right => {
+                    transform2.translation.x = transform1.translation.x + (collider2.0.x / 2.0);
+                    info!("Right");
+                }
+                CollisionSide::Top => {
+                    info!("Top");
+                    transform2.translation.y = transform1.translation.y + (collider2.0.x / 2.0);
+                    if let Some(mut velocity) = velocity2 {
+                        velocity.0.y = 0.0;
+                    }
+                    *state2 = EntityState::Grounded;
+                }
+                CollisionSide::Bottom => {
+                    info!("Bottom");
+                    transform2.translation.y = transform1.translation.y - (collider2.0.x / 2.0);
+                    if let Some(mut velocity) = velocity2 {
+                        velocity.0.y = 0.0;
+                    }
+                }
             }
         }
     }

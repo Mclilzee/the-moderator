@@ -1,2 +1,2 @@
 pub mod actors;
-pub mod movable_object;
+pub mod movable_sprite;

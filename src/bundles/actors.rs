@@ -1,11 +1,12 @@
-use super::movable_object::MovableObject;
 use crate::components::EntityState;
 use crate::components::{Collider, Health};
 use bevy::prelude::*;
 
+use super::movable_sprite::MovableSprite;
+
 #[derive(Bundle)]
 pub struct Actor {
-    pub movable_object: MovableObject,
+    pub movable_object: MovableSprite,
     pub collider: Collider,
     pub hp: Health,
     pub entity_state: EntityState,
@@ -14,7 +15,7 @@ pub struct Actor {
 impl Actor {
     fn new(entity_state: EntityState, hp: i32, size: Vec2) -> Self {
         Self {
-            movable_object: MovableObject::default(),
+            movable_object: MovableSprite::default(),
             collider: Collider(size),
             hp: Health(hp),
             entity_state,
