@@ -4,6 +4,9 @@ use bevy::prelude::*;
 pub struct MaxJumps(pub u16);
 
 #[derive(Component)]
+pub struct Health(pub i32);
+
+#[derive(Component)]
 pub struct Player;
 
 #[derive(Component)]

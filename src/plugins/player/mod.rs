@@ -23,7 +23,7 @@ impl Plugin for PlayerPlugin {
 
 fn spawn_player(mut commands: Commands, asset_loader: Res<AnimationMap>) {
     let mut char = (
-        Actor::grounded(PLAYER_STARING_HP, Vec2::new(15.0, 35.0)),
+        Actor::dynamic(PLAYER_STARING_HP, Vec2::new(15.0, 35.0)),
         Player,
         MaxJumps(2),
     );
