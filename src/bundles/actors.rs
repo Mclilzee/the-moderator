@@ -1,6 +1,6 @@
 use super::movable_object::MovableObject;
 use crate::{
-    components::{BoundaryBox, BoundaryType, Hp},
+    components::{Collider, ColliderType, Hp},
     plugins::physics::state::EntityState,
 };
 use bevy::prelude::*;
@@ -8,19 +8,16 @@ use bevy::prelude::*;
 #[derive(Bundle)]
 pub struct Actor {
     pub movable_object: MovableObject,
-    pub hp: Hp,
-    pub collider: BoundaryBox,
+    pub collider: Collider,
     pub state: EntityState,
 }
 
 impl Actor {
-    pub fn new(hp_value: i32, boundary: Vec2) -> Self {
+    pub fn new(hp_value: i32, boundary: Collider) -> Self {
         Self {
-            hp: Hp(hp_value),
-            collider: BoundaryBox {
-                boundary,
-                boundary_type: BoundaryType::HitBox,
-            },
+            movable_object: MovableObject::default(),
+            collider: Collider,
+            state: EntityState::Grounded,
         }
     }
 
@@ -29,8 +26,8 @@ impl Actor {
         self
     }
 
-    pub fn hp(mut self, hp: i32) -> Self {
-        self.hp = Hp(hp);
+    pub fn boundary(mut self, boundary: Collider) -> Self {
+        self.boundary = boundary;
         self
     }
 }

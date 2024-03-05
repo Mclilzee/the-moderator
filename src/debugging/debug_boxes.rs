@@ -1,6 +1,6 @@
 use bevy::{input::common_conditions::input_just_pressed, prelude::*};
 
-use crate::components::BoundaryBox;
+use crate::components::Collider;
 
 #[derive(Component)]
 struct DebugBox;
@@ -34,13 +34,13 @@ fn toggle_state(mut next: ResMut<NextState<BoxDebugState>>, current: Res<State<B
     }
 }
 
-fn spawn_debug_boxes(mut commands: Commands, boundary_box_query: Query<(Entity, &BoundaryBox)>) {
+fn spawn_debug_boxes(mut commands: Commands, boundary_box_query: Query<(Entity, &Collider)>) {
     for (parent, boundary_box) in boundary_box_query.iter() {
         let child = commands
             .spawn((
                 SpriteBundle {
                     sprite: Sprite {
-                        custom_size: Some(boundary_box.boundary),
+                        custom_size: Some(boundary_box.size),
                         ..default()
                     },
                     ..default()

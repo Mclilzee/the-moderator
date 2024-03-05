@@ -21,22 +21,23 @@ pub struct Platform;
 #[derive(Component, Default)]
 pub struct Velocity(pub Vec2);
 
-pub enum BoundaryType {
+pub enum ColliderType {
     HitBox { hp: i32 },
     HurtBox { dmg: u32 },
+    Solid,
 }
 
 #[derive(Component)]
-pub struct BoundaryBox {
-    pub boundary: Vec2,
-    pub boundary_type: BoundaryType,
+pub struct Collider {
+    pub size: Vec2,
+    pub collider_type: ColliderType,
 }
 
-impl BoundaryBox {
-    pub fn new(boundary: Vec2, boundary_type: BoundaryType) -> Self {
+impl Collider {
+    pub fn new(size: Vec2, collider_type: ColliderType) -> Self {
         Self {
-            boundary,
-            boundary_type,
+            size,
+            collider_type,
         }
     }
 }
