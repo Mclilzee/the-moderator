@@ -1,5 +1,5 @@
 use super::movable_object::MovableObject;
-use crate::components::{HitBox, Hp};
+use crate::components::{BoundaryType, HitBox, Hp};
 use bevy::prelude::*;
 
 #[derive(Bundle, Default)]
@@ -10,10 +10,13 @@ pub struct Actor {
 }
 
 impl Actor {
-    pub fn new(hp_value: i32, hitbox: Vec2) -> Self {
+    pub fn new(hp_value: i32, boundary: Vec2) -> Self {
         Self {
             hp: Hp(hp_value),
-            collider: HitBox(hitbox),
+            collider: HitBox {
+                boundary,
+                boundary_type: BoundaryType::HitBox,
+            },
             ..default()
         }
     }

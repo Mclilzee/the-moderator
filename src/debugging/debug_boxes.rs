@@ -40,7 +40,7 @@ fn spawn_debug_boxes(mut commands: Commands, hitbox_query: Query<(Entity, &HitBo
             .spawn((
                 SpriteBundle {
                     sprite: Sprite {
-                        custom_size: Some(hitbox.0),
+                        custom_size: Some(hitbox.boundary),
                         ..default()
                     },
                     ..default()

@@ -21,5 +21,15 @@ pub struct Platform;
 #[derive(Component, Default)]
 pub struct Velocity(pub Vec2);
 
+#[derive(Default)]
+pub enum BoundaryType {
+    #[default]
+    HitBox,
+    HurtBox,
+}
+
 #[derive(Component, Default)]
-pub struct HitBox(pub Vec2);
+pub struct HitBox {
+    pub boundary: Vec2,
+    pub boundary_type: BoundaryType,
+}

@@ -39,7 +39,7 @@ fn collision(
     let collider = PlatformCollider::new(&platform_transform.translation, &platform_size);
 
     for (hitbox, mut transform, mut velocity, jumps) in actors_query.iter_mut() {
-        let position = collider.position(&transform.translation, &hitbox.0);
+        let position = collider.position(&transform.translation, &hitbox.boundary);
         match position {
             CollidePosition::Top(position) => {
                 transform.translation = position;
