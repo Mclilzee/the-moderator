@@ -5,6 +5,8 @@ use crate::{
 use bevy::prelude::*;
 use rand::Rng;
 
+use super::physics::state::EntityState;
+
 const SPAMMER_STARTING_HP: i32 = 5;
 const SPAMMER_SPEED: f32 = 40.0;
 const SPAMMER_WIDTH: f32 = 25.0;
@@ -52,6 +54,7 @@ fn spawn_spammer(
         let mut spammer = Actor::new(
             SPAMMER_STARTING_HP,
             Vec2::new(SPAMMER_WIDTH, SPAMMER_HEIGHT),
+            EntityState::Grounded,
         );
         spammer.movable_object.sprite_sheet.transform.translation = Vec3::new(spawn_x, 0.0, 0.0);
 
