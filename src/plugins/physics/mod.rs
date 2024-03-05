@@ -1,5 +1,8 @@
 mod collider;
-use bevy::prelude::*;
+use bevy::{
+    math::bounding::{Aabb2d, BoundingVolume, IntersectsVolume},
+    prelude::*,
+};
 
 use crate::{
     components::{Collider, Velocity},
@@ -25,7 +28,20 @@ fn collision(mut colliders_query: Query<Colliders>) {
     while let Some(
         [(collider1, mut transform1, velocity1), (collider2, mut transform2, velocity2)],
     ) = combination.fetch_next()
-    {}
+    {
+        let first = Aabb2d::new(
+            transform1.translation.truncate(),
+            collider1.0 / Vec2::splat(2.0),
+        );
+        let second = Aabb2d::new(
+            transform2.translation.truncate(),
+            collider2.0 / Vec2::splat(2.0),
+        );
+
+        if !first.intersects(&second) {
+            continue;
+        }
+    }
     // let position = collider.position(&transform.translation, &boundary_box.size);
     // match position {
     //     CollidePosition::Top(position) => {
@@ -40,6 +56,31 @@ fn collision(mut colliders_query: Query<Colliders>) {
     //     CollidePosition::Right(position) => transform.translation = position,
     //     CollidePosition::None => (),
     // }
+}
+
+enum CollisionSide {
+    Left,
+    Right,
+    Top,
+    Bottom,
+}
+
+fn find_collision_side(first: Aabb2d, second: Aabb2d) -> CollisionSide {
+    let closest = first.closest_point(second.center());
+    let offset = second.center() - closest;
+    let abs = offset.abs() - second.half_size();
+
+    if first.contains(&second) || abs.y > abs.x {
+        if offset.y < 0.0 {
+            CollisionSide::Bottom
+        } else {
+            CollisionSide::Top
+        }
+    } else if offset.x < 0.0 {
+        CollisionSide::Left
+    } else {
+        CollisionSide::Right
+    }
 }
 
 type MovingActors<'a> = (&'a mut Transform, &'a mut Velocity);
