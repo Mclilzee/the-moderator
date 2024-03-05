@@ -1,4 +1,5 @@
 mod collider;
+pub mod state;
 use self::collider::{CollidePosition, PlatformCollider};
 use bevy::prelude::*;
 
