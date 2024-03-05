@@ -1,5 +1,5 @@
 use crate::{
-    bundles::character::Character,
+    bundles::character::Actor,
     components::{Player, Spammer, Velocity},
 };
 use bevy::prelude::*;
@@ -49,7 +49,7 @@ fn spawn_spammer(
 
         let spawn_x = offset + f32::copysign(camera_offset + 5.0, offset);
 
-        let mut spammer = Character::new(
+        let mut spammer = Actor::new(
             SPAMMER_STARTING_HP,
             Vec2::new(SPAMMER_WIDTH, SPAMMER_HEIGHT),
         );
