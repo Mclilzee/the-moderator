@@ -16,8 +16,13 @@ pub fn animate(
     let first_frame;
     let last_frame;
 
+    if keys.any_pressed([KeyCode::ArrowLeft, KeyCode::KeyA]) {
+        sprite.flip_x = true;
+    } else if keys.any_pressed([KeyCode::ArrowRight, KeyCode::KeyD]) {
+        sprite.flip_x = false;
+    }
+
     if velocity.0.x.abs() > 0.0 {
-        sprite.flip_x = keys.any_pressed([KeyCode::ArrowLeft, KeyCode::KeyA]);
         first_frame = 8;
         last_frame = 17;
     } else {
