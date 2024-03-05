@@ -49,7 +49,7 @@ fn spawn_spammer(
 
         let spawn_x = offset + f32::copysign(camera_offset + 5.0, offset);
 
-        let mut spammer = Actor::dynamic(
+        let mut spammer = Actor::grounded(
             SPAMMER_STARTING_HP,
             Vec2::new(SPAMMER_WIDTH, SPAMMER_HEIGHT),
         );

@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::components::{Collider, ColliderType};
+use crate::components::Collider;
 
 pub struct PlatformPlugin;
 
@@ -25,9 +25,6 @@ fn platform(size: Vec2) -> (SpriteBundle, Collider) {
             },
             ..default()
         },
-        Collider {
-            size,
-            collider_type: ColliderType::Solid,
-        },
+        Collider(size),
     )
 }

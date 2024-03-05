@@ -40,7 +40,7 @@ fn spawn_debug_boxes(mut commands: Commands, boundary_box_query: Query<(Entity, 
             .spawn((
                 SpriteBundle {
                     sprite: Sprite {
-                        custom_size: Some(boundary_box.size),
+                        custom_size: Some(boundary_box.0),
                         ..default()
                     },
                     ..default()

@@ -1,9 +1,4 @@
 mod collider;
-pub mod entity_type;
-use self::{
-    collider::{CollidePosition, PlatformCollider},
-    entity_type::EntityType,
-};
 use bevy::prelude::*;
 
 use crate::{
@@ -52,7 +47,7 @@ type MovingActors<'a> = (&'a mut Transform, &'a mut Velocity);
 fn movement(mut actors_query: Query<MovingActors>, time: Res<Time>) {
     for (mut transform, mut velocity) in actors_query.iter_mut() {
         velocity.0.y -= GRAVITY_ACCELERATION;
-        if velocity.0.y == GRAVITY_MAX_SPEED {
+        if velocity.0.y > GRAVITY_MAX_SPEED {
             velocity.0.y = GRAVITY_MAX_SPEED;
         }
 
