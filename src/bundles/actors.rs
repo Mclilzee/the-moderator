@@ -5,7 +5,7 @@ use crate::{
 };
 use bevy::prelude::*;
 
-#[derive(Bundle, Default)]
+#[derive(Bundle)]
 pub struct Actor {
     pub movable_object: MovableObject,
     pub hp: Hp,
@@ -21,7 +21,16 @@ impl Actor {
                 boundary,
                 boundary_type: BoundaryType::HitBox,
             },
-            ..default()
         }
+    }
+
+    pub fn state(mut self, state: EntityState) -> Self {
+        self.state = state;
+        self
+    }
+
+    pub fn hp(mut self, hp: i32) -> Self {
+        self.hp = Hp(hp);
+        self
     }
 }

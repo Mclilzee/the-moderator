@@ -20,6 +20,6 @@ fn spawn_ground(mut commands: Commands) {
             },
             ..default()
         },
-        Platform,
+        EntityState::Solid,
     ));
 }

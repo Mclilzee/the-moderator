@@ -21,14 +21,22 @@ pub struct Platform;
 #[derive(Component, Default)]
 pub struct Velocity(pub Vec2);
 
-#[derive(Default)]
 pub enum BoundaryType {
-    #[default]
-    HitBox,
+    HitBox { hp: i32 },
+    HurtBox { dmg: u32 },
 }
 
-#[derive(Component, Default)]
+#[derive(Component)]
 pub struct BoundaryBox {
     pub boundary: Vec2,
     pub boundary_type: BoundaryType,
+}
+
+impl BoundaryBox {
+    pub fn new(boundary: Vec2, boundary_type: BoundaryType) -> Self {
+        Self {
+            boundary,
+            boundary_type,
+        }
+    }
 }
