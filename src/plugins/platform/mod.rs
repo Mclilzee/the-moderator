@@ -1,7 +1,5 @@
 use bevy::prelude::*;
 
-use super::physics::state::EntityState;
-
 pub struct PlatformPlugin;
 
 impl Plugin for PlatformPlugin {
