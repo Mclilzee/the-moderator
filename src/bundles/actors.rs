@@ -13,21 +13,14 @@ pub struct Actor {
 }
 
 impl Actor {
-    pub fn new(hp_value: i32, boundary: Collider) -> Self {
+    pub fn new(hp: i32, size: Vec2, state: EntityState) -> Self {
         Self {
             movable_object: MovableObject::default(),
-            collider: Collider,
-            state: EntityState::Grounded,
+            collider: Collider {
+                size,
+                collider_type: ColliderType::HitBox { hp },
+            },
+            state,
         }
-    }
-
-    pub fn state(mut self, state: EntityState) -> Self {
-        self.state = state;
-        self
-    }
-
-    pub fn boundary(mut self, boundary: Collider) -> Self {
-        self.boundary = boundary;
-        self
     }
 }
