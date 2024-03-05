@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::components::Platform;
+use super::physics::state::EntityState;
 
 pub struct PlatformPlugin;
 
