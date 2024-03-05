@@ -15,7 +15,14 @@ pub struct Platform;
 #[derive(Component, Default)]
 pub struct Velocity(pub Vec2);
 
+pub enum ColliderType {
+    Solid,
+    Dynamic,
+    Flying,
+}
+
 #[derive(Component)]
 pub struct Collider {
     pub size: Vec2,
+    pub collider_type: ColliderType,
 }
