@@ -6,14 +6,14 @@ use bevy::prelude::*;
 pub struct Actor {
     pub movable_object: MovableObject,
     pub hp: Hp,
-    pub hitbox: HitBox,
+    pub collider: HitBox,
 }
 
 impl Actor {
     pub fn new(hp_value: i32, hitbox: Vec2) -> Self {
         Self {
             hp: Hp(hp_value),
-            hitbox: HitBox(hitbox),
+            collider: HitBox(hitbox),
             ..default()
         }
     }
