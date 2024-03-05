@@ -3,6 +3,17 @@ use bevy::math::{
     Vec2, Vec3,
 };
 
+pub enum ColliderType {
+    Dynamic,
+    Solid,
+    Flyer,
+}
+
+pub struct Collider {
+    aabb: Aabb2d,
+    collider_type: ColliderType,
+}
+
 pub enum CollidePosition {
     Top(Vec3),
     Bottom(Vec3),
