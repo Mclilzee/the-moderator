@@ -1,10 +1,13 @@
 mod collider;
 pub mod state;
-use self::collider::{CollidePosition, PlatformCollider};
+use self::{
+    collider::{CollidePosition, PlatformCollider},
+    state::EntityState,
+};
 use bevy::prelude::*;
 
 use crate::{
-    components::{Collider, Jumps, Platform, Velocity},
+    components::{Collider, Jumps, Velocity},
     consts::{GRAVITY_ACCELERATION, GRAVITY_MAX_SPEED},
     InGameSet,
 };
@@ -29,12 +32,6 @@ type Colliders<'a> = (
 );
 
 fn collision(mut colliders_query: Query<Colliders>) {
-    let (platform_transform, platform_sprite) = platform_query.single();
-    let platform_size = match platform_sprite.custom_size {
-        Some(vec) => vec,
-        None => return,
-    };
-
     for (collider, mut transform, maybe_velocity, maybe_jump, state) in
         colliders_query.mut_iter_combinations()
     {
