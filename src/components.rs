@@ -1,13 +1,7 @@
 use bevy::prelude::*;
 
 #[derive(Component)]
-pub struct Jumps {
-    pub current: u16,
-    pub max: u16,
-}
-
-#[derive(Component, Default)]
-pub struct Hp(pub i32);
+pub struct MaxJumps(pub u16);
 
 #[derive(Component)]
 pub struct Player;
@@ -24,6 +18,7 @@ pub struct Velocity(pub Vec2);
 pub enum ColliderType {
     HitBox { hp: i32 },
     HurtBox { dmg: u32 },
+    Solid,
 }
 
 #[derive(Component)]

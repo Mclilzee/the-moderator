@@ -2,15 +2,11 @@ mod animation;
 mod constants;
 mod player_input;
 
-use self::{
-    animation::animate,
-    constants::{ALLOWED_JUMPS, PLAYER_STARING_HP},
-    player_input::input,
-};
+use self::{animation::animate, constants::PLAYER_STARING_HP, player_input::input};
 use super::asset_loader::{AnimationKey, AnimationMap};
 use crate::{
     bundles::actors::Actor,
-    components::{Jumps, Player},
+    components::{MaxJumps, Player},
     InGameSet,
 };
 use bevy::{prelude::*, render::camera::ScalingMode};
@@ -29,10 +25,7 @@ fn spawn_player(mut commands: Commands, asset_loader: Res<AnimationMap>) {
     let mut char = (
         Actor::grounded(PLAYER_STARING_HP, Vec2::new(15.0, 35.0)),
         Player,
-        Jumps {
-            current: ALLOWED_JUMPS,
-            max: ALLOWED_JUMPS,
-        },
+        MaxJumps(2),
     );
 
     let animation = asset_loader

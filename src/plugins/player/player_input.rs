@@ -1,17 +1,18 @@
 use bevy::prelude::*;
 
-use crate::components::Velocity;
 use crate::consts::GRAVITY_ACCELERATION;
+use crate::{components::Velocity, plugins::physics::state::EntityState};
 
 use self::constants::{PLAYER_JUMP_HEIGHT, PLAYER_SPEED};
 
+use super::constants::ALLOWED_JUMPS;
 use super::*;
 
 pub fn input(
     keys: Res<ButtonInput<KeyCode>>,
-    mut query: Query<(&mut Velocity, &mut Jumps), With<Player>>,
+    mut query: Query<(&mut Velocity, &mut MaxJumps, &EntityState), With<Player>>,
 ) {
-    let (mut velocity, mut jumps) = query.single_mut();
+    let (mut velocity, mut jumps, state) = query.single_mut();
     velocity.0.x = 0.0;
     if keys.any_pressed([KeyCode::ArrowRight, KeyCode::KeyD]) {
         velocity.0.x = PLAYER_SPEED;
@@ -21,9 +22,15 @@ pub fn input(
         velocity.0.x = -PLAYER_SPEED;
     }
 
-    if keys.any_just_pressed([KeyCode::ArrowUp, KeyCode::Space]) && jumps.current >= 1 {
-        velocity.0.y = PLAYER_JUMP_HEIGHT + GRAVITY_ACCELERATION;
-        jumps.current -= 1;
+    if keys.any_just_pressed([KeyCode::ArrowUp, KeyCode::Space]) {
+        if let EntityState::Grounded = *state {
+            jumps.0 = ALLOWED_JUMPS
+        };
+
+        if jumps.0 > 0 {
+            velocity.0.y = PLAYER_JUMP_HEIGHT + GRAVITY_ACCELERATION;
+            jumps.0 -= 1;
+        }
     }
 
     if keys.pressed(KeyCode::KeyW) {
