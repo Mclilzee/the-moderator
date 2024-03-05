@@ -1,6 +1,6 @@
 use bevy::{input::common_conditions::input_just_pressed, prelude::*};
 
-use crate::components::HitBox;
+use crate::components::BoundaryBox;
 
 #[derive(Component)]
 struct DebugBox;
@@ -34,18 +34,18 @@ fn toggle_state(mut next: ResMut<NextState<BoxDebugState>>, current: Res<State<B
     }
 }
 
-fn spawn_debug_boxes(mut commands: Commands, hitbox_query: Query<(Entity, &HitBox)>) {
-    for (parent, hitbox) in hitbox_query.iter() {
+fn spawn_debug_boxes(mut commands: Commands, boundary_box_query: Query<(Entity, &BoundaryBox)>) {
+    for (parent, boundary_box) in boundary_box_query.iter() {
         let child = commands
             .spawn((
                 SpriteBundle {
                     sprite: Sprite {
-                        custom_size: Some(hitbox.boundary),
+                        custom_size: Some(boundary_box.boundary),
                         ..default()
                     },
                     ..default()
                 },
-                Name::new("HitBox Debug"),
+                Name::new("BoundaryBox Debug"),
                 DebugBox,
             ))
             .id();

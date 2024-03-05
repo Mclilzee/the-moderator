@@ -28,7 +28,7 @@ pub enum BoundaryType {
 }
 
 #[derive(Component, Default)]
-pub struct HitBox {
+pub struct BoundaryBox {
     pub boundary: Vec2,
     pub boundary_type: BoundaryType,
 }

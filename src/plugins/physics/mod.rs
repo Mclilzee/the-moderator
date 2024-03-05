@@ -3,7 +3,7 @@ use self::collider::{CollidePosition, PlatformCollider};
 use bevy::prelude::*;
 
 use crate::{
-    components::{HitBox, Jumps, Platform, Velocity},
+    components::{BoundaryBox, Jumps, Platform, Velocity},
     consts::{GRAVITY_ACCELERATION, GRAVITY_MAX_SPEED},
     InGameSet,
 };
@@ -20,7 +20,7 @@ impl Plugin for PhysicsPlugin {
 }
 
 type CollidingActors<'a> = (
-    &'a HitBox,
+    &'a BoundaryBox,
     &'a mut Transform,
     &'a mut Velocity,
     Option<&'a mut Jumps>,
@@ -38,8 +38,8 @@ fn collision(
 
     let collider = PlatformCollider::new(&platform_transform.translation, &platform_size);
 
-    for (hitbox, mut transform, mut velocity, jumps) in actors_query.iter_mut() {
-        let position = collider.position(&transform.translation, &hitbox.boundary);
+    for (boundary_box, mut transform, mut velocity, jumps) in actors_query.iter_mut() {
+        let position = collider.position(&transform.translation, &boundary_box.boundary);
         match position {
             CollidePosition::Top(position) => {
                 transform.translation = position;
