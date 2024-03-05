@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use crate::consts::GRAVITY_ACCELERATION;
-use crate::{components::Velocity, plugins::physics::state::EntityState};
+use crate::{components::Velocity, plugins::physics::entity_type::EntityType};
 
 use self::constants::{PLAYER_JUMP_HEIGHT, PLAYER_SPEED};
 
@@ -10,7 +10,7 @@ use super::*;
 
 pub fn input(
     keys: Res<ButtonInput<KeyCode>>,
-    mut query: Query<(&mut Velocity, &mut MaxJumps, &EntityState), With<Player>>,
+    mut query: Query<(&mut Velocity, &mut MaxJumps, &EntityType), With<Player>>,
 ) {
     let (mut velocity, mut jumps, state) = query.single_mut();
     velocity.0.x = 0.0;
@@ -23,7 +23,7 @@ pub fn input(
     }
 
     if keys.any_just_pressed([KeyCode::ArrowUp, KeyCode::Space]) {
-        if let EntityState::Grounded = *state {
+        if let EntityType::Grounded = *state {
             jumps.0 = ALLOWED_JUMPS
         };
 

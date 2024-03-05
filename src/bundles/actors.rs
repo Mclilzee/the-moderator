@@ -1,7 +1,7 @@
 use super::movable_object::MovableObject;
 use crate::{
     components::{Collider, ColliderType},
-    plugins::physics::state::EntityState,
+    plugins::physics::entity_type::EntityType,
 };
 use bevy::prelude::*;
 
@@ -9,18 +9,19 @@ use bevy::prelude::*;
 pub struct Actor {
     pub movable_object: MovableObject,
     pub collider: Collider,
-    pub state: EntityState,
+    pub entity_type: EntityType,
+    pub hitbox: HitBox,
 }
 
 impl Actor {
-    pub fn grounded(hp: i32, size: Vec2) -> Self {
+    fn new(entity_type: EntityType, hp: i32, size: Vec2) -> Self {
         Self {
             movable_object: MovableObject::default(),
-            collider: Collider {
-                size,
-                collider_type: ColliderType::HitBox { hp },
-            },
-            state: EntityState::Grounded,
+            collider: Collider { size },
+            entity_type,
         }
+    }
+    pub fn grounded(hp: i32, size: Vec2) -> Self {
+        Self::new(EntityType::Grounded, hp, size)
     }
 }
