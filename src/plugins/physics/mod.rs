@@ -23,30 +23,28 @@ impl Plugin for PhysicsPlugin {
     }
 }
 
-type Colliders<'a> = (
-    &'a Collider,
-    &'a mut Transform,
-    Option<&'a mut Velocity>,
-    EntityType,
-);
+type Colliders<'a> = (&'a Collider, &'a mut Transform, Option<&'a mut Velocity>);
 
 fn collision(mut colliders_query: Query<Colliders>) {
-    for ([mut first, mut second]) in colliders_query.iter_combinations_mut() {
-        // let position = collider.position(&transform.translation, &boundary_box.size);
-        // match position {
-        //     CollidePosition::Top(position) => {
-        //         transform.translation = position;
-        //         velocity.0.y = 0.0;
-        //     }
-        //     CollidePosition::Bottom(position) => {
-        //         transform.translation = position;
-        //         velocity.0.y = 0.0;
-        //     }
-        //     CollidePosition::Left(position) => transform.translation = position,
-        //     CollidePosition::Right(position) => transform.translation = position,
-        //     CollidePosition::None => (),
-        // }
-    }
+    let mut combination = colliders_query.iter_combinations_mut();
+    while let Some(
+        [(collider1, mut transform1, velocity1), (collider2, mut transform2, velocity2)],
+    ) = combination.fetch_next()
+    {}
+    // let position = collider.position(&transform.translation, &boundary_box.size);
+    // match position {
+    //     CollidePosition::Top(position) => {
+    //         transform.translation = position;
+    //         velocity.0.y = 0.0;
+    //     }
+    //     CollidePosition::Bottom(position) => {
+    //         transform.translation = position;
+    //         velocity.0.y = 0.0;
+    //     }
+    //     CollidePosition::Left(position) => transform.translation = position,
+    //     CollidePosition::Right(position) => transform.translation = position,
+    //     CollidePosition::None => (),
+    // }
 }
 
 type MovingActors<'a> = (&'a mut Transform, &'a mut Velocity);
