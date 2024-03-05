@@ -25,7 +25,6 @@ pub struct Velocity(pub Vec2);
 pub enum BoundaryType {
     #[default]
     HitBox,
-    HurtBox,
 }
 
 #[derive(Component, Default)]
