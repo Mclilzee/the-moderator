@@ -1,11 +1,10 @@
-mod collider;
 use bevy::{
     math::bounding::{Aabb2d, BoundingVolume, IntersectsVolume},
     prelude::*,
 };
 
 use crate::{
-    components::{Collider, Velocity},
+    components::{Collider, EntityState, Velocity},
     consts::{GRAVITY_ACCELERATION, GRAVITY_MAX_SPEED},
     InGameSet,
 };
@@ -21,12 +20,17 @@ impl Plugin for PhysicsPlugin {
     }
 }
 
-type Colliders<'a> = (&'a Collider, &'a mut Transform, Option<&'a mut Velocity>);
+type Colliders<'a> = (
+    &'a Collider,
+    &'a mut EntityState,
+    &'a mut Transform,
+    Option<&'a mut Velocity>,
+);
 
 fn collision(mut colliders_query: Query<Colliders>) {
     let mut combination = colliders_query.iter_combinations_mut();
     while let Some(
-        [(collider1, mut transform1, velocity1), (collider2, mut transform2, velocity2)],
+        [(collider1, state1, mut transform1, velocity1), (collider2, state2, mut transform2, velocity2)],
     ) = combination.fetch_next()
     {
         let first = Aabb2d::new(
@@ -41,21 +45,16 @@ fn collision(mut colliders_query: Query<Colliders>) {
         if !first.intersects(&second) {
             continue;
         }
+
+        if *state1 == EntityState::Solid {
+            match find_collision_side(&first, &second) {
+                CollisionSide::Left => transform2.translation.x = transform1.translation.x - 5.0,
+                CollisionSide::Right => todo!(),
+                CollisionSide::Top => todo!(),
+                CollisionSide::Bottom => todo!(),
+            }
+        }
     }
-    // let position = collider.position(&transform.translation, &boundary_box.size);
-    // match position {
-    //     CollidePosition::Top(position) => {
-    //         transform.translation = position;
-    //         velocity.0.y = 0.0;
-    //     }
-    //     CollidePosition::Bottom(position) => {
-    //         transform.translation = position;
-    //         velocity.0.y = 0.0;
-    //     }
-    //     CollidePosition::Left(position) => transform.translation = position,
-    //     CollidePosition::Right(position) => transform.translation = position,
-    //     CollidePosition::None => (),
-    // }
 }
 
 enum CollisionSide {
@@ -65,12 +64,12 @@ enum CollisionSide {
     Bottom,
 }
 
-fn find_collision_side(first: Aabb2d, second: Aabb2d) -> CollisionSide {
+fn find_collision_side(first: &Aabb2d, second: &Aabb2d) -> CollisionSide {
     let closest = first.closest_point(second.center());
     let offset = second.center() - closest;
     let abs = offset.abs() - second.half_size();
 
-    if first.contains(&second) || abs.y > abs.x {
+    if first.contains(second) || abs.y > abs.x {
         if offset.y < 0.0 {
             CollisionSide::Bottom
         } else {
