@@ -31,25 +31,21 @@ type Colliders<'a> = (
 );
 
 fn collision(mut colliders_query: Query<Colliders>) {
-    for ([first, second]) in colliders_query.mut_iter_combinations() {
-        let collider = PlatformCollider::new(&platform_transform.translation, &platform_size);
-
-        for (boundary_box, mut transform, mut velocity, jumps) in actors_query.iter_mut() {
-            let position = collider.position(&transform.translation, &boundary_box.size);
-            match position {
-                CollidePosition::Top(position) => {
-                    transform.translation = position;
-                    velocity.0.y = 0.0;
-                }
-                CollidePosition::Bottom(position) => {
-                    transform.translation = position;
-                    velocity.0.y = 0.0;
-                }
-                CollidePosition::Left(position) => transform.translation = position,
-                CollidePosition::Right(position) => transform.translation = position,
-                CollidePosition::None => (),
-            }
-        }
+    for ([mut first, mut second]) in colliders_query.iter_combinations_mut() {
+        // let position = collider.position(&transform.translation, &boundary_box.size);
+        // match position {
+        //     CollidePosition::Top(position) => {
+        //         transform.translation = position;
+        //         velocity.0.y = 0.0;
+        //     }
+        //     CollidePosition::Bottom(position) => {
+        //         transform.translation = position;
+        //         velocity.0.y = 0.0;
+        //     }
+        //     CollidePosition::Left(position) => transform.translation = position,
+        //     CollidePosition::Right(position) => transform.translation = position,
+        //     CollidePosition::None => (),
+        // }
     }
 }
 

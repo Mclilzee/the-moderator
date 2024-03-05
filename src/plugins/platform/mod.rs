@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+use crate::components::{Collider, ColliderType};
+
 pub struct PlatformPlugin;
 
 impl Plugin for PlatformPlugin {
@@ -9,15 +11,23 @@ impl Plugin for PlatformPlugin {
 }
 
 fn spawn_ground(mut commands: Commands) {
-    commands.spawn((
+    let platform = platform(Vec2::new(1000.0, 200.0));
+    commands.spawn(platform);
+}
+
+fn platform(size: Vec2) -> (SpriteBundle, Collider) {
+    (
         SpriteBundle {
             sprite: Sprite {
                 color: Color::PURPLE,
-                custom_size: Some(Vec2::new(1000.0, 200.0)),
+                custom_size: Some(size),
                 ..default()
             },
             ..default()
         },
-        EntityType::Solid,
-    ));
+        Collider {
+            size,
+            collider_type: ColliderType::Solid,
+        },
+    )
 }
