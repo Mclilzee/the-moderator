@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 #[derive(Component)]
-pub enum State {
+pub enum EntityState {
     Grounded,
     Flying,
     Solid,
