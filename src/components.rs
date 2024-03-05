@@ -24,7 +24,6 @@ pub struct Velocity(pub Vec2);
 pub enum ColliderType {
     HitBox { hp: i32 },
     HurtBox { dmg: u32 },
-    Solid,
 }
 
 #[derive(Component)]
