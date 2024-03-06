@@ -140,7 +140,6 @@ fn movement(mut actors_query: Query<MovingActors>, time: Res<Time>) {
         }
 
         let velocity = velocity.0.extend(0.0) * time.delta_seconds();
-        info!("{}", velocity);
         transform.translation += velocity;
     }
 }
