@@ -4,7 +4,7 @@ use bevy::{
 };
 
 use crate::{
-    components::{Collider, EntityState, Velocity},
+    components::{Collider, EntityState, Spammer, Velocity},
     consts::{GRAVITY_ACCELERATION, GRAVITY_MAX_SPEED},
     InGameSet,
 };
@@ -135,10 +135,12 @@ type MovingActors<'a> = (&'a mut Transform, &'a mut Velocity);
 fn movement(mut actors_query: Query<MovingActors>, time: Res<Time>) {
     for (mut transform, mut velocity) in actors_query.iter_mut() {
         velocity.0.y -= GRAVITY_ACCELERATION;
-        if velocity.0.y > GRAVITY_MAX_SPEED {
+        if velocity.0.y < -GRAVITY_MAX_SPEED {
             velocity.0.y = -GRAVITY_MAX_SPEED;
         }
 
-        transform.translation += velocity.0.extend(0.0) * time.delta_seconds();
+        let velocity = velocity.0.extend(0.0) * time.delta_seconds();
+        info!("{}", velocity);
+        transform.translation += velocity;
     }
 }
