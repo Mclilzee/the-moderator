@@ -4,7 +4,7 @@ use bevy::{
 };
 
 use crate::{
-    components::{Collider, EntityState, Spammer, Velocity},
+    components::{Collider, EntityState, Velocity},
     consts::{GRAVITY_ACCELERATION, GRAVITY_MAX_SPEED},
     InGameSet,
 };
@@ -27,7 +27,7 @@ type Colliders<'a> = (
     Option<&'a mut Velocity>,
 );
 
-fn collision(mut colliders_query: Query<Colliders, Without<Spammer>>) {
+fn collision(mut colliders_query: Query<Colliders>) {
     let mut combination = colliders_query.iter_combinations_mut();
     while let Some(
         [(collider1, mut state1, mut transform1, mut velocity1), (collider2, mut state2, mut transform2, mut velocity2)],
@@ -46,28 +46,59 @@ fn collision(mut colliders_query: Query<Colliders, Without<Spammer>>) {
             continue;
         }
 
-        if *state1 == EntityState::Solid && (*state2 != EntityState::Solid || velocity2.is_some()) {
-            match find_collision_side(&first, &second) {
-                CollisionSide::Left => {
-                    transform2.translation.x = transform1.translation.x - (collider2.0.x / 2.0);
-                }
-                CollisionSide::Right => {
-                    transform2.translation.x = transform1.translation.x + (collider2.0.x / 2.0);
-                }
-                CollisionSide::Top => {
-                    transform2.translation.y = transform1.translation.y + (collider2.0.y / 2.0);
-                    if let Some(mut velocity) = velocity2 {
-                        velocity.0.y = 0.0;
-                    }
-                    *state2 = EntityState::Grounded;
-                }
-                CollisionSide::Bottom => {
-                    transform2.translation.y = transform1.translation.y - (collider2.0.y / 2.0);
-                    if let Some(mut velocity) = velocity2 {
-                        velocity.0.y = 0.0;
-                    }
-                }
-            }
+        solve_solid_collision(
+            &first,
+            &state1,
+            &second,
+            &mut transform2.translation,
+            &velocity2,
+            &mut state2,
+        );
+
+        solve_solid_collision(
+            &second,
+            &state2,
+            &first,
+            &mut transform1.translation,
+            &velocity1,
+            &mut state1,
+        );
+    }
+}
+
+fn solve_solid_collision(
+    solid_boundary: &Aabb2d,
+    solid_state: &EntityState,
+    entity_boundary: &Aabb2d,
+    entity_translation: &mut Vec3,
+    entity_velocity: &Option<Mut<'_, Velocity>>,
+    entity_state: &mut EntityState,
+) {
+    if *solid_state != EntityState::Solid
+        || (*entity_state == EntityState::Solid && entity_velocity.is_none())
+    {
+        return;
+    }
+
+    match find_collision_side(solid_boundary, entity_boundary) {
+        CollisionSide::Left => {
+            entity_translation.x = solid_boundary.min.x - (entity_boundary.half_size().x / 2.0);
+        }
+        CollisionSide::Right => {
+            entity_translation.x = solid_boundary.max.x + (entity_boundary.half_size().x / 2.0);
+        }
+        CollisionSide::Top => {
+            entity_translation.y = solid_boundary.max.y + (entity_boundary.half_size().y / 2.0);
+            // if let Some(&mut velocity) = *entity_velocity {
+            //     velocity.0.y = 0.0;
+            // }
+            *entity_state = EntityState::Grounded;
+        }
+        CollisionSide::Bottom => {
+            entity_translation.y = solid_boundary.min.y - (entity_boundary.half_size().y / 2.0);
+            // if let Some(&mut velocity) = *entity_velocity {
+            //     velocity.0.y = 0.0;
+            // }
         }
     }
 }
@@ -83,20 +114,18 @@ fn find_collision_side(first: &Aabb2d, second: &Aabb2d) -> CollisionSide {
     let closest = first.closest_point(second.center());
     let offset = second.center() - closest;
     let abs = offset.abs() - second.half_size();
-    println!("Offset Abs: {abs}");
-    CollisionSide::Left
 
-    // if first.contains(second) || abs.y > abs.x {
-    //     if offset.y < 0.0 {
-    //         CollisionSide::Bottom
-    //     } else {
-    //         CollisionSide::Top
-    //     }
-    // } else if offset.x < 0.0 {
-    //     CollisionSide::Left
-    // } else {
-    //     CollisionSide::Right
-    // }
+    if first.contains(second) || abs.y > abs.x {
+        if offset.y < 0.0 {
+            CollisionSide::Bottom
+        } else {
+            CollisionSide::Top
+        }
+    } else if offset.x < 0.0 {
+        CollisionSide::Left
+    } else {
+        CollisionSide::Right
+    }
 }
 
 type MovingActors<'a> = (&'a mut Transform, &'a mut Velocity);
