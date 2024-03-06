@@ -84,18 +84,19 @@ fn find_collision_side(first: &Aabb2d, second: &Aabb2d) -> CollisionSide {
     let offset = second.center() - closest;
     let abs = offset.abs() - second.half_size();
     println!("Offset Abs: {abs}");
+    CollisionSide::Left
 
-    if first.contains(second) || abs.y > abs.x {
-        if offset.y < 0.0 {
-            CollisionSide::Bottom
-        } else {
-            CollisionSide::Top
-        }
-    } else if offset.x < 0.0 {
-        CollisionSide::Left
-    } else {
-        CollisionSide::Right
-    }
+    // if first.contains(second) || abs.y > abs.x {
+    //     if offset.y < 0.0 {
+    //         CollisionSide::Bottom
+    //     } else {
+    //         CollisionSide::Top
+    //     }
+    // } else if offset.x < 0.0 {
+    //     CollisionSide::Left
+    // } else {
+    //     CollisionSide::Right
+    // }
 }
 
 type MovingActors<'a> = (&'a mut Transform, &'a mut Velocity);
