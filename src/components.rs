@@ -23,4 +23,5 @@ pub enum EntityState {
     Grounded,
     Flying,
     Solid,
+    Airborn,
 }
