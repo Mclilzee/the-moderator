@@ -82,20 +82,21 @@ fn solve_solid_collision(
 
     match find_collision_side(solid_boundary, entity_boundary) {
         CollisionSide::Left => {
-            entity_translation.x = solid_boundary.min.x - (entity_boundary.half_size().x / 2.0);
+            entity_translation.x = solid_boundary.min.x - (entity_boundary.half_size().x);
         }
         CollisionSide::Right => {
-            entity_translation.x = solid_boundary.max.x + (entity_boundary.half_size().x / 2.0);
+            entity_translation.x = solid_boundary.max.x + (entity_boundary.half_size().x);
         }
         CollisionSide::Top => {
-            entity_translation.y = solid_boundary.max.y + (entity_boundary.half_size().y / 2.0);
+            entity_translation.y = solid_boundary.max.y + (entity_boundary.half_size().y);
             // if let Some(&mut velocity) = *entity_velocity {
             //     velocity.0.y = 0.0;
             // }
             *entity_state = EntityState::Grounded;
         }
         CollisionSide::Bottom => {
-            entity_translation.y = solid_boundary.min.y - (entity_boundary.half_size().y / 2.0);
+            info!("Bottom");
+            entity_translation.y = solid_boundary.min.y - (entity_boundary.half_size().y);
             // if let Some(&mut velocity) = *entity_velocity {
             //     velocity.0.y = 0.0;
             // }
@@ -110,12 +111,13 @@ enum CollisionSide {
     Bottom,
 }
 
-fn find_collision_side(first: &Aabb2d, second: &Aabb2d) -> CollisionSide {
-    let closest = first.closest_point(second.center());
-    let offset = second.center() - closest;
-    let abs = offset.abs() - second.half_size();
+fn find_collision_side(solid: &Aabb2d, entity: &Aabb2d) -> CollisionSide {
+    let center = entity.center();
+    let closest = solid.closest_point(center);
+    let offset = center - closest;
+    let abs = offset.abs() - entity.half_size();
 
-    if first.contains(second) || abs.y > abs.x {
+    if solid.contains(entity) || abs.y > abs.x {
         if offset.y < 0.0 {
             CollisionSide::Bottom
         } else {
