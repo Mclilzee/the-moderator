@@ -27,7 +27,8 @@ pub struct Jumps {
 #[derive(Component, PartialEq, Debug)]
 pub enum EntityType {
     Grounded,
+    Falling,
+    Jumping,
     Flying,
     Solid,
-    Dead,
 }

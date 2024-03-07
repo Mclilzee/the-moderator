@@ -69,10 +69,8 @@ fn collision(mut colliders_query: Query<Colliders>) {
         solve_damage(
             damage1,
             health1.as_deref_mut(),
-            &mut state1,
             damage2,
             health2.as_deref_mut(),
-            &mut state2,
         );
     }
 }
@@ -80,26 +78,18 @@ fn collision(mut colliders_query: Query<Colliders>) {
 fn solve_damage(
     dmg1: Option<&Damage>,
     health1: Option<&mut Health>,
-    state1: &mut EntityType,
     dmg2: Option<&Damage>,
     health2: Option<&mut Health>,
-    state2: &mut EntityType,
 ) {
     if let Some(dmg) = dmg1 {
         if let Some(hp) = health2 {
             hp.0 -= dmg.0;
-            if hp.0 <= 0 {
-                *state2 = EntityType::Dead;
-            }
         }
     }
 
     if let Some(dmg) = dmg2 {
         if let Some(hp) = health1 {
             hp.0 -= dmg.0;
-            if hp.0 <= 0 {
-                *state1 = EntityType::Dead;
-            }
         }
     }
 }
@@ -118,6 +108,16 @@ fn solve_solid_collision(
         return;
     }
 
+    if *entity_state == EntityType::Grounded {
+        if let Some(velocity) = &entity_velocity {
+            if velocity.0.y > 0.0 {
+                *entity_state = EntityType::Jumping;
+            } else {
+                *entity_state = EntityType::Falling;
+            }
+        }
+    }
+
     match find_collision_side(solid_boundary, entity_boundary) {
         CollisionSide::Left => {
             entity_translation.x = solid_boundary.min.x - (entity_boundary.half_size().x);
@@ -126,6 +126,7 @@ fn solve_solid_collision(
             entity_translation.x = solid_boundary.max.x + (entity_boundary.half_size().x);
         }
         CollisionSide::Top => {
+            *entity_state = EntityType::Grounded;
             entity_translation.y = solid_boundary.max.y + (entity_boundary.half_size().y);
             if let Some(velocity) = entity_velocity {
                 velocity.0.y = 0.0;
