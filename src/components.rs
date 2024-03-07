@@ -19,10 +19,10 @@ pub struct Velocity(pub Vec2);
 pub struct Collider(pub Vec2);
 
 #[derive(Component)]
-pub struct Flying;
-
-#[derive(Component)]
-pub struct Solid;
+pub struct Jumps {
+    pub current: u8,
+    pub max: u8,
+}
 
 #[derive(Component, PartialEq, Debug)]
 pub enum EntityType {

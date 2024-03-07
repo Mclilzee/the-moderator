@@ -1,8 +1,6 @@
 use self::constants::{PLAYER_JUMP_HEIGHT, PLAYER_SPEED};
-use super::constants::ALLOWED_JUMPS;
 use super::*;
-use crate::components::{EntityType, Velocity};
-use crate::consts::GRAVITY_ACCELERATION;
+use crate::components::{Jumps, Velocity};
 use bevy::prelude::*;
 
 pub fn input(
@@ -19,11 +17,9 @@ pub fn input(
         velocity.0.x = -PLAYER_SPEED;
     }
 
-    if keys.any_just_pressed([KeyCode::ArrowUp, KeyCode::Space]) {
-        if jumps.0 > 0 {
-            velocity.0.y = PLAYER_JUMP_HEIGHT + GRAVITY_ACCELERATION;
-            jumps.0 -= 1;
-        }
+    if keys.any_just_pressed([KeyCode::ArrowUp, KeyCode::Space]) && jumps.current > 0 {
+        velocity.0.y = PLAYER_JUMP_HEIGHT;
+        jumps.current -= 1;
     }
 
     if keys.pressed(KeyCode::KeyW) {
