@@ -4,7 +4,7 @@ use bevy::{
 };
 
 use crate::{
-    components::{Collider, Damage, EntityState, Health, Velocity},
+    components::{Collider, Damage, EntityType, Flying, Health, Velocity},
     consts::{GRAVITY_ACCELERATION, GRAVITY_MAX_SPEED},
     InGameSet,
 };
@@ -24,7 +24,7 @@ impl Plugin for PhysicsPlugin {
 
 type Colliders<'a> = (
     &'a Collider,
-    &'a mut EntityState,
+    &'a mut EntityType,
     &'a mut Transform,
     Option<&'a mut Velocity>,
     Option<&'a Damage>,
@@ -82,16 +82,16 @@ fn collision(mut colliders_query: Query<Colliders>) {
 fn solve_damage(
     dmg1: Option<&Damage>,
     health1: Option<&mut Health>,
-    state1: &mut EntityState,
+    state1: &mut EntityType,
     dmg2: Option<&Damage>,
     health2: Option<&mut Health>,
-    state2: &mut EntityState,
+    state2: &mut EntityType,
 ) {
     if let Some(dmg) = dmg1 {
         if let Some(hp) = health2 {
             hp.0 -= dmg.0;
             if hp.0 <= 0 {
-                *state2 = EntityState::Dead;
+                *state2 = EntityType::Dead;
             }
         }
     }
@@ -100,7 +100,7 @@ fn solve_damage(
         if let Some(hp) = health1 {
             hp.0 -= dmg.0;
             if hp.0 <= 0 {
-                *state1 = EntityState::Dead;
+                *state1 = EntityType::Dead;
             }
         }
     }
@@ -108,14 +108,14 @@ fn solve_damage(
 
 fn solve_solid_collision(
     solid_boundary: &Aabb2d,
-    solid_state: &EntityState,
+    solid_state: &EntityType,
     entity_boundary: &Aabb2d,
     entity_translation: &mut Vec3,
     entity_velocity: Option<&mut Velocity>,
-    entity_state: &mut EntityState,
+    entity_state: &mut EntityType,
 ) {
-    if *solid_state != EntityState::Solid
-        || (*entity_state == EntityState::Solid && entity_velocity.is_none())
+    if *solid_state != EntityType::Solid
+        || (*entity_state == EntityType::Solid && entity_velocity.is_none())
     {
         return;
     }
@@ -169,13 +169,14 @@ fn find_collision_side(solid: &Aabb2d, entity: &Aabb2d) -> CollisionSide {
     }
 }
 
-type MovingActors<'a> = (&'a mut Transform, &'a mut Velocity);
-
+type MovingActors<'a> = (&'a mut Transform, &'a mut Velocity, &'a EntityType);
 fn movement(mut actors_query: Query<MovingActors>, time: Res<Time>) {
-    for (mut transform, mut velocity) in actors_query.iter_mut() {
-        velocity.0.y -= GRAVITY_ACCELERATION;
-        if velocity.0.y < -GRAVITY_MAX_SPEED {
-            velocity.0.y = -GRAVITY_MAX_SPEED;
+    for (mut transform, mut velocity, entity_type) in actors_query.iter_mut() {
+        if *entity_type == EntityType::Grounded {
+            velocity.0.y -= GRAVITY_ACCELERATION;
+            if velocity.0.y < -GRAVITY_MAX_SPEED {
+                velocity.0.y = -GRAVITY_MAX_SPEED;
+            }
         }
 
         let velocity = velocity.0.extend(0.0) * time.delta_seconds();
@@ -183,11 +184,8 @@ fn movement(mut actors_query: Query<MovingActors>, time: Res<Time>) {
     }
 }
 
-fn clean_dead(mut commands: Commands, dead_query: Query<(Entity, &EntityState)>) {
-    for (id, _) in dead_query
-        .iter()
-        .filter(|(_, state)| *state == &EntityState::Dead)
-    {
+fn clean_dead(mut commands: Commands, dead_query: Query<(Entity, &Health)>) {
+    for (id, _) in dead_query.iter().filter(|(_, hp)| hp.0 > 0) {
         if let Some(entity) = commands.get_entity(id) {
             entity.despawn_recursive();
         }

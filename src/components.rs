@@ -21,11 +21,15 @@ pub struct Velocity(pub Vec2);
 #[derive(Component)]
 pub struct Collider(pub Vec2);
 
+#[derive(Component)]
+pub struct Flying;
+
+#[derive(Component)]
+pub struct Solid;
+
 #[derive(Component, PartialEq, Debug)]
-pub enum EntityState {
+pub enum EntityType {
     Grounded,
     Flying,
     Solid,
-    Airborn,
-    Dead,
 }
