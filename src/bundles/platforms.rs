@@ -1,11 +1,11 @@
 use bevy::prelude::*;
 
-use crate::components::{Collider, EntityState};
+use crate::components::{Collider, EntityType};
 
 #[derive(Bundle)]
 pub struct Platform {
     collider: Collider,
-    state: EntityState,
+    state: EntityType,
     sprite_sheet: SpriteBundle,
 }
 
@@ -22,7 +22,7 @@ impl Platform {
             },
 
             collider: Collider(size),
-            state: EntityState::Solid,
+            state: EntityType::Solid,
         }
     }
 }

@@ -22,10 +22,22 @@ pub struct Collider(pub Vec2);
 pub struct AvailableJumps(pub u8);
 
 #[derive(Component, PartialEq, Debug)]
-pub enum EntityState {
-    Grounded,
-    Falling,
-    Jumping,
-    Flying,
+pub enum EntityType {
+    Grounded(GroundedState),
+    Flying(FlyingState),
     Solid,
+}
+
+#[derive(Component, PartialEq, Debug)]
+pub enum GroundedState {
+    Falling,
+    Standing,
+    Jumping,
+}
+
+#[derive(Component, PartialEq, Debug)]
+pub enum FlyingState {
+    Ascending,
+    Descending,
+    Hovering,
 }

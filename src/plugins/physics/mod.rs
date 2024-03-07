@@ -4,7 +4,7 @@ use bevy::{
 };
 
 use crate::{
-    components::{Collider, Damage, EntityState, Health, Player, Velocity},
+    components::{Collider, Damage, EntityType, Health, Player, Velocity},
     consts::{GRAVITY_ACCELERATION, GRAVITY_MAX_SPEED},
     InGameSet,
 };
@@ -22,7 +22,7 @@ impl Plugin for PhysicsPlugin {
 
 type Colliders<'a> = (
     &'a Collider,
-    &'a mut EntityState,
+    &'a mut EntityType,
     &'a mut Transform,
     Option<&'a mut Velocity>,
     Option<&'a Damage>,
@@ -45,6 +45,8 @@ fn collision(mut colliders_query: Query<Colliders>) {
         );
 
         if !first.intersects(&second) {
+            set_grounded(&mut state1, velocity1.as_deref_mut());
+            set_grounded(&mut state2, velocity2.as_deref_mut());
             continue;
         }
 
@@ -75,6 +77,18 @@ fn collision(mut colliders_query: Query<Colliders>) {
     }
 }
 
+fn set_grounded(state: &mut EntityType, velocity: Option<&mut Velocity>) {
+    if *state == EntityType::Grounded {
+        if let Some(velocity) = &velocity {
+            if velocity.0.y < 0.0 {
+                *state = EntityType::Falling;
+            } else {
+                *state = EntityType::Jumping;
+            }
+        }
+    }
+}
+
 fn solve_damage(
     dmg1: Option<&Damage>,
     health1: Option<&mut Health>,
@@ -96,24 +110,15 @@ fn solve_damage(
 
 fn solve_solid_collision(
     solid_boundary: &Aabb2d,
-    solid_state: &EntityState,
+    solid_state: &EntityType,
     entity_boundary: &Aabb2d,
     entity_translation: &mut Vec3,
     entity_velocity: Option<&mut Velocity>,
-    entity_state: &mut EntityState,
+    entity_state: &mut EntityType,
 ) {
-    if *solid_state != EntityState::Solid
-        || (*entity_state == EntityState::Solid && entity_velocity.is_none())
+    if *solid_state != EntityType::Solid
+        || (*entity_state == EntityType::Solid && entity_velocity.is_none())
     {
-        if *entity_state == EntityState::Grounded {
-            if let Some(velocity) = &entity_velocity {
-                if velocity.0.y > 0.0 {
-                    *entity_state = EntityState::Jumping;
-                } else {
-                    *entity_state = EntityState::Falling;
-                }
-            }
-        }
         return;
     }
 
@@ -125,14 +130,13 @@ fn solve_solid_collision(
             entity_translation.x = solid_boundary.max.x + (entity_boundary.half_size().x);
         }
         CollisionSide::Top => {
-            *entity_state = EntityState::Grounded;
+            *entity_state = EntityType::Grounded;
             entity_translation.y = solid_boundary.max.y + (entity_boundary.half_size().y);
             if let Some(velocity) = entity_velocity {
                 velocity.0.y = 0.0;
             }
         }
         CollisionSide::Bottom => {
-            info!("Bottom");
             entity_translation.y = solid_boundary.min.y - (entity_boundary.half_size().y);
             if let Some(velocity) = entity_velocity {
                 velocity.0.y = 0.0;
@@ -167,11 +171,11 @@ fn find_collision_side(solid: &Aabb2d, entity: &Aabb2d) -> CollisionSide {
     }
 }
 
-type MovingActors<'a> = (&'a mut Transform, &'a mut Velocity, &'a EntityState);
+type MovingActors<'a> = (&'a mut Transform, &'a mut Velocity, &'a EntityType);
 fn movement(mut actors_query: Query<MovingActors, With<Player>>, time: Res<Time>) {
-    for (mut transform, mut velocity, entity_type) in actors_query.iter_mut() {
-        match *entity_type {
-            EntityState::Jumping | EntityState::Falling => {
+    for (mut transform, mut velocity, state) in actors_query.iter_mut() {
+        match *state {
+            EntityType::Jumping | EntityType::Falling => {
                 velocity.0.y -= GRAVITY_ACCELERATION;
                 if velocity.0.y < -GRAVITY_MAX_SPEED {
                     velocity.0.y = -GRAVITY_MAX_SPEED;
@@ -180,8 +184,10 @@ fn movement(mut actors_query: Query<MovingActors, With<Player>>, time: Res<Time>
             _ => (),
         }
 
+        // info!("State {:?}", state);
+
         let velocity = velocity.0.extend(0.0) * time.delta_seconds();
-        println!("Velocity {}", velocity.y);
+        // println!("Velocity {}", velocity.y);
         transform.translation += velocity;
     }
 }
