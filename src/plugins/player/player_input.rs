@@ -22,8 +22,6 @@ pub fn input(
             jumps.0 = PLAYER_MAX_JUMPS;
         }
 
-        info!("Entity State {:?}", state);
-
         if jumps.0 > 0 {
             velocity.0.y = PLAYER_JUMP_HEIGHT;
             jumps.0 -= 1;

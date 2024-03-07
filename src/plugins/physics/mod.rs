@@ -158,13 +158,11 @@ fn find_collision_side(solid: &Aabb2d, entity: &Aabb2d) -> CollisionSide {
 
 type MovingActors<'a> = (&'a mut Transform, &'a mut Velocity, &'a EntityType);
 fn movement(mut actors_query: Query<MovingActors, With<Player>>, time: Res<Time>) {
-    let delta_time = time.delta_seconds();
     for (mut transform, mut velocity, entity_type) in actors_query.iter_mut() {
         if let EntityType::Grounded = *entity_type {
-            velocity.0.y -= GRAVITY_ACCELERATION * delta_time;
-            let max_speed = GRAVITY_MAX_SPEED * delta_time;
-            if velocity.0.y < -max_speed {
-                velocity.0.y = -max_speed;
+            velocity.0.y -= GRAVITY_ACCELERATION;
+            if velocity.0.y < -GRAVITY_MAX_SPEED {
+                velocity.0.y = -GRAVITY_MAX_SPEED;
             }
         }
 
