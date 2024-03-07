@@ -7,9 +7,9 @@ use bevy::prelude::*;
 
 pub fn input(
     keys: Res<ButtonInput<KeyCode>>,
-    mut query: Query<(&mut Velocity, &mut MaxJumps, &mut EntityType), With<Player>>,
+    mut query: Query<(&mut Velocity), With<Player>>,
 ) {
-    let (mut velocity, mut jumps, mut state) = query.single_mut();
+    let (mut velocity, mut jumps) = query.single_mut();
     velocity.0.x = 0.0;
     if keys.any_pressed([KeyCode::ArrowRight, KeyCode::KeyD]) {
         velocity.0.x = PLAYER_SPEED;

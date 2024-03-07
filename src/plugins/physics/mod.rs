@@ -15,7 +15,7 @@ impl Plugin for PhysicsPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
             Update,
-            (movement, collision, clean_dead)
+            (movement, collision)
                 .chain()
                 .in_set(InGameSet::Play),
         );
