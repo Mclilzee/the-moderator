@@ -5,6 +5,7 @@ mod player_input;
 use self::constants::PLAYER_MAX_JUMPS;
 use self::{animation::animate, constants::PLAYER_STARING_HP, player_input::input};
 use super::asset_loader::{AnimationKey, AnimationMap};
+use crate::components::Jumps;
 use crate::{
     bundles::actors::Actor,
     components::{AvailableJumps, Damage, Player},

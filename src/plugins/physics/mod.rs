@@ -45,8 +45,6 @@ fn collision(mut colliders_query: Query<Colliders>) {
         );
 
         if !first.intersects(&second) {
-            set_grounded(&mut state1, velocity1.as_deref_mut());
-            set_grounded(&mut state2, velocity2.as_deref_mut());
             continue;
         }
 
