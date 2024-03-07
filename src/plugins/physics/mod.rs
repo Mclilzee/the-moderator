@@ -4,7 +4,7 @@ use bevy::{
 };
 
 use crate::{
-    components::{Collider, Damage, EntityType, Flying, Health, Velocity},
+    components::{Collider, Damage, EntityType, Health, Velocity},
     consts::{GRAVITY_ACCELERATION, GRAVITY_MAX_SPEED},
     InGameSet,
 };
@@ -15,9 +15,7 @@ impl Plugin for PhysicsPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
             Update,
-            (movement, collision)
-                .chain()
-                .in_set(InGameSet::Play),
+            (movement, collision).chain().in_set(InGameSet::Play),
         );
     }
 }
