@@ -28,7 +28,10 @@ fn spawn_player(mut commands: Commands, asset_loader: Res<AnimationMap>) {
         Player,
         AvailableJumps(PLAYER_MAX_JUMPS),
         Damage(5),
-        Jumps { current: 0, max: 2 },
+        Jumps {
+            current: 20,
+            max: 2,
+        },
     );
 
     let animation = asset_loader
