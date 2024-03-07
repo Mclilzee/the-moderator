@@ -5,7 +5,7 @@ use crate::{
 use bevy::prelude::*;
 use rand::Rng;
 
-const SPAMMER_STARTING_HP: i32 = 5;
+const SPAMMER_STARTING_HP: i32 = 20;
 const SPAMMER_SPEED: f32 = 40.0;
 const SPAMMER_WIDTH: f32 = 25.0;
 const SPAMMER_HEIGHT: f32 = 40.0;
@@ -55,7 +55,7 @@ fn spawn_spammer(
         );
         spammer.movable_object.sprite_sheet.transform.translation = Vec3::new(spawn_x, 0.0, 0.0);
 
-        commands.spawn((spammer, Spammer, Health(20)));
+        commands.spawn((spammer, Spammer));
     }
 }
 
