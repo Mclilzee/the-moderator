@@ -51,7 +51,7 @@ fn collision(mut colliders_query: Query<Colliders>) {
             &state1,
             &second,
             &mut transform2.translation,
-            &velocity2,
+            velocity2.as_deref_mut(),
             &mut state2,
         );
 
@@ -60,7 +60,7 @@ fn collision(mut colliders_query: Query<Colliders>) {
             &state2,
             &first,
             &mut transform1.translation,
-            &velocity1,
+            velocity1.as_deref_mut(),
             &mut state1,
         );
     }
@@ -71,7 +71,7 @@ fn solve_solid_collision(
     solid_state: &EntityState,
     entity_boundary: &Aabb2d,
     entity_translation: &mut Vec3,
-    entity_velocity: &Option<Mut<'_, Velocity>>,
+    entity_velocity: Option<&mut Velocity>,
     entity_state: &mut EntityState,
 ) {
     if *solid_state != EntityState::Solid
@@ -89,17 +89,17 @@ fn solve_solid_collision(
         }
         CollisionSide::Top => {
             entity_translation.y = solid_boundary.max.y + (entity_boundary.half_size().y);
-            // if let Some(&mut velocity) = *entity_velocity {
-            //     velocity.0.y = 0.0;
-            // }
+            if let Some(velocity) = entity_velocity {
+                velocity.0.y = 0.0;
+            }
             *entity_state = EntityState::Grounded;
         }
         CollisionSide::Bottom => {
             info!("Bottom");
             entity_translation.y = solid_boundary.min.y - (entity_boundary.half_size().y);
-            // if let Some(&mut velocity) = *entity_velocity {
-            //     velocity.0.y = 0.0;
-            // }
+            if let Some(velocity) = entity_velocity {
+                velocity.0.y = 0.0;
+            }
         }
     }
 }
