@@ -4,7 +4,7 @@ use bevy::{
 };
 
 use crate::{
-    components::{Collider, Damage, EntityType, Health, Player, Velocity},
+    components::{Collider, Damage, EntityState, Health, Player, Velocity},
     consts::{GRAVITY_ACCELERATION, GRAVITY_MAX_SPEED},
     InGameSet,
 };
@@ -22,7 +22,7 @@ impl Plugin for PhysicsPlugin {
 
 type Colliders<'a> = (
     &'a Collider,
-    &'a mut EntityType,
+    &'a mut EntityState,
     &'a mut Transform,
     Option<&'a mut Velocity>,
     Option<&'a Damage>,
@@ -96,24 +96,24 @@ fn solve_damage(
 
 fn solve_solid_collision(
     solid_boundary: &Aabb2d,
-    solid_state: &EntityType,
+    solid_state: &EntityState,
     entity_boundary: &Aabb2d,
     entity_translation: &mut Vec3,
     entity_velocity: Option<&mut Velocity>,
-    entity_state: &mut EntityType,
+    entity_state: &mut EntityState,
 ) {
-    if *solid_state != EntityType::Solid
-        || (*entity_state == EntityType::Solid && entity_velocity.is_none())
+    if *solid_state != EntityState::Solid
+        || (*entity_state == EntityState::Solid && entity_velocity.is_none())
     {
         return;
     }
 
-    if *entity_state == EntityType::Grounded {
+    if *entity_state == EntityState::Grounded {
         if let Some(velocity) = &entity_velocity {
             if velocity.0.y > 0.0 {
-                *entity_state = EntityType::Jumping;
+                *entity_state = EntityState::Jumping;
             } else {
-                *entity_state = EntityType::Falling;
+                *entity_state = EntityState::Falling;
             }
         }
     }
@@ -126,7 +126,7 @@ fn solve_solid_collision(
             entity_translation.x = solid_boundary.max.x + (entity_boundary.half_size().x);
         }
         CollisionSide::Top => {
-            *entity_state = EntityType::Grounded;
+            *entity_state = EntityState::Grounded;
             entity_translation.y = solid_boundary.max.y + (entity_boundary.half_size().y);
             if let Some(velocity) = entity_velocity {
                 velocity.0.y = 0.0;
@@ -168,13 +168,19 @@ fn find_collision_side(solid: &Aabb2d, entity: &Aabb2d) -> CollisionSide {
     }
 }
 
-type MovingActors<'a> = (&'a mut Transform, &'a mut Velocity, &'a EntityType);
+type MovingActors<'a> = (&'a mut Transform, &'a mut Velocity, &'a mut EntityState);
 fn movement(mut actors_query: Query<MovingActors, With<Player>>, time: Res<Time>) {
-    for (mut transform, mut velocity, entity_type) in actors_query.iter_mut() {
-        if *entity_type == EntityType::Grounded {
+    for (mut transform, mut velocity, mut entity_type) in actors_query.iter_mut() {
+        if *entity_type == EntityState::Grounded {
             velocity.0.y -= GRAVITY_ACCELERATION;
             if velocity.0.y < -GRAVITY_MAX_SPEED {
                 velocity.0.y = -GRAVITY_MAX_SPEED;
+            }
+
+            if velocity.0.y > 0.0 {
+                *entity_type = EntityState::Jumping;
+            } else {
+                *entity_type = EntityState::Falling;
             }
         }
 

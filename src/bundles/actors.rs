@@ -1,4 +1,4 @@
-use crate::components::EntityType;
+use crate::components::EntityState;
 use crate::components::{Collider, Health};
 use bevy::prelude::*;
 
@@ -9,11 +9,11 @@ pub struct Actor {
     pub movable_object: MovableSprite,
     pub collider: Collider,
     pub hp: Health,
-    pub entity_state: EntityType,
+    pub entity_state: EntityState,
 }
 
 impl Actor {
-    fn new(entity_state: EntityType, hp: i32, size: Vec2) -> Self {
+    fn new(entity_state: EntityState, hp: i32, size: Vec2) -> Self {
         Self {
             movable_object: MovableSprite::default(),
             collider: Collider(size),
@@ -23,10 +23,10 @@ impl Actor {
     }
 
     pub fn grounded(hp: i32, size: Vec2) -> Self {
-        Self::new(EntityType::Grounded, hp, size)
+        Self::new(EntityState::Grounded, hp, size)
     }
 
     pub fn flying(hp: i32, size: Vec2) -> Self {
-        Self::new(EntityType::Flying, hp, size)
+        Self::new(EntityState::Flying, hp, size)
     }
 }
