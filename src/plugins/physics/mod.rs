@@ -65,6 +65,42 @@ fn collision(mut colliders_query: Query<Colliders>) {
             velocity1.as_deref_mut(),
             &mut state1,
         );
+
+        solve_damage(
+            damage1.as_deref(),
+            health1.as_deref_mut(),
+            &mut state1,
+            damage2.as_deref(),
+            health2.as_deref_mut(),
+            &mut state2,
+        );
+    }
+}
+
+fn solve_damage(
+    dmg1: Option<&Damage>,
+    health1: Option<&mut Health>,
+    state1: &mut EntityState,
+    dmg2: Option<&Damage>,
+    health2: Option<&mut Health>,
+    state2: &mut EntityState,
+) {
+    if let Some(dmg) = dmg1 {
+        if let Some(hp) = health2 {
+            hp.0 -= dmg.0;
+            if hp.0 <= 0 {
+                *state2 = EntityState::Dead;
+            }
+        }
+    }
+
+    if let Some(dmg) = dmg2 {
+        if let Some(hp) = health1 {
+            hp.0 -= dmg.0;
+            if hp.0 <= 0 {
+                *state1 = EntityState::Dead;
+            }
+        }
     }
 }
 
