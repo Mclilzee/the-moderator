@@ -4,7 +4,7 @@ use bevy::{
 };
 
 use crate::{
-    components::{Collider, Damage, EntityType, Health, Velocity},
+    components::{Collider, Damage, EntityType, Health, Player, Velocity},
     consts::{GRAVITY_ACCELERATION, GRAVITY_MAX_SPEED},
     InGameSet,
 };
@@ -168,7 +168,7 @@ fn find_collision_side(solid: &Aabb2d, entity: &Aabb2d) -> CollisionSide {
 }
 
 type MovingActors<'a> = (&'a mut Transform, &'a mut Velocity, &'a EntityType);
-fn movement(mut actors_query: Query<MovingActors>, time: Res<Time>) {
+fn movement(mut actors_query: Query<MovingActors, With<Player>>, time: Res<Time>) {
     for (mut transform, mut velocity, entity_type) in actors_query.iter_mut() {
         if *entity_type == EntityType::Grounded {
             velocity.0.y -= GRAVITY_ACCELERATION;
@@ -178,6 +178,7 @@ fn movement(mut actors_query: Query<MovingActors>, time: Res<Time>) {
         }
 
         let velocity = velocity.0.extend(0.0) * time.delta_seconds();
+        println!("Velocity {}", velocity.y);
         transform.translation += velocity;
     }
 }
