@@ -29,21 +29,7 @@ pub struct Jumps {
 
 #[derive(Component, PartialEq, Debug)]
 pub enum EntityType {
-    Grounded(GroundedState),
-    Flying(FlyingState),
+    Grounded,
+    Flying,
     Solid,
-}
-
-#[derive(Component, PartialEq, Debug)]
-pub enum GroundedState {
-    Falling,
-    Standing,
-    Jumping,
-}
-
-#[derive(Component, PartialEq, Debug)]
-pub enum FlyingState {
-    Ascending,
-    Descending,
-    Hovering,
 }

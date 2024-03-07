@@ -77,18 +77,6 @@ fn collision(mut colliders_query: Query<Colliders>) {
     }
 }
 
-fn set_grounded(state: &mut EntityType, velocity: Option<&mut Velocity>) {
-    if *state == EntityType::Grounded {
-        if let Some(velocity) = &velocity {
-            if velocity.0.y < 0.0 {
-                *state = EntityType::Falling;
-            } else {
-                *state = EntityType::Jumping;
-            }
-        }
-    }
-}
-
 fn solve_damage(
     dmg1: Option<&Damage>,
     health1: Option<&mut Health>,
@@ -130,7 +118,6 @@ fn solve_solid_collision(
             entity_translation.x = solid_boundary.max.x + (entity_boundary.half_size().x);
         }
         CollisionSide::Top => {
-            *entity_state = EntityType::Grounded;
             entity_translation.y = solid_boundary.max.y + (entity_boundary.half_size().y);
             if let Some(velocity) = entity_velocity {
                 velocity.0.y = 0.0;
@@ -173,21 +160,17 @@ fn find_collision_side(solid: &Aabb2d, entity: &Aabb2d) -> CollisionSide {
 
 type MovingActors<'a> = (&'a mut Transform, &'a mut Velocity, &'a EntityType);
 fn movement(mut actors_query: Query<MovingActors, With<Player>>, time: Res<Time>) {
-    for (mut transform, mut velocity, state) in actors_query.iter_mut() {
-        match *state {
-            EntityType::Jumping | EntityType::Falling => {
-                velocity.0.y -= GRAVITY_ACCELERATION;
-                if velocity.0.y < -GRAVITY_MAX_SPEED {
-                    velocity.0.y = -GRAVITY_MAX_SPEED;
-                }
+    let delta_time = time.delta_seconds();
+    for (mut transform, mut velocity, entity_type) in actors_query.iter_mut() {
+        if let EntityType::Grounded = *entity_type {
+            velocity.0.y -= GRAVITY_ACCELERATION * delta_time;
+            let max_speed = GRAVITY_MAX_SPEED * delta_time;
+            if velocity.0.y < -max_speed {
+                velocity.0.y = -max_speed;
             }
-            _ => (),
         }
 
-        // info!("State {:?}", state);
-
         let velocity = velocity.0.extend(0.0) * time.delta_seconds();
-        // println!("Velocity {}", velocity.y);
         transform.translation += velocity;
     }
 }
