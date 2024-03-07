@@ -25,14 +25,14 @@ type Colliders<'a> = (
     &'a mut EntityState,
     &'a mut Transform,
     Option<&'a mut Velocity>,
-    Option<&'a mut Damage>,
+    Option<&'a Damage>,
     Option<&'a mut Health>,
 );
 
 fn collision(mut colliders_query: Query<Colliders>) {
     let mut combination = colliders_query.iter_combinations_mut();
     while let Some(
-        [(collider1, mut state1, mut transform1, mut velocity1, mut damage1, mut health1), (collider2, mut state2, mut transform2, mut velocity2, mut damage2, mut health2)],
+        [(collider1, mut state1, mut transform1, mut velocity1, damage1, mut health1), (collider2, mut state2, mut transform2, mut velocity2, damage2, mut health2)],
     ) = combination.fetch_next()
     {
         let first = Aabb2d::new(
@@ -67,10 +67,10 @@ fn collision(mut colliders_query: Query<Colliders>) {
         );
 
         solve_damage(
-            damage1.as_deref(),
+            damage1,
             health1.as_deref_mut(),
             &mut state1,
-            damage2.as_deref(),
+            damage2,
             health2.as_deref_mut(),
             &mut state2,
         );
