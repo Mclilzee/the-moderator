@@ -5,7 +5,7 @@ use bevy::{
 
 use crate::{
     components::{Collider, Damage, EntityType, Health, Player, Velocity},
-    consts::{GRAVITY_ACCELERATION, GRAVITY_MAX_SPEED},
+    consts::GRAVITY_ACCELERATION,
     InGameSet,
 };
 

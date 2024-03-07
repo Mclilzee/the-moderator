@@ -1,2 +1,1 @@
 pub const GRAVITY_ACCELERATION: f32 = 350.0;
-pub const GRAVITY_MAX_SPEED: f32 = 1000.0;

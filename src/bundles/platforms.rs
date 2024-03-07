@@ -14,7 +14,7 @@ impl Platform {
         Self {
             sprite_sheet: SpriteBundle {
                 sprite: Sprite {
-                    color: Color::PURPLE,
+                    color,
                     custom_size: Some(size),
                     ..default()
                 },
