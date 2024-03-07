@@ -173,8 +173,8 @@ fn movement(mut actors_query: Query<MovingActors>, time: Res<Time>) {
 
         if let EntityType::Grounded = *entity_type {
             velocity.0.y -= GRAVITY_ACCELERATION * delta_time;
-            if velocity.0.y < -GRAVITY_MAX_SPEED {
-                velocity.0.y = -GRAVITY_MAX_SPEED;
+            if velocity.0.y < -GRAVITY_ACCELERATION {
+                velocity.0.y = -GRAVITY_ACCELERATION;
             }
         }
     }
