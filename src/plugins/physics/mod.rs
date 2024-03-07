@@ -9,13 +9,22 @@ use crate::{
     InGameSet,
 };
 
+#[derive(Resource)]
+struct VelocityPrinter(Timer);
+
 pub struct PhysicsPlugin;
 
 impl Plugin for PhysicsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(
+        app.insert_resource(VelocityPrinter(Timer::from_seconds(
+            0.2,
+            TimerMode::Repeating,
+        )))
+        .add_systems(
             Update,
-            (movement, collision).chain().in_set(InGameSet::Play),
+            (movement, print_velocity, collision)
+                .chain()
+                .in_set(InGameSet::Play),
         );
     }
 }
@@ -157,16 +166,27 @@ fn find_collision_side(solid: &Aabb2d, entity: &Aabb2d) -> CollisionSide {
 }
 
 type MovingActors<'a> = (&'a mut Transform, &'a mut Velocity, &'a EntityType);
-fn movement(mut actors_query: Query<MovingActors, With<Player>>, time: Res<Time>) {
+fn movement(mut actors_query: Query<MovingActors>, time: Res<Time>) {
     for (mut transform, mut velocity, entity_type) in actors_query.iter_mut() {
+        let delta_time = time.delta_seconds();
+        transform.translation += velocity.0.extend(0.0) * delta_time;
+
         if let EntityType::Grounded = *entity_type {
-            velocity.0.y -= GRAVITY_ACCELERATION;
+            velocity.0.y -= GRAVITY_ACCELERATION * delta_time;
             if velocity.0.y < -GRAVITY_MAX_SPEED {
                 velocity.0.y = -GRAVITY_MAX_SPEED;
             }
         }
+    }
+}
 
-        let velocity = velocity.0.extend(0.0) * time.delta_seconds();
-        transform.translation += velocity;
+fn print_velocity(
+    velocity_query: Query<&Velocity, With<Player>>,
+    time: Res<Time>,
+    mut velocity_timer: ResMut<VelocityPrinter>,
+) {
+    if velocity_timer.0.tick(time.delta()).finished() {
+        let velocity = velocity_query.single();
+        info!("Velocity {}", velocity.0.y);
     }
 }
