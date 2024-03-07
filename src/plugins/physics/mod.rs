@@ -105,17 +105,16 @@ fn solve_solid_collision(
     if *solid_state != EntityState::Solid
         || (*entity_state == EntityState::Solid && entity_velocity.is_none())
     {
-        return;
-    }
-
-    if *entity_state == EntityState::Grounded {
-        if let Some(velocity) = &entity_velocity {
-            if velocity.0.y > 0.0 {
-                *entity_state = EntityState::Jumping;
-            } else {
-                *entity_state = EntityState::Falling;
+        if *entity_state == EntityState::Grounded {
+            if let Some(velocity) = &entity_velocity {
+                if velocity.0.y > 0.0 {
+                    *entity_state = EntityState::Jumping;
+                } else {
+                    *entity_state = EntityState::Falling;
+                }
             }
         }
+        return;
     }
 
     match find_collision_side(solid_boundary, entity_boundary) {
@@ -168,20 +167,17 @@ fn find_collision_side(solid: &Aabb2d, entity: &Aabb2d) -> CollisionSide {
     }
 }
 
-type MovingActors<'a> = (&'a mut Transform, &'a mut Velocity, &'a mut EntityState);
+type MovingActors<'a> = (&'a mut Transform, &'a mut Velocity, &'a EntityState);
 fn movement(mut actors_query: Query<MovingActors, With<Player>>, time: Res<Time>) {
-    for (mut transform, mut velocity, mut entity_type) in actors_query.iter_mut() {
-        if *entity_type == EntityState::Grounded {
-            velocity.0.y -= GRAVITY_ACCELERATION;
-            if velocity.0.y < -GRAVITY_MAX_SPEED {
-                velocity.0.y = -GRAVITY_MAX_SPEED;
+    for (mut transform, mut velocity, entity_type) in actors_query.iter_mut() {
+        match *entity_type {
+            EntityState::Jumping | EntityState::Falling => {
+                velocity.0.y -= GRAVITY_ACCELERATION;
+                if velocity.0.y < -GRAVITY_MAX_SPEED {
+                    velocity.0.y = -GRAVITY_MAX_SPEED;
+                }
             }
-
-            if velocity.0.y > 0.0 {
-                *entity_type = EntityState::Jumping;
-            } else {
-                *entity_type = EntityState::Falling;
-            }
+            _ => (),
         }
 
         let velocity = velocity.0.extend(0.0) * time.delta_seconds();
