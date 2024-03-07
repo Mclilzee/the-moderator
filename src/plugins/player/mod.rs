@@ -6,7 +6,7 @@ use self::{animation::animate, constants::PLAYER_STARING_HP, player_input::input
 use super::asset_loader::{AnimationKey, AnimationMap};
 use crate::{
     bundles::actors::Actor,
-    components::{MaxJumps, Player},
+    components::{Damage, MaxJumps, Player},
     InGameSet,
 };
 use bevy::{prelude::*, render::camera::ScalingMode};
@@ -26,6 +26,7 @@ fn spawn_player(mut commands: Commands, asset_loader: Res<AnimationMap>) {
         Actor::grounded(PLAYER_STARING_HP, Vec2::new(15.0, 35.0)),
         Player,
         MaxJumps(2),
+        Damage(5),
     );
 
     let animation = asset_loader

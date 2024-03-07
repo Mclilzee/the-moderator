@@ -1,6 +1,6 @@
 use crate::{
     bundles::actors::Actor,
-    components::{Player, Spammer, Velocity},
+    components::{Health, Player, Spammer, Velocity},
 };
 use bevy::prelude::*;
 use rand::Rng;
@@ -55,7 +55,7 @@ fn spawn_spammer(
         );
         spammer.movable_object.sprite_sheet.transform.translation = Vec3::new(spawn_x, 0.0, 0.0);
 
-        commands.spawn((spammer, Spammer));
+        commands.spawn((spammer, Spammer, Health(20)));
     }
 }
 
