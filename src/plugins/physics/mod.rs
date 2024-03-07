@@ -71,8 +71,10 @@ fn collision(mut colliders_query: Query<Colliders>) {
         solve_damage(
             damage1,
             health1.as_deref_mut(),
+            &mut state1,
             damage2,
             health2.as_deref_mut(),
+            &mut state2,
         );
     }
 }
@@ -80,18 +82,26 @@ fn collision(mut colliders_query: Query<Colliders>) {
 fn solve_damage(
     dmg1: Option<&Damage>,
     health1: Option<&mut Health>,
+    state1: &mut EntityType,
     dmg2: Option<&Damage>,
     health2: Option<&mut Health>,
+    state2: &mut EntityType,
 ) {
     if let Some(dmg) = dmg1 {
         if let Some(hp) = health2 {
             hp.0 -= dmg.0;
+            if hp.0 <= 0 {
+                *state2 = EntityType::Dead;
+            }
         }
     }
 
     if let Some(dmg) = dmg2 {
         if let Some(hp) = health1 {
             hp.0 -= dmg.0;
+            if hp.0 <= 0 {
+                *state1 = EntityType::Dead;
+            }
         }
     }
 }
@@ -171,13 +181,5 @@ fn movement(mut actors_query: Query<MovingActors>, time: Res<Time>) {
 
         let velocity = velocity.0.extend(0.0) * time.delta_seconds();
         transform.translation += velocity;
-    }
-}
-
-fn clean_dead(mut commands: Commands, dead_query: Query<(Entity, &Health)>) {
-    for (id, _) in dead_query.iter().filter(|(_, hp)| hp.0 > 0) {
-        if let Some(entity) = commands.get_entity(id) {
-            entity.despawn_recursive();
-        }
     }
 }

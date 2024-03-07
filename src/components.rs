@@ -32,4 +32,5 @@ pub enum EntityType {
     Grounded,
     Flying,
     Solid,
+    Dead,
 }
