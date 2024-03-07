@@ -15,7 +15,9 @@ impl Plugin for PhysicsPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
             Update,
-            (movement, collision).chain().in_set(InGameSet::Play),
+            (movement, collision, clean_dead)
+                .chain()
+                .in_set(InGameSet::Play),
         );
     }
 }
@@ -179,5 +181,15 @@ fn movement(mut actors_query: Query<MovingActors>, time: Res<Time>) {
 
         let velocity = velocity.0.extend(0.0) * time.delta_seconds();
         transform.translation += velocity;
+    }
+}
+
+fn clean_dead(mut commands: Commands, dead_query: Query<(Entity, &EntityState)>) {
+    for (id, state) in dead_query.iter() {
+        if *state == EntityState::Dead {
+            if let Some(mut entity) = commands.get_entity(id) {
+                entity.despawn();
+            }
+        }
     }
 }

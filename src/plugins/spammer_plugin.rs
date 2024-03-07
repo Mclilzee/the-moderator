@@ -1,6 +1,6 @@
 use crate::{
     bundles::actors::Actor,
-    components::{Health, Player, Spammer, Velocity},
+    components::{Player, Spammer, Velocity},
 };
 use bevy::prelude::*;
 use rand::Rng;
