@@ -6,7 +6,7 @@ use self::{animation::animate, constants::PLAYER_STARING_HP, player_input::input
 use super::asset_loader::{AnimationKey, AnimationMap};
 use crate::{
     bundles::actors::Actor,
-    components::{Damage, MaxJumps, Player},
+    components::{Damage, Player},
     InGameSet,
 };
 use bevy::{prelude::*, render::camera::ScalingMode};

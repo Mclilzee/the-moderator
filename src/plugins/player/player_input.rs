@@ -7,7 +7,7 @@ use bevy::prelude::*;
 
 pub fn input(
     keys: Res<ButtonInput<KeyCode>>,
-    mut query: Query<(&mut Velocity), With<Player>>,
+    mut query: Query<(&mut Velocity, &mut Jumps), With<Player>>,
 ) {
     let (mut velocity, mut jumps) = query.single_mut();
     velocity.0.x = 0.0;
