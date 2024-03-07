@@ -132,9 +132,6 @@ fn solve_solid_collision(
             if let Some(velocity) = entity_velocity {
                 velocity.0.y = 0.0;
             }
-            if *entity_state != EntityState::Dead {
-                *entity_state = EntityState::Grounded;
-            }
         }
         CollisionSide::Bottom => {
             info!("Bottom");
