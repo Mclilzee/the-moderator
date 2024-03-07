@@ -132,7 +132,9 @@ fn solve_solid_collision(
             if let Some(velocity) = entity_velocity {
                 velocity.0.y = 0.0;
             }
-            *entity_state = EntityState::Grounded;
+            if *entity_state != EntityState::Dead {
+                *entity_state = EntityState::Grounded;
+            }
         }
         CollisionSide::Bottom => {
             info!("Bottom");
@@ -185,11 +187,12 @@ fn movement(mut actors_query: Query<MovingActors>, time: Res<Time>) {
 }
 
 fn clean_dead(mut commands: Commands, dead_query: Query<(Entity, &EntityState)>) {
-    for (id, state) in dead_query.iter() {
-        if *state == EntityState::Dead {
-            if let Some(mut entity) = commands.get_entity(id) {
-                entity.despawn();
-            }
+    for (id, _) in dead_query
+        .iter()
+        .filter(|(_, state)| *state == &EntityState::Dead)
+    {
+        if let Some(entity) = commands.get_entity(id) {
+            entity.despawn_recursive();
         }
     }
 }

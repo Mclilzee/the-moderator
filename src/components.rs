@@ -21,7 +21,7 @@ pub struct Velocity(pub Vec2);
 #[derive(Component)]
 pub struct Collider(pub Vec2);
 
-#[derive(Component, PartialEq)]
+#[derive(Component, PartialEq, Debug)]
 pub enum EntityState {
     Grounded,
     Flying,
