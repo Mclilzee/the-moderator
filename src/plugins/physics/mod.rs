@@ -4,7 +4,7 @@ use bevy::{
 };
 
 use crate::{
-    components::{Collider, EntityState, Velocity},
+    components::{Collider, Damage, EntityState, Health, Velocity},
     consts::{GRAVITY_ACCELERATION, GRAVITY_MAX_SPEED},
     InGameSet,
 };
@@ -24,6 +24,8 @@ type Colliders<'a> = (
     &'a Collider,
     &'a mut EntityState,
     &'a mut Transform,
+    Option<&'a mut Health>,
+    Option<&'a mut Damage>,
     Option<&'a mut Velocity>,
 );
 

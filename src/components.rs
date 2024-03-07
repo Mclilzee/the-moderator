@@ -7,6 +7,9 @@ pub struct MaxJumps(pub u16);
 pub struct Health(pub i32);
 
 #[derive(Component)]
+pub struct Damage(pub i32);
+
+#[derive(Component)]
 pub struct Player;
 
 #[derive(Component)]
