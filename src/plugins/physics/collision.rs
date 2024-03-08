@@ -16,7 +16,7 @@ type Colliders<'a> = (
     &'a Collider,
     &'a mut EntityType,
     &'a mut Transform,
-    Option<&'a mut Velocity>,
+    Option<&'a Velocity>,
     Option<&'a Damage>,
     Option<&'a mut Health>,
 );
@@ -24,7 +24,7 @@ type Colliders<'a> = (
 pub fn collision(mut colliders_query: Query<Colliders>) {
     let mut combination = colliders_query.iter_combinations_mut();
     while let Some(
-        [(collider1, mut state1, mut transform1, mut velocity1, damage1, mut health1), (collider2, mut state2, mut transform2, mut velocity2, damage2, mut health2)],
+        [(collider1, mut state1, mut transform1, velocity1, damage1, mut health1), (collider2, mut state2, mut transform2, velocity2, damage2, mut health2)],
     ) = combination.fetch_next()
     {
         let first = Aabb2d::new(
@@ -45,7 +45,7 @@ pub fn collision(mut colliders_query: Query<Colliders>) {
             &state1,
             &second,
             &mut transform2.translation,
-            velocity2.as_deref_mut(),
+            &velocity2,
             &mut state2,
         );
 
@@ -54,7 +54,7 @@ pub fn collision(mut colliders_query: Query<Colliders>) {
             &state2,
             &first,
             &mut transform1.translation,
-            velocity1.as_deref_mut(),
+            &velocity1,
             &mut state1,
         );
 
@@ -91,7 +91,7 @@ fn solve_solid_collision(
     solid_state: &EntityType,
     entity_boundary: &Aabb2d,
     entity_translation: &mut Vec3,
-    entity_velocity: Option<&mut Velocity>,
+    entity_velocity: &Option<&Velocity>,
     entity_state: &mut EntityType,
 ) {
     if *solid_state != EntityType::Solid
@@ -109,15 +109,9 @@ fn solve_solid_collision(
         }
         CollisionSide::Top => {
             entity_translation.y = solid_boundary.max.y + (entity_boundary.half_size().y);
-            if let Some(velocity) = entity_velocity {
-                velocity.0.y = 0.0;
-            }
         }
         CollisionSide::Bottom => {
             entity_translation.y = solid_boundary.min.y - (entity_boundary.half_size().y);
-            if let Some(velocity) = entity_velocity {
-                velocity.0.y = 0.0;
-            }
         }
     }
 }
