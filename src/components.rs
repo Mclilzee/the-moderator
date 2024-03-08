@@ -31,4 +31,4 @@ pub struct Jumps {
 pub struct Grounded(pub bool);
 
 #[derive(Component)]
-pub struct Platform;
+pub struct Solid;

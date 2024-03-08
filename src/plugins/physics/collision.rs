@@ -3,7 +3,7 @@ use bevy::{
     prelude::*,
 };
 
-use crate::components::{Collider, Damage, EntityType, Health, Velocity};
+use crate::components::{Collider, Damage, Grounded, Health, Solid, Velocity};
 
 enum CollisionSide {
     Left,
@@ -14,9 +14,10 @@ enum CollisionSide {
 
 type Colliders<'a> = (
     &'a Collider,
-    &'a mut EntityType,
     &'a mut Transform,
+    Option<&'a Solid>,
     Option<&'a Velocity>,
+    Option<&'a mut Grounded>,
     Option<&'a Damage>,
     Option<&'a mut Health>,
 );
@@ -24,39 +25,50 @@ type Colliders<'a> = (
 pub fn collision(mut colliders_query: Query<Colliders>) {
     let mut combination = colliders_query.iter_combinations_mut();
     while let Some(
-        [(collider1, mut state1, mut transform1, velocity1, damage1, mut health1), (collider2, mut state2, mut transform2, velocity2, damage2, mut health2)],
+        [(collider1, mut transform1, solid1, velocity1, mut grounded1, damage1, mut health1), (collider2, mut transform2, solid2, velocity2, mut grounded2, damage2, mut health2)],
     ) = combination.fetch_next()
     {
-        let first = Aabb2d::new(
+        let first_collider = Aabb2d::new(
             transform1.translation.truncate(),
             collider1.0 / Vec2::splat(2.0),
         );
-        let second = Aabb2d::new(
+        let second_collider = Aabb2d::new(
             transform2.translation.truncate(),
             collider2.0 / Vec2::splat(2.0),
         );
 
-        if !first.intersects(&second) {
+        if !first_collider.intersects(&second_collider) {
+            if let Some(mut grounded) = grounded1 {
+                grounded.0 = false;
+            }
+
+            if let Some(mut grounded) = grounded2 {
+                grounded.0 = false;
+            }
             continue;
         }
 
-        solve_solid_collision(
-            &first,
-            &state1,
-            &second,
-            &mut transform2.translation,
-            &velocity2,
-            &mut state2,
-        );
+        if solid1.is_some() {
+            solve_platform_collision(
+                &first_collider,
+                &solid2,
+                &second_collider,
+                &mut transform2.translation,
+                &velocity2,
+                grounded2.as_deref_mut(),
+            );
+        }
 
-        solve_solid_collision(
-            &second,
-            &state2,
-            &first,
-            &mut transform1.translation,
-            &velocity1,
-            &mut state1,
-        );
+        if solid2.is_some() {
+            solve_platform_collision(
+                &second_collider,
+                &solid1,
+                &first_collider,
+                &mut transform1.translation,
+                &velocity1,
+                grounded1.as_deref_mut(),
+            );
+        }
 
         solve_damage(
             damage1,
@@ -64,6 +76,37 @@ pub fn collision(mut colliders_query: Query<Colliders>) {
             damage2,
             health2.as_deref_mut(),
         );
+    }
+}
+
+fn solve_platform_collision(
+    solid_boundary: &Aabb2d,
+    entity_platform: &Option<&Solid>,
+    entity_boundary: &Aabb2d,
+    entity_translation: &mut Vec3,
+    entity_velocity: &Option<&Velocity>,
+    entity_grounded: Option<&mut Grounded>,
+) {
+    if entity_platform.is_some() && entity_velocity.is_none() {
+        return;
+    }
+
+    match find_collision_side(solid_boundary, entity_boundary) {
+        CollisionSide::Left => {
+            entity_translation.x = solid_boundary.min.x - (entity_boundary.half_size().x);
+        }
+        CollisionSide::Right => {
+            entity_translation.x = solid_boundary.max.x + (entity_boundary.half_size().x);
+        }
+        CollisionSide::Top => {
+            entity_translation.y = solid_boundary.max.y + (entity_boundary.half_size().y);
+            if let Some(grounded) = entity_grounded {
+                grounded.0 = true;
+            }
+        }
+        CollisionSide::Bottom => {
+            entity_translation.y = solid_boundary.min.y - (entity_boundary.half_size().y);
+        }
     }
 }
 
@@ -82,36 +125,6 @@ fn solve_damage(
     if let Some(dmg) = dmg2 {
         if let Some(hp) = health1 {
             hp.0 -= dmg.0;
-        }
-    }
-}
-
-fn solve_solid_collision(
-    solid_boundary: &Aabb2d,
-    solid_state: &EntityType,
-    entity_boundary: &Aabb2d,
-    entity_translation: &mut Vec3,
-    entity_velocity: &Option<&Velocity>,
-    entity_state: &mut EntityType,
-) {
-    if *solid_state != EntityType::Solid
-        || (*entity_state == EntityType::Solid && entity_velocity.is_none())
-    {
-        return;
-    }
-
-    match find_collision_side(solid_boundary, entity_boundary) {
-        CollisionSide::Left => {
-            entity_translation.x = solid_boundary.min.x - (entity_boundary.half_size().x);
-        }
-        CollisionSide::Right => {
-            entity_translation.x = solid_boundary.max.x + (entity_boundary.half_size().x);
-        }
-        CollisionSide::Top => {
-            entity_translation.y = solid_boundary.max.y + (entity_boundary.half_size().y);
-        }
-        CollisionSide::Bottom => {
-            entity_translation.y = solid_boundary.min.y - (entity_boundary.half_size().y);
         }
     }
 }
