@@ -38,12 +38,12 @@ pub fn collision(mut colliders_query: Query<Colliders>) {
         );
 
         if !first_collider.intersects(&second_collider) {
-            if let Some(mut grounded) = grounded1 {
-                grounded.0 = false;
+            if solid1.is_some() && grounded2.is_some() {
+                grounded2.unwrap().0 = false;
             }
 
-            if let Some(mut grounded) = grounded2 {
-                grounded.0 = false;
+            if solid2.is_some() && grounded1.is_some() {
+                grounded1.unwrap().0 = false;
             }
             continue;
         }
