@@ -27,9 +27,8 @@ pub struct Jumps {
     pub max: u8,
 }
 
-#[derive(Component, PartialEq, Debug)]
-pub enum EntityType {
-    Grounded,
-    Flying,
-    Solid,
-}
+#[derive(Component)]
+pub struct Grounded(pub bool);
+
+#[derive(Component)]
+pub struct Platform;

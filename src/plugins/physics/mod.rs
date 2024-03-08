@@ -3,7 +3,7 @@ use super::physics::collision::collision;
 use bevy::prelude::*;
 
 use crate::{
-    components::{EntityType, Velocity},
+    components::{Grounded, Velocity},
     consts::GRAVITY_ACCELERATION,
     InGameSet,
 };
@@ -19,13 +19,17 @@ impl Plugin for PhysicsPlugin {
     }
 }
 
-type MovingActors<'a> = (&'a mut Transform, &'a mut Velocity, &'a EntityType);
+type MovingActors<'a> = (&'a mut Transform, &'a mut Velocity, Option<&'a Grounded>);
 fn movement(mut actors_query: Query<MovingActors>, time: Res<Time>) {
-    for (mut transform, mut velocity, entity_type) in actors_query.iter_mut() {
+    for (mut transform, mut velocity, grounded) in actors_query.iter_mut() {
         let delta_time = time.delta_seconds();
         transform.translation += velocity.0.extend(0.0) * delta_time;
 
-        if let EntityType::Grounded = *entity_type {
+        if let Some(grounded) = grounded {
+            if !grounded.0 {
+                return;
+            }
+
             velocity.0.y -= GRAVITY_ACCELERATION * delta_time;
             if velocity.0.y < -GRAVITY_ACCELERATION {
                 velocity.0.y = -GRAVITY_ACCELERATION;

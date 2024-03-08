@@ -5,7 +5,7 @@ mod player_input;
 use self::constants::PLAYER_MAX_JUMPS;
 use self::{animation::animate, constants::PLAYER_STARING_HP, player_input::input};
 use super::asset_loader::{AnimationKey, AnimationMap};
-use crate::components::Jumps;
+use crate::components::{Grounded, Jumps};
 use crate::{
     bundles::actors::Actor,
     components::{AvailableJumps, Damage, Player},
@@ -25,7 +25,7 @@ impl Plugin for PlayerPlugin {
 
 fn spawn_player(mut commands: Commands, asset_loader: Res<AnimationMap>) {
     let mut char = (
-        Actor::grounded(PLAYER_STARING_HP, Vec2::new(15.0, 35.0)),
+        Actor::new(PLAYER_STARING_HP, Vec2::new(15.0, 35.0)),
         Player,
         AvailableJumps(PLAYER_MAX_JUMPS),
         Damage(5),
@@ -33,6 +33,7 @@ fn spawn_player(mut commands: Commands, asset_loader: Res<AnimationMap>) {
             current: 20,
             max: 2,
         },
+        Grounded(true),
     );
 
     let animation = asset_loader
@@ -40,8 +41,8 @@ fn spawn_player(mut commands: Commands, asset_loader: Res<AnimationMap>) {
         .get(&AnimationKey::Player)
         .expect("Player animation to be found");
 
-    char.0.movable_object.sprite_sheet.texture = animation.texture.clone();
-    char.0.movable_object.sprite_sheet.atlas = TextureAtlas {
+    char.0.movable_sprite.sprite_sheet.texture = animation.texture.clone();
+    char.0.movable_sprite.sprite_sheet.atlas = TextureAtlas {
         layout: animation.atlas.clone(),
         index: 1,
     };

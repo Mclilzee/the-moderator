@@ -1,6 +1,6 @@
 use crate::{
     bundles::actors::Actor,
-    components::{Player, Spammer, Velocity},
+    components::{Grounded, Player, Spammer, Velocity},
 };
 use bevy::prelude::*;
 use rand::Rng;
@@ -49,13 +49,13 @@ fn spawn_spammer(
 
         let spawn_x = offset + f32::copysign(camera_offset + 5.0, offset);
 
-        let mut spammer = Actor::grounded(
+        let mut spammer = Actor::new(
             SPAMMER_STARTING_HP,
             Vec2::new(SPAMMER_WIDTH, SPAMMER_HEIGHT),
         );
-        spammer.movable_object.sprite_sheet.transform.translation = Vec3::new(spawn_x, 0.0, 0.0);
+        spammer.movable_sprite.sprite_sheet.transform.translation = Vec3::new(spawn_x, 0.0, 0.0);
 
-        commands.spawn((spammer, Spammer));
+        commands.spawn((spammer, Spammer, Grounded(true)));
     }
 }
 
