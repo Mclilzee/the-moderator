@@ -31,7 +31,7 @@ pub fn animate(
         .0
         .get(&AnimationKey::Player)
         .expect("Animation to be found")
-        .range;
+        .indices;
 
     if let Some(indices) = player_animations.get(state) {
         first_frame = indices.first_frame;

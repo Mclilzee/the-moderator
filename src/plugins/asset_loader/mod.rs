@@ -14,7 +14,7 @@ pub enum AnimationKey {
 pub struct Animation {
     pub texture: Handle<Image>,
     pub atlas: Handle<TextureAtlasLayout>,
-    pub range: HashMap<EntityState, AnimationIndices>,
+    pub indices: HashMap<EntityState, AnimationIndices>,
 }
 
 pub struct AnimationIndices {

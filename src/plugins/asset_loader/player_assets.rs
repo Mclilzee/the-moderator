@@ -23,7 +23,7 @@ pub fn setup(
     let range = Animation {
         texture,
         atlas: layout,
-        range,
+        indices: range,
     };
 
     animations.0.insert(AnimationKey::Player, range);
