@@ -6,7 +6,7 @@ use self::constants::PLAYER_MAX_JUMPS;
 use self::{animation::animate, constants::PLAYER_STARING_HP, player_input::input};
 use super::asset_loader::AnimationKey;
 use super::asset_loader::AnimationMap;
-use crate::components::{Grounded, Jumps};
+use crate::components::{EntityState, Grounded, Jumps};
 use crate::{
     bundles::actors::Actor,
     components::{AvailableJumps, Damage, Player},
@@ -35,6 +35,7 @@ fn spawn_player(mut commands: Commands, asset_loader: Res<AnimationMap>) {
             max: 2,
         },
         Grounded(true),
+        EntityState::Idle,
     );
 
     let animation = asset_loader
