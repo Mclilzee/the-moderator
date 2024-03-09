@@ -26,7 +26,6 @@ fn movement(mut actors_query: Query<MovingActors>, time: Res<Time>) {
         transform.translation += velocity.0.extend(0.0) * delta_time;
 
         if let Some(grounded) = grounded {
-            println!("FPS : {}", 1.0 / time.delta_seconds());
             if grounded.0 {
                 continue;
             }
