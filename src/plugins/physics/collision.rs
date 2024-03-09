@@ -103,6 +103,10 @@ fn solve_platform_collision(
             if let Some(grounded) = entity_grounded {
                 grounded.0 = true;
             }
+
+            if let Some(velocity) = entity_velocity {
+                velocity.0.y = 0.0;
+            }
         }
         CollisionSide::Bottom => {
             entity_translation.y = solid_boundary.min.y - (entity_boundary.half_size().y);
