@@ -15,6 +15,7 @@ pub struct Animation {
     pub texture: Handle<Image>,
     pub atlas: Handle<TextureAtlasLayout>,
     pub indices: HashMap<EntityState, AnimationIndices>,
+    pub default: AnimationIndices,
 }
 
 pub struct AnimationIndices {
