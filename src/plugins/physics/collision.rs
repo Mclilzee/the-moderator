@@ -16,7 +16,7 @@ type Colliders<'a> = (
     &'a Collider,
     &'a mut Transform,
     Option<&'a Solid>,
-    Option<&'a Velocity>,
+    Option<&'a mut Velocity>,
     Option<&'a mut Grounded>,
     Option<&'a Damage>,
     Option<&'a mut Health>,
@@ -25,7 +25,7 @@ type Colliders<'a> = (
 pub fn collision(mut colliders_query: Query<Colliders>) {
     let mut combination = colliders_query.iter_combinations_mut();
     while let Some(
-        [(collider1, mut transform1, solid1, velocity1, mut grounded1, damage1, mut health1), (collider2, mut transform2, solid2, velocity2, mut grounded2, damage2, mut health2)],
+        [(collider1, mut transform1, solid1, mut velocity1, mut grounded1, damage1, mut health1), (collider2, mut transform2, solid2, mut velocity2, mut grounded2, damage2, mut health2)],
     ) = combination.fetch_next()
     {
         let first_collider = Aabb2d::new(
@@ -54,7 +54,7 @@ pub fn collision(mut colliders_query: Query<Colliders>) {
                 &solid2,
                 &second_collider,
                 &mut transform2.translation,
-                &velocity2,
+                velocity2.as_deref_mut(),
                 grounded2.as_deref_mut(),
             );
         }
@@ -65,7 +65,7 @@ pub fn collision(mut colliders_query: Query<Colliders>) {
                 &solid1,
                 &first_collider,
                 &mut transform1.translation,
-                &velocity1,
+                velocity1.as_deref_mut(),
                 grounded1.as_deref_mut(),
             );
         }
@@ -84,7 +84,7 @@ fn solve_platform_collision(
     entity_platform: &Option<&Solid>,
     entity_boundary: &Aabb2d,
     entity_translation: &mut Vec3,
-    entity_velocity: &Option<&Velocity>,
+    entity_velocity: Option<&mut Velocity>,
     entity_grounded: Option<&mut Grounded>,
 ) {
     if entity_platform.is_some() && entity_velocity.is_none() {
