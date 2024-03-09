@@ -18,12 +18,12 @@ pub struct Animation {
 }
 
 pub struct AnimationIndices {
-    pub first_frame: u32,
-    pub last_frame: u32,
+    pub first_frame: usize,
+    pub last_frame: usize,
 }
 
 impl AnimationIndices {
-    fn new(first_frame: u32, last_frame: u32) -> Self {
+    fn new(first_frame: usize, last_frame: usize) -> Self {
         AnimationIndices {
             first_frame,
             last_frame,
