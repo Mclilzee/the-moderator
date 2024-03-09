@@ -24,6 +24,7 @@ pub fn setup(
         texture,
         atlas: layout,
         indices: range,
+        default: AnimationIndices::new(1, 7),
     };
 
     animations.0.insert(AnimationKey::Player, range);
