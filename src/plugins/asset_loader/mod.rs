@@ -1,18 +1,14 @@
 mod player_assets;
 use bevy::{prelude::*, utils::HashMap};
 
+use crate::components::EntityState;
+
 #[derive(Resource, Default)]
 pub struct AnimationMap(pub HashMap<AnimationKey, Animation>);
 
 #[derive(Eq, Hash, PartialEq)]
 pub enum AnimationKey {
     Player,
-}
-
-#[derive(Eq, Hash, PartialEq)]
-pub enum EntityState {
-    Idle,
-    Running,
 }
 
 pub struct Animation {

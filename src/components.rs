@@ -32,3 +32,10 @@ pub struct Grounded(pub bool);
 
 #[derive(Component)]
 pub struct Solid;
+
+#[derive(Eq, Hash, PartialEq, Component)]
+pub enum EntityState {
+    Idle,
+    Running,
+    Jumping,
+}

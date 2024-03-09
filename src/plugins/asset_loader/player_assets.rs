@@ -1,6 +1,7 @@
 use bevy::{prelude::*, utils::HashMap};
 
-use super::{Animation, AnimationIndices, AnimationKey, AnimationMap, EntityState};
+use super::{Animation, AnimationIndices, AnimationKey, AnimationMap};
+use crate::components::EntityState;
 
 pub fn setup(
     asset_server: Res<AssetServer>,
