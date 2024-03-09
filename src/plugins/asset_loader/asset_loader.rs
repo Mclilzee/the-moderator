@@ -9,7 +9,7 @@ pub enum AnimationKey {
 }
 
 #[derive(Eq, Hash, PartialEq)]
-pub enum AnimationType {
+pub enum EntityState {
     Idle,
     Running,
 }
@@ -17,7 +17,7 @@ pub enum AnimationType {
 pub struct Animation {
     pub texture: Handle<Image>,
     pub atlas: Handle<TextureAtlasLayout>,
-    pub range: HashMap<AnimationType, AnimationIndices>,
+    pub range: HashMap<EntityState, AnimationIndices>,
 }
 
 pub struct AnimationIndices {
@@ -55,9 +55,9 @@ fn load_assets(
         None,
         None,
     ));
-    let mut range: HashMap<AnimationType, AnimationIndices> = HashMap::new();
-    range.insert(AnimationType::Idle, AnimationIndices::new(1, 7));
-    range.insert(AnimationType::Running, AnimationIndices::new(8, 16));
+    let mut range: HashMap<EntityState, AnimationIndices> = HashMap::new();
+    range.insert(EntityState::Idle, AnimationIndices::new(1, 7));
+    range.insert(EntityState::Running, AnimationIndices::new(8, 16));
 
     let range = Animation {
         texture,
