@@ -18,7 +18,7 @@ pub fn setup(
     ));
     let mut range: HashMap<EntityState, AnimationIndices> = HashMap::new();
     range.insert(EntityState::Idle, AnimationIndices::new(1, 7));
-    range.insert(EntityState::Running, AnimationIndices::new(8, 16));
+    range.insert(EntityState::Running, AnimationIndices::new(8, 17));
 
     let range = Animation {
         texture,

@@ -38,14 +38,6 @@ pub fn animate(
         last_frame = indices.last_frame;
     }
 
-    // if velocity.0.x.abs() > 0.0 {
-    //     first_frame = 8;
-    //     last_frame = 17;
-    // } else {
-    //     first_frame = 1;
-    //     last_frame = 7;
-    // }
-
     timer.0.tick(time.delta());
     if timer.0.finished() {
         let mut index = atlas.index + 1;
