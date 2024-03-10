@@ -17,18 +17,16 @@ pub fn setup(
         None,
     ));
 
-    let first = 1;
-    let last = 7;
-
+    let idle_animation = AnimationIndices::new(1, 7);
     let mut range: HashMap<EntityState, AnimationIndices> = HashMap::new();
-    range.insert(EntityState::Idle, AnimationIndices::new(first, last));
+    range.insert(EntityState::Idle, idle_animation.clone());
     range.insert(EntityState::Running, AnimationIndices::new(8, 17));
 
     let range = Animation {
         texture,
         atlas: layout,
         indices: range,
-        default: AnimationIndices::new(first, last),
+        default: idle_animation,
     };
 
     animations.0.insert(AnimationKey::Player, range);
