@@ -73,7 +73,7 @@ fn spawn_spammer(
 
         spammer.movable_sprite.sprite_sheet.transform.translation = Vec3::new(spawn_x, 0.0, 0.0);
 
-        commands.spawn((spammer, Spammer, Grounded(true)));
+        commands.spawn((spammer, Spammer, Grounded(true), EntityState::Idle));
     }
 }
 
@@ -108,8 +108,8 @@ pub fn animate(
 
     let spammer_animations = &animation
         .0
-        .get(&AnimationKey::Player)
-        .expect("Animation to be found");
+        .get(&AnimationKey::Spammer)
+        .expect("Animation for spammer were not found");
 
     let frames = spammer_animations
         .indices
