@@ -2,6 +2,11 @@ use crate::{
     bundles::actors::Actor,
     components::{Grounded, Player, Spammer, Velocity},
 };
+use crate::{
+    components::EntityState,
+    plugins::asset_loader::{AnimationKey, AnimationMap},
+    AnimationTimer,
+};
 use bevy::prelude::*;
 use rand::Rng;
 
@@ -35,6 +40,7 @@ fn spawn_spammer(
     spammers_query: Query<&Spammer>,
     time: Res<Time>,
     camera_query: Query<&OrthographicProjection, (With<Camera>, Without<Player>)>,
+    asset_loader: Res<AnimationMap>,
 ) {
     if spammers_query.iter().count() > SPAMMER_LIMIT {
         return;
@@ -46,13 +52,24 @@ fn spawn_spammer(
         let mut random = rand::thread_rng();
         let offset = random.gen_range(-50.0..50.0);
         let camera_offset = camera.area.width() / 2.0;
-
         let spawn_x = offset + f32::copysign(camera_offset + 5.0, offset);
 
         let mut spammer = Actor::new(
             SPAMMER_STARTING_HP,
             Vec2::new(SPAMMER_WIDTH, SPAMMER_HEIGHT),
         );
+
+        let animation = asset_loader
+            .0
+            .get(&AnimationKey::Spammer)
+            .expect("Spammer animation to be found");
+
+        spammer.movable_sprite.sprite_sheet.texture = animation.texture.clone();
+        spammer.movable_sprite.sprite_sheet.atlas = TextureAtlas {
+            layout: animation.atlas.clone(),
+            index: 1,
+        };
+
         spammer.movable_sprite.sprite_sheet.transform.translation = Vec3::new(spawn_x, 0.0, 0.0);
 
         commands.spawn((spammer, Spammer, Grounded(true)));

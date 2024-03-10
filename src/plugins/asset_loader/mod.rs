@@ -9,6 +9,7 @@ pub struct AnimationMap(pub HashMap<AnimationKey, Animation>);
 #[derive(Eq, Hash, PartialEq)]
 pub enum AnimationKey {
     Player,
+    Spammer,
 }
 
 pub struct Animation {
