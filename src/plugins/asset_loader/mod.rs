@@ -1,4 +1,5 @@
 mod player_assets;
+mod spammer_assets;
 use bevy::{prelude::*, utils::HashMap};
 
 use crate::components::EntityState;
@@ -19,6 +20,7 @@ pub struct Animation {
     pub default: AnimationIndices,
 }
 
+#[derive(Clone, Copy)]
 pub struct AnimationIndices {
     pub first_frame: usize,
     pub last_frame: usize,

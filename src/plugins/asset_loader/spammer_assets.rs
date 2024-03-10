@@ -19,7 +19,7 @@ pub fn setup(
 
     let idle_animation = AnimationIndices::new(1, 7);
     let mut range: HashMap<EntityState, AnimationIndices> = HashMap::new();
-    range.insert(EntityState::Idle, idle_animation.clone());
+    range.insert(EntityState::Idle, idle_animation);
     range.insert(EntityState::Running, AnimationIndices::new(8, 17));
 
     let range = Animation {
