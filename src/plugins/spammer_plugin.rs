@@ -104,6 +104,11 @@ pub fn animate(
     mut timer: ResMut<AnimationTimer>,
     animation: Res<AnimationMap>,
 ) {
+    timer.0.tick(time.delta());
+    if !timer.0.finished() {
+        return;
+    }
+
     let spammer_animations = &animation
         .0
         .get(&AnimationKey::Spammer)
@@ -121,15 +126,12 @@ pub fn animate(
             sprite.flip_x = false;
         }
 
-        timer.0.tick(time.delta());
-        if timer.0.finished() {
-            let mut index = atlas.index + 1;
+        let mut index = atlas.index + 1;
 
-            if atlas.index >= frames.last_frame || atlas.index < frames.first_frame {
-                index = frames.first_frame;
-            }
-
-            atlas.index = index;
+        if atlas.index >= frames.last_frame || atlas.index < frames.first_frame {
+            index = frames.first_frame;
         }
+
+        atlas.index = index;
     }
 }

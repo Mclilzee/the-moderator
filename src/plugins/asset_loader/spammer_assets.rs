@@ -11,13 +11,13 @@ pub fn setup(
     let texture: Handle<Image> = asset_server.load("monsters/Spammer.png");
     let layout = atlas_server.add(TextureAtlasLayout::from_grid(
         Vec2::new(32.0, 32.0),
-        12,
+        13,
         1,
         None,
         None,
     ));
 
-    let idle_animation = AnimationIndices::new(1, 12);
+    let idle_animation = AnimationIndices::new(1, 10);
     let mut indices: HashMap<EntityState, AnimationIndices> = HashMap::new();
     indices.insert(EntityState::Idle, idle_animation);
 
