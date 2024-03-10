@@ -13,7 +13,7 @@ use rand::Rng;
 const SPAMMER_STARTING_HP: i32 = 20;
 const SPAMMER_SPEED: f32 = 40.0;
 const SPAMMER_WIDTH: f32 = 25.0;
-const SPAMMER_HEIGHT: f32 = 32.0;
+const SPAMMER_HEIGHT: f32 = 30.0;
 const SPAMMER_LIMIT: usize = 100;
 
 pub struct SpammerPlugins;
