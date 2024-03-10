@@ -11,22 +11,22 @@ pub fn setup(
     let texture: Handle<Image> = asset_server.load("monsters/Spammer.png");
     let layout = atlas_server.add(TextureAtlasLayout::from_grid(
         Vec2::new(32.0, 32.0),
-        18,
+        12,
         1,
         None,
         None,
     ));
 
-    let idle_animation = AnimationIndices::new(1, 18);
-    let mut range: HashMap<EntityState, AnimationIndices> = HashMap::new();
-    range.insert(EntityState::Idle, idle_animation);
+    let idle_animation = AnimationIndices::new(1, 12);
+    let mut indices: HashMap<EntityState, AnimationIndices> = HashMap::new();
+    indices.insert(EntityState::Idle, idle_animation);
 
-    let range = Animation {
+    let animation = Animation {
         texture,
         atlas: layout,
-        indices: range,
+        indices,
         default: idle_animation,
     };
 
-    animations.0.insert(AnimationKey::Spammer, range);
+    animations.0.insert(AnimationKey::Spammer, animation);
 }

@@ -98,38 +98,38 @@ fn track_player(
 pub fn animate(
     mut sprite_query: Query<
         (&mut TextureAtlas, &mut Sprite, &EntityState, &Velocity),
-        With<Player>,
+        With<Spammer>,
     >,
     time: Res<Time>,
     mut timer: ResMut<AnimationTimer>,
     animation: Res<AnimationMap>,
 ) {
-    let (mut atlas, mut sprite, state, velocity) = sprite_query.single_mut();
-
     let spammer_animations = &animation
         .0
         .get(&AnimationKey::Spammer)
         .expect("Animation for spammer were not found");
 
-    let frames = spammer_animations
-        .indices
-        .get(state)
-        .unwrap_or(&spammer_animations.default);
+    for (mut atlas, mut sprite, state, velocity) in sprite_query.iter_mut() {
+        let frames = spammer_animations
+            .indices
+            .get(state)
+            .unwrap_or(&spammer_animations.default);
 
-    if velocity.0.x > 0.0 {
-        sprite.flip_x = true;
-    } else if velocity.0.x < 0.0 {
-        sprite.flip_x = false;
-    }
-
-    timer.0.tick(time.delta());
-    if timer.0.finished() {
-        let mut index = atlas.index + 1;
-
-        if atlas.index >= frames.last_frame || atlas.index < frames.first_frame {
-            index = frames.first_frame;
+        if velocity.0.x < 0.0 {
+            sprite.flip_x = true;
+        } else if velocity.0.x > 0.0 {
+            sprite.flip_x = false;
         }
 
-        atlas.index = index;
+        timer.0.tick(time.delta());
+        if timer.0.finished() {
+            let mut index = atlas.index + 1;
+
+            if atlas.index >= frames.last_frame || atlas.index < frames.first_frame {
+                index = frames.first_frame;
+            }
+
+            atlas.index = index;
+        }
     }
 }
