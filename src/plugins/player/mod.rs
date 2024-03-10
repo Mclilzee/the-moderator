@@ -41,7 +41,7 @@ fn spawn_player(mut commands: Commands, asset_loader: Res<AnimationMap>) {
     let animation = asset_loader
         .0
         .get(&AnimationKey::Player)
-        .expect("Player animation to be found");
+        .expect("Player animation were not found");
 
     char.0.movable_sprite.sprite_sheet.texture = animation.texture.clone();
     char.0.movable_sprite.sprite_sheet.atlas = TextureAtlas {

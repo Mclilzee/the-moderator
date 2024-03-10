@@ -62,7 +62,7 @@ fn spawn_spammer(
         let animation = asset_loader
             .0
             .get(&AnimationKey::Spammer)
-            .expect("Spammer animation to be found");
+            .expect("Spammer animation were not found");
 
         spammer.movable_sprite.sprite_sheet.texture = animation.texture.clone();
         spammer.movable_sprite.sprite_sheet.atlas = TextureAtlas {
