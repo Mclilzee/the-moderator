@@ -39,6 +39,7 @@ pub struct AssetLoaderPlugin;
 impl Plugin for AssetLoaderPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.insert_resource(AnimationMap::default())
-            .add_systems(PreStartup, player_assets::setup);
+            .add_systems(PreStartup, player_assets::setup)
+            .add_systems(PreStartup, spammer_assets::setup);
     }
 }

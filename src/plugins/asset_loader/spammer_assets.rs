@@ -28,5 +28,5 @@ pub fn setup(
         default: idle_animation,
     };
 
-    animations.0.insert(AnimationKey::Player, range);
+    animations.0.insert(AnimationKey::Spammer, range);
 }
