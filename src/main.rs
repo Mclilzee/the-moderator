@@ -33,6 +33,5 @@ fn main() {
         .add_plugins(spammer_plugin::SpammerPlugins)
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
         .add_plugins(RapierDebugRenderPlugin::default())
-        .add_plugins(DebugBoxPlugin)
         .run();
 }

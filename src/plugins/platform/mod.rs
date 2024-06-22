@@ -1,6 +1,5 @@
 use bevy::prelude::*;
-
-use crate::{bundles::platforms::Platform, components::Solid};
+use bevy_rapier2d::geometry::Collider;
 
 pub struct PlatformPlugin;
 
@@ -11,5 +10,8 @@ impl Plugin for PlatformPlugin {
 }
 
 fn spawn_ground(mut commands: Commands) {
-    commands.spawn((Platform::new(Color::BLUE, Vec2::new(1000.0, 200.0)), Solid));
+    commands.spawn((
+        Collider::cuboid(500.0, 100.0),
+        TransformBundle::from(Transform::from_xyz(0.0, -100.0, 0.0)),
+    ));
 }
