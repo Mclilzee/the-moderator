@@ -5,11 +5,9 @@ mod debugging;
 mod plugins;
 
 use bevy::prelude::*;
+use bevy_rapier2d::prelude::*;
 use debugging::debug_boxes::DebugBoxPlugin;
-use plugins::{
-    asset_loader::AssetLoaderPlugin, default_plugins, physics::PhysicsPlugin, platform, player,
-    spammer_plugin,
-};
+use plugins::{asset_loader::AssetLoaderPlugin, default_plugins, platform, player, spammer_plugin};
 use std::time::Duration;
 
 #[derive(Clone, PartialEq, Eq, Debug, Hash, SystemSet)]
@@ -33,7 +31,8 @@ fn main() {
         .add_plugins(platform::PlatformPlugin)
         .add_plugins(player::PlayerPlugin)
         .add_plugins(spammer_plugin::SpammerPlugins)
-        .add_plugins(PhysicsPlugin)
+        .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
+        .add_plugins(RapierDebugRenderPlugin::default())
         .add_plugins(DebugBoxPlugin)
         .run();
 }
