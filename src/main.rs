@@ -6,7 +6,6 @@ mod plugins;
 
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
-use debugging::debug_boxes::DebugBoxPlugin;
 use plugins::{asset_loader::AssetLoaderPlugin, default_plugins, platform, player, spammer_plugin};
 use std::time::Duration;
 

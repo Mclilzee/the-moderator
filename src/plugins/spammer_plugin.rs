@@ -55,10 +55,7 @@ fn spawn_spammer(
         let camera_offset = camera.area.width() / 2.0;
         let spawn_x = offset + f32::copysign(camera_offset + 5.0, offset);
 
-        let mut spammer = Actor::new(
-            SPAMMER_STARTING_HP,
-            Vec2::new(SPAMMER_WIDTH, SPAMMER_HEIGHT),
-        );
+        let mut spammer = Actor::new(SPAMMER_STARTING_HP, SPAMMER_WIDTH, SPAMMER_HEIGHT);
 
         let animation = asset_loader
             .0

@@ -1,5 +1,6 @@
-use crate::components::{Collider, Health};
+use crate::components::Health;
 use bevy::prelude::*;
+use bevy_rapier2d::prelude::*;
 
 use super::movable_sprite::MovableSprite;
 
@@ -11,10 +12,10 @@ pub struct Actor {
 }
 
 impl Actor {
-    pub fn new(hp: i32, size: Vec2) -> Self {
+    pub fn new(hp: i32, width: f32, height: f32) -> Self {
         Self {
             movable_sprite: MovableSprite::default(),
-            collider: Collider(size),
+            collider: Collider::cuboid(width, height),
             hp: Health(hp),
         }
     }
