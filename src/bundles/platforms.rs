@@ -1,15 +1,14 @@
 use bevy::prelude::*;
-
-use crate::components::Collider;
+use bevy_rapier2d::geometry::Collider;
 
 #[derive(Bundle)]
-pub struct Platform {
+pub struct Platforms {
     collider: Collider,
     sprite_sheet: SpriteBundle,
 }
 
-impl Platform {
-    pub fn new(color: Color, size: Vec2) -> Self {
+impl Platforms {
+    pub fn cuboid(color: Color, size: Vec2, transform: Transform) -> Self {
         Self {
             sprite_sheet: SpriteBundle {
                 sprite: Sprite {
@@ -17,10 +16,10 @@ impl Platform {
                     custom_size: Some(size),
                     ..default()
                 },
+                transform,
                 ..default()
             },
-
-            collider: Collider(size),
+            collider: Collider::cuboid(size.x / 2.0, size.y / 2.0),
         }
     }
 }
