@@ -1,7 +1,5 @@
 mod bundles;
 mod components;
-mod consts;
-mod debugging;
 mod plugins;
 
 use bevy::prelude::*;
