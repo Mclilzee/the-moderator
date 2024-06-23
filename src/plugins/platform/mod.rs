@@ -11,7 +11,7 @@ impl Plugin for PlatformPlugin {
 
 fn spawn_ground(mut commands: Commands) {
     commands.spawn((
-        Collider::cuboid(500.0, 100.0),
+        Collider::cuboid(500.0, 20.0),
         TransformBundle::from(Transform::from_xyz(0.0, -100.0, 0.0)),
     ));
 }
