@@ -13,9 +13,6 @@ pub struct Player;
 pub struct Spammer;
 
 #[derive(Component)]
-pub struct Collider(pub Vec2);
-
-#[derive(Component)]
 pub struct AvailableJumps(pub u8);
 
 #[derive(Component)]
