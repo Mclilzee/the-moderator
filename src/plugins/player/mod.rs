@@ -43,8 +43,8 @@ fn spawn_player(mut commands: Commands, asset_loader: Res<AnimationMap>) {
         .get(&AnimationKey::Player)
         .expect("Player animation were not found");
 
-    char.0.movable_sprite.sprite_sheet.texture = animation.texture.clone();
-    char.0.movable_sprite.sprite_sheet.atlas = TextureAtlas {
+    char.0.sprite_sheet.texture = animation.texture.clone();
+    char.0.sprite_sheet.atlas = TextureAtlas {
         layout: animation.atlas.clone(),
         index: 1,
     };

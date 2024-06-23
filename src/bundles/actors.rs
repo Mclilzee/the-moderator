@@ -7,6 +7,7 @@ pub struct Actor {
     collider: Collider,
     hp: Health,
     body: RigidBody,
+    pub sprite_sheet: SpriteSheetBundle,
     pub vel: Velocity,
 }
 
@@ -17,6 +18,7 @@ impl Actor {
             hp: Health(hp),
             body: RigidBody::Dynamic,
             vel: Velocity::zero(),
+            sprite_sheet: SpriteSheetBundle::default(),
         }
     }
 }

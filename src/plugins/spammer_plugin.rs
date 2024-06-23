@@ -62,13 +62,13 @@ fn spawn_spammer(
             .get(&AnimationKey::Spammer)
             .expect("Spammer animation were not found");
 
-        spammer.movable_sprite.sprite_sheet.texture = animation.texture.clone();
-        spammer.movable_sprite.sprite_sheet.atlas = TextureAtlas {
+        spammer.sprite_sheet.texture = animation.texture.clone();
+        spammer.sprite_sheet.atlas = TextureAtlas {
             layout: animation.atlas.clone(),
             index: 1,
         };
 
-        spammer.movable_sprite.sprite_sheet.transform.translation = Vec3::new(spawn_x, 0.0, 0.0);
+        spammer.sprite_sheet.transform.translation = Vec3::new(spawn_x, 0.0, 0.0);
 
         commands.spawn((spammer, Spammer, Grounded(true), EntityState::Idle));
     }
