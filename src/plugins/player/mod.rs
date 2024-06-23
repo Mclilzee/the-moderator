@@ -14,6 +14,7 @@ use crate::{
 };
 use bevy::{prelude::*, render::camera::ScalingMode};
 use bevy_rapier2d::dynamics::LockedAxes;
+use constants::{PLAYER_HEIGHT, PLAYER_WIDTH};
 
 pub struct PlayerPlugin;
 
@@ -27,7 +28,7 @@ impl Plugin for PlayerPlugin {
 
 fn spawn_player(mut commands: Commands, asset_loader: Res<AnimationMap>) {
     let mut char = (
-        Actor::new(PLAYER_STARING_HP, 7.0, 15.0),
+        Actor::new(PLAYER_STARING_HP, PLAYER_WIDTH, PLAYER_HEIGHT),
         Player,
         AvailableJumps(PLAYER_MAX_JUMPS),
         Damage(5),
