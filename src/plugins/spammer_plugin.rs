@@ -1,6 +1,6 @@
 use crate::{
     bundles::actors::Actor,
-    components::{Grounded, Player, Spammer, Velocity},
+    components::{Grounded, Player, Spammer},
 };
 use crate::{
     components::EntityState,
@@ -8,6 +8,7 @@ use crate::{
     AnimationTimer,
 };
 use bevy::prelude::*;
+use bevy_rapier2d::dynamics::Velocity;
 use rand::Rng;
 
 const SPAMMER_STARTING_HP: i32 = 20;
@@ -84,7 +85,7 @@ fn track_player(
     let player_transform = player_query.single();
 
     for (transform, mut velocity) in spammer_query.iter_mut() {
-        velocity.0.x = if player_transform.translation.x > transform.translation.x {
+        velocity.linvel.x = if player_transform.translation.x > transform.translation.x {
             SPAMMER_SPEED
         } else {
             -SPAMMER_SPEED
@@ -117,9 +118,9 @@ pub fn animate(
             .get(state)
             .unwrap_or(&spammer_animations.default);
 
-        if velocity.0.x < 0.0 {
+        if velocity.linvel.x < 0.0 {
             sprite.flip_x = true;
-        } else if velocity.0.x > 0.0 {
+        } else if velocity.linvel.x > 0.0 {
             sprite.flip_x = false;
         }
 

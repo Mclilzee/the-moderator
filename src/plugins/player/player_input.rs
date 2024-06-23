@@ -1,5 +1,6 @@
-use crate::components::{AvailableJumps, EntityState, Grounded, Player, Velocity};
+use crate::components::{AvailableJumps, EntityState, Grounded, Player};
 use bevy::prelude::*;
+use bevy_rapier2d::dynamics::Velocity;
 
 use super::constants::{PLAYER_JUMP_HEIGHT, PLAYER_MAX_JUMPS, PLAYER_SPEED};
 
@@ -17,16 +18,16 @@ pub fn input(
 ) {
     let (mut grounded, mut velocity, mut jumps, mut state) =
         query.get_single_mut().expect("Player should exist");
-    velocity.0.x = 0.0;
+    velocity.linvel.x = 0.0;
     *state = EntityState::Idle;
     if keys.any_pressed([KeyCode::ArrowRight, KeyCode::KeyD]) {
         *state = EntityState::Running;
-        velocity.0.x = PLAYER_SPEED;
+        velocity.linvel.x = PLAYER_SPEED;
     }
 
     if keys.any_pressed([KeyCode::ArrowLeft, KeyCode::KeyA]) {
         *state = EntityState::Running;
-        velocity.0.x = -PLAYER_SPEED;
+        velocity.linvel.x = -PLAYER_SPEED;
     }
 
     if keys.any_just_pressed([KeyCode::ArrowUp, KeyCode::Space]) {
@@ -35,17 +36,17 @@ pub fn input(
         }
 
         if jumps.0 > 0 {
-            velocity.0.y = PLAYER_JUMP_HEIGHT;
+            velocity.linvel.y = PLAYER_JUMP_HEIGHT;
             jumps.0 -= 1;
             grounded.0 = false;
         }
     }
 
     if keys.pressed(KeyCode::KeyW) {
-        velocity.0.y = PLAYER_SPEED;
+        velocity.linvel.y = PLAYER_SPEED;
     }
 
     if keys.pressed(KeyCode::KeyS) {
-        velocity.0.y = -PLAYER_SPEED;
+        velocity.linvel.y = -PLAYER_SPEED;
     }
 }
