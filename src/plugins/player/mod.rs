@@ -13,6 +13,7 @@ use crate::{
     InGameSet,
 };
 use bevy::{prelude::*, render::camera::ScalingMode};
+use bevy_rapier2d::dynamics::LockedAxes;
 
 pub struct PlayerPlugin;
 
@@ -36,6 +37,7 @@ fn spawn_player(mut commands: Commands, asset_loader: Res<AnimationMap>) {
         },
         Grounded(true),
         EntityState::Idle,
+        LockedAxes::ROTATION_LOCKED,
     );
 
     let animation = asset_loader
