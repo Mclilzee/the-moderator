@@ -8,7 +8,7 @@ use crate::{
     AnimationTimer,
 };
 use bevy::prelude::*;
-use bevy_rapier2d::dynamics::Velocity;
+use bevy_rapier2d::dynamics::{LockedAxes, Velocity};
 use rand::Rng;
 
 const SPAMMER_STARTING_HP: i32 = 20;
@@ -71,7 +71,13 @@ fn spawn_spammer(
 
         spammer.sprite_sheet.transform.translation = Vec3::new(spawn_x, 0.0, 0.0);
 
-        commands.spawn((spammer, Spammer, Grounded(true), EntityState::Idle));
+        commands.spawn((
+            spammer,
+            Spammer,
+            Grounded(true),
+            EntityState::Idle,
+            LockedAxes::ROTATION_LOCKED,
+        ));
     }
 }
 

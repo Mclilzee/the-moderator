@@ -1,6 +1,6 @@
 use crate::components::Health;
 use bevy::prelude::*;
-use bevy_rapier2d::{prelude::*, rapier::dynamics::LockedAxes};
+use bevy_rapier2d::prelude::*;
 
 #[derive(Bundle)]
 pub struct Actor {
