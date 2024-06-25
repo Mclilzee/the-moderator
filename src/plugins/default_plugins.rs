@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, window::Cursor};
 
 pub struct CustomDefaultPlugin;
 
@@ -22,6 +22,10 @@ fn create_window() -> Window {
         title: "Fred's Revenge".to_string(),
         resolution: (800.0, 600.0).into(),
         resizable: true,
+        cursor: Cursor {
+            visible: false,
+            ..default()
+        },
         ..default()
     }
 }
