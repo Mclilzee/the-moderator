@@ -7,7 +7,7 @@ pub struct MousePlugin;
 
 impl Plugin for MousePlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, (show_cursor, draw).chain());
+        app.add_systems(Update, show_cursor);
     }
 }
 
