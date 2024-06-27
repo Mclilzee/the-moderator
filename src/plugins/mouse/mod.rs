@@ -7,7 +7,8 @@ pub struct MousePlugin;
 
 impl Plugin for MousePlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(PostStartup, spawn);
+        app.add_systems(PostStartup, spawn)
+            .add_systems(Update, move_cursor);
     }
 }
 
@@ -16,14 +17,6 @@ fn spawn(
     window_q: Query<&Window, With<PrimaryWindow>>,
     camera_q: Query<(&Camera, &GlobalTransform)>,
 ) {
-    if camera_q.is_empty() {
-        info!("Camera not found");
-        return;
-    } else if window_q.is_empty() {
-        info!("Window not found");
-        return;
-    }
-
     let (camera, camera_transform) = camera_q.single();
     let window = window_q.single();
     if let Some(vec) = window
@@ -46,14 +39,26 @@ fn spawn(
                 ..default()
             },
         ));
+
+        info!("spawn successfully");
     }
 }
 
-fn move_cursor(mut evr_cursor: EventReader<CursorMoved>) {
-    for ev in evr_cursor.read() {
-        info!(
-            "New cursor position: X: {}, Y: {}, in Window ID: {:?}",
-            ev.position.x, ev.position.y, ev.window
-        )
+fn move_cursor(
+    window_q: Query<&Window, With<PrimaryWindow>>,
+    camera_q: Query<(&Camera, &GlobalTransform)>,
+    mut cursor_q: Query<&mut Transform, With<Cursor>>,
+) {
+    let (camera, camera_transform) = camera_q.single();
+    let window = window_q.single();
+    if let Some(vec) = window
+        .cursor_position()
+        .and_then(|cursor| camera.viewport_to_world(camera_transform, cursor))
+        .map(|ray| ray.origin)
+    {
+        if let Ok(mut transform) = cursor_q.get_single_mut() {
+            transform.translation = vec;
+            info!("{vec:?}");
+        }
     }
 }

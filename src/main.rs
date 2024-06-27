@@ -5,7 +5,7 @@ mod plugins;
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 use plugins::{
-    asset_loader::AssetLoaderPlugin, default_plugins, mouse, platform, player, spammer_plugin,
+    asset_loader, camera_plugin, default_plugins, mouse, platform, player, spammer_plugin,
 };
 use std::time::Duration;
 
@@ -26,7 +26,8 @@ fn main() {
             TimerMode::Repeating,
         )))
         .add_plugins(default_plugins::CustomDefaultPlugin)
-        .add_plugins(AssetLoaderPlugin)
+        .add_plugins(camera_plugin::CameraPlugin)
+        .add_plugins(asset_loader::AssetLoaderPlugin)
         .add_plugins(platform::PlatformPlugin)
         .add_plugins(player::PlayerPlugin)
         .add_plugins(spammer_plugin::SpammerPlugins)

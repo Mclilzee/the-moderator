@@ -57,9 +57,6 @@ fn spawn_player(
     };
 
     let player_id = commands.spawn((char, Name::new("Player"))).id();
-    let camera_id = camera_q.single();
-    commands
-        .get_entity(camera_id)
-        .unwrap()
-        .set_parent(player_id);
+    let id = camera_q.single();
+    commands.get_entity(id).unwrap().set_parent(player_id);
 }
