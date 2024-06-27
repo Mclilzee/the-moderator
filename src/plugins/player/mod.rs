@@ -12,7 +12,7 @@ use crate::{
     components::{AvailableJumps, Damage, Player},
     InGameSet,
 };
-use bevy::{prelude::*, render::camera::ScalingMode};
+use bevy::prelude::*;
 use bevy_rapier2d::dynamics::LockedAxes;
 use constants::{PLAYER_HEIGHT, PLAYER_WIDTH};
 
@@ -26,7 +26,11 @@ impl Plugin for PlayerPlugin {
     }
 }
 
-fn spawn_player(mut commands: Commands, asset_loader: Res<AnimationMap>) {
+fn spawn_player(
+    mut commands: Commands,
+    asset_loader: Res<AnimationMap>,
+    camera_q: Query<Entity, With<Camera>>,
+) {
     let mut char = (
         Actor::new(PLAYER_STARING_HP, PLAYER_WIDTH, PLAYER_HEIGHT),
         Player,
@@ -52,14 +56,10 @@ fn spawn_player(mut commands: Commands, asset_loader: Res<AnimationMap>) {
         index: 1,
     };
 
-    let mut camera = Camera2dBundle::default();
-
-    camera.projection.scaling_mode = ScalingMode::AutoMin {
-        min_width: 500.0,
-        min_height: 400.0,
-    };
-
     let player_id = commands.spawn((char, Name::new("Player"))).id();
-    let mut camera = commands.spawn(camera);
-    camera.set_parent(player_id);
+    let camera_id = camera_q.single();
+    commands
+        .get_entity(camera_id)
+        .unwrap()
+        .set_parent(player_id);
 }
