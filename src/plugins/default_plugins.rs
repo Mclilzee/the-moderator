@@ -1,7 +1,10 @@
 use bevy::{
+    asset::AssetLoader,
     prelude::*,
     window::{Cursor, PrimaryWindow},
 };
+
+use super::asset_loader;
 
 pub struct CustomDefaultPlugin;
 
@@ -41,16 +44,12 @@ fn create_window() -> Window {
     }
 }
 
-fn spawn_cursor(mut commands: Commands) {
+fn spawn_cursor(mut commands: Commands, asset_server: Res<AssetServer>) {
+    let texture: Handle<Image> = asset_server.load("Cursor.png");
     commands.spawn((
         CustomCursor,
         SpriteSheetBundle {
-            transform: Transform::from_xyz(0.0, 0.0, 100.0),
-            sprite: Sprite {
-                color: Color::BLUE,
-                custom_size: Some(Vec2::new(5.0, 5.0)),
-                ..default()
-            },
+            texture,
             ..default()
         },
     ));
