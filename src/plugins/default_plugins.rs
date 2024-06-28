@@ -9,7 +9,7 @@ pub struct CustomDefaultPlugin;
 struct CustomCursor;
 
 #[derive(Resource)]
-struct CursorDirection(Vec2);
+pub struct CursorDirection(pub Vec2);
 
 impl Plugin for CustomDefaultPlugin {
     fn build(&self, app: &mut App) {

@@ -1,5 +1,5 @@
 mod animation;
-mod attack;
+mod attacks;
 mod constants;
 mod player_input;
 
@@ -21,7 +21,8 @@ pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(PostStartup, spawn_player)
+        app.add_plugins(attacks::AttacksPlugin)
+            .add_systems(PostStartup, spawn_player)
             .add_systems(Update, input.in_set(InGameSet::Input))
             .add_systems(Update, animate);
     }
