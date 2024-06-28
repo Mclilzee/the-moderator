@@ -1,4 +1,5 @@
 const HAMMER_SPEED: f32 = 20.0;
+const ROTATION_SPEED: f32 = 2.0;
 
 use crate::{
     components::{EntityState, Player},
@@ -58,12 +59,12 @@ fn mouse_button_input(
 }
 
 fn animate(
-    mut sprite_query: Query<(&mut TextureAtlas, &mut Sprite, &EntityState), With<Hammer>>,
+    mut sprite_query: Query<(&mut TextureAtlas, &mut Transform, &EntityState), With<Hammer>>,
     time: Res<Time>,
     mut timer: ResMut<AnimationTimer>,
     animation: Res<AnimationMap>,
 ) {
-    for (mut atlas, mut sprite, state) in sprite_query.iter_mut() {
+    for (mut atlas, mut transform, state) in sprite_query.iter_mut() {
         let hammer_animation = &animation
             .0
             .get(&AnimationKey::Hammer)
@@ -84,5 +85,7 @@ fn animate(
 
             atlas.index = index;
         }
+
+        transform.rotate_z(f32::to_radians(ROTATION_SPEED));
     }
 }
