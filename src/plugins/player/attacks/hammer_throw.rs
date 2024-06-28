@@ -9,7 +9,7 @@ use crate::{
     AnimationTimer,
 };
 use bevy::prelude::*;
-use bevy_rapier2d::{dynamics::Velocity, geometry::Collider};
+use bevy_rapier2d::{dynamics::Velocity, geometry::Collider, rapier::dynamics::RigidBodyType};
 
 #[derive(Component)]
 struct Hammer;
@@ -49,26 +49,26 @@ fn animate(
     mut timer: ResMut<AnimationTimer>,
     animation: Res<AnimationMap>,
 ) {
-    let (mut atlas, mut sprite, state) = sprite_query.single_mut();
+    for (mut atlas, mut sprite, state) in sprite_query.iter_mut() {
+        let hammer_animation = &animation
+            .0
+            .get(&AnimationKey::Hammer)
+            .expect("Animation were not found");
 
-    let hammer_animation = &animation
-        .0
-        .get(&AnimationKey::Hammer)
-        .expect("Animation were not found");
+        let frames = hammer_animation
+            .indices
+            .get(state)
+            .unwrap_or(&hammer_animation.default);
 
-    let frames = hammer_animation
-        .indices
-        .get(state)
-        .unwrap_or(&hammer_animation.default);
+        timer.0.tick(time.delta());
+        if timer.0.finished() {
+            let mut index = atlas.index + 1;
 
-    timer.0.tick(time.delta());
-    if timer.0.finished() {
-        let mut index = atlas.index + 1;
+            if atlas.index >= frames.last_frame || atlas.index < frames.first_frame {
+                index = frames.first_frame;
+            }
 
-        if atlas.index >= frames.last_frame || atlas.index < frames.first_frame {
-            index = frames.first_frame;
+            atlas.index = index;
         }
-
-        atlas.index = index;
     }
 }
