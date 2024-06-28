@@ -63,11 +63,10 @@ fn move_cursor(
     if let Some(vec) = window
         .cursor_position()
         .and_then(|cursor| camera.viewport_to_world(camera_transform, cursor))
-        .map(|ray| ray.origin.normalize())
+        .map(|ray| ray.origin.truncate())
     {
         if let Ok(mut t) = cursor_q.get_single_mut() {
-            t.translation = vec;
-            info!("Transforming\n\n");
+            t.translation = vec.extend(5.0);
         }
     }
 }
