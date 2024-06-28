@@ -48,7 +48,7 @@ fn spawn_cursor(mut commands: Commands, asset_server: Res<AssetServer>) {
     let texture: Handle<Image> = asset_server.load("Cursor.png");
     commands.spawn((
         CustomCursor,
-        SpriteSheetBundle {
+        SpriteBundle {
             texture,
             ..default()
         },
