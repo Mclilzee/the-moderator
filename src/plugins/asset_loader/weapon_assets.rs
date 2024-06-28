@@ -10,7 +10,7 @@ pub fn setup(
 ) {
     let texture: Handle<Image> = asset_server.load("Hammer.png");
     let layout = atlas_server.add(TextureAtlasLayout::from_grid(
-        Vec2::new(31.0, 38.0),
+        Vec2::new(32.0, 32.0),
         13,
         1,
         Some(Vec2::new(4.0, 0.0)),

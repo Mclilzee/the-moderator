@@ -9,7 +9,7 @@ use crate::{
     AnimationTimer,
 };
 use bevy::prelude::*;
-use bevy_rapier2d::{dynamics::Velocity, geometry::Collider, rapier::dynamics::RigidBodyType};
+use bevy_rapier2d::{dynamics::Velocity, geometry::Collider};
 
 #[derive(Component)]
 struct Hammer;
@@ -28,17 +28,31 @@ fn mouse_button_input(
     player_transform: Query<&Transform, With<Player>>,
     direction: Res<CursorDirection>,
     buttons: Res<ButtonInput<MouseButton>>,
+    animation_map: Res<AnimationMap>,
 ) {
     if buttons.just_pressed(MouseButton::Left) {
+        let animation = animation_map
+            .0
+            .get(&AnimationKey::Hammer)
+            .expect("Player animation were not found");
+
+        let mut sprite_sheet = SpriteSheetBundle {
+            transform: *player_transform.single(),
+            ..default()
+        };
+
+        sprite_sheet.texture = animation.texture.clone();
+        sprite_sheet.atlas = TextureAtlas {
+            layout: animation.atlas.clone(),
+            index: 1,
+        };
+
         command.spawn((
             Hammer,
             EntityState::Idle,
-            SpriteSheetBundle {
-                transform: *player_transform.single(),
-                ..default()
-            },
-            Collider::cuboid(10.0, 10.0),
+            Collider::cuboid(14.0, 14.0),
             Velocity::linear(direction.0 * HAMMER_SPEED),
+            sprite_sheet,
         ));
     }
 }
