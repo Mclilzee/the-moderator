@@ -1,4 +1,5 @@
 mod animation;
+mod attack;
 mod constants;
 mod player_input;
 

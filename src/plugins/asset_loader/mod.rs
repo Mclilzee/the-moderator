@@ -1,5 +1,6 @@
 mod player_assets;
 mod spammer_assets;
+mod weapon_assets;
 use bevy::{prelude::*, utils::HashMap};
 
 use crate::components::EntityState;
@@ -11,6 +12,7 @@ pub struct AnimationMap(pub HashMap<AnimationKey, Animation>);
 pub enum AnimationKey {
     Player,
     Spammer,
+    Hammer,
 }
 
 pub struct Animation {
@@ -40,6 +42,7 @@ impl Plugin for AssetLoaderPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.insert_resource(AnimationMap::default())
             .add_systems(PreStartup, player_assets::setup)
-            .add_systems(PreStartup, spammer_assets::setup);
+            .add_systems(PreStartup, spammer_assets::setup)
+            .add_systems(PreStartup, weapon_assets::setup);
     }
 }

@@ -1,10 +1,7 @@
 use bevy::{
-    asset::AssetLoader,
     prelude::*,
     window::{Cursor, PrimaryWindow},
 };
-
-use super::asset_loader;
 
 pub struct CustomDefaultPlugin;
 
