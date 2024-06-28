@@ -8,6 +8,9 @@ pub struct CustomDefaultPlugin;
 #[derive(Component)]
 struct CustomCursor;
 
+#[derive(Resource)]
+struct CursorDirection(Vec2);
+
 impl Plugin for CustomDefaultPlugin {
     fn build(&self, app: &mut App) {
         let window = create_window();
@@ -51,12 +54,14 @@ fn spawn_cursor(mut commands: Commands) {
             ..default()
         },
     ));
+    commands.insert_resource(CursorDirection(Vec2::ZERO));
 }
 
 fn move_cursor(
     window_q: Query<&Window, With<PrimaryWindow>>,
     camera_q: Query<(&Camera, &GlobalTransform)>,
-    mut cursor_q: Query<&mut Transform, With<CustomCursor>>,
+    mut transform_q: Query<&mut Transform, With<CustomCursor>>,
+    mut direction: ResMut<CursorDirection>,
 ) {
     let (camera, camera_transform) = camera_q.single();
     let window = window_q.single();
@@ -65,8 +70,7 @@ fn move_cursor(
         .and_then(|cursor| camera.viewport_to_world(camera_transform, cursor))
         .map(|ray| ray.origin.truncate())
     {
-        if let Ok(mut t) = cursor_q.get_single_mut() {
-            t.translation = vec.extend(5.0);
-        }
+        transform_q.single_mut().translation = vec.extend(5.0);
+        direction.0 = vec.normalize();
     }
 }
