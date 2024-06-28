@@ -1,4 +1,4 @@
-const HAMMER_SPEED: f32 = 20.0;
+const HAMMER_SPEED: f32 = 200.0;
 const ROTATION_SPEED: f32 = 2.0;
 
 use crate::{
@@ -10,7 +10,10 @@ use crate::{
     AnimationTimer,
 };
 use bevy::prelude::*;
-use bevy_rapier2d::{dynamics::Velocity, geometry::Collider};
+use bevy_rapier2d::{
+    dynamics::{RigidBody, Velocity},
+    geometry::{Collider, Sensor},
+};
 
 #[derive(Component)]
 struct Hammer;
@@ -52,6 +55,8 @@ fn mouse_button_input(
             Hammer,
             EntityState::Idle,
             Collider::cuboid(14.0, 14.0),
+            Sensor,
+            RigidBody::KinematicVelocityBased,
             Velocity::linear(direction.0 * HAMMER_SPEED),
             sprite_sheet,
         ));
