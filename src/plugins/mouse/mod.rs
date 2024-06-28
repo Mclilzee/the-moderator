@@ -7,41 +7,24 @@ pub struct MousePlugin;
 
 impl Plugin for MousePlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(PostStartup, spawn)
+        app.add_systems(PostUpdate, spawn_cursor)
             .add_systems(Update, move_cursor);
     }
 }
 
-fn spawn(
-    mut commands: Commands,
-    window_q: Query<&Window, With<PrimaryWindow>>,
-    camera_q: Query<(&Camera, &GlobalTransform)>,
-) {
-    let (camera, camera_transform) = camera_q.single();
-    let window = window_q.single();
-    if let Some(vec) = window
-        .cursor_position()
-        .and_then(|cursor| camera.viewport_to_world(camera_transform, cursor))
-        .map(|ray| ray.origin)
-    {
-        commands.spawn((
-            Cursor,
-            SpriteSheetBundle {
-                transform: Transform {
-                    translation: vec,
-                    ..default()
-                },
-                sprite: Sprite {
-                    color: Color::BLUE,
-                    custom_size: Some(Vec2::new(5.0, 5.0)),
-                    ..default()
-                },
+fn spawn_cursor(mut commands: Commands) {
+    commands.spawn((
+        Cursor,
+        SpriteSheetBundle {
+            transform: Transform::from_xyz(0.0, 0.0, 100.0),
+            sprite: Sprite {
+                color: Color::BLUE,
+                custom_size: Some(Vec2::new(5.0, 5.0)),
                 ..default()
             },
-        ));
-
-        info!("spawn successfully");
-    }
+            ..default()
+        },
+    ));
 }
 
 fn move_cursor(
