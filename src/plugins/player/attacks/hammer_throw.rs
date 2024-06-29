@@ -9,7 +9,8 @@ use crate::{
 use bevy::prelude::*;
 use bevy_rapier2d::{
     dynamics::{RigidBody, Velocity},
-    geometry::{Collider, Sensor},
+    geometry::{ActiveEvents, Collider, Sensor},
+    pipeline::CollisionEvent,
 };
 
 const HAMMER_SPEED: f32 = 350.0;
@@ -62,6 +63,7 @@ fn mouse_button_input(
             Collider::cuboid(14.0, 14.0),
             Sensor,
             RigidBody::KinematicVelocityBased,
+            ActiveEvents::COLLISION_EVENTS,
             Velocity::linear((p2 - p1).normalize() * HAMMER_SPEED),
             sprite_sheet,
         ));
@@ -102,7 +104,11 @@ fn animate(
 
 fn collision(
     commands: &mut Commands,
-    hammers: Query<&Collider, (With<Hammer>, Without<Spammer>)>,
-    spammers: Query<&Collider, (With<Spammer>, Without<Hammer>)>,
+    hammers: Query<Entity, (With<Hammer>, Without<Spammer>)>,
+    spammers: Query<Entity, (With<Spammer>, Without<Hammer>)>,
+    mut ev_collision_events: EventReader<CollisionEvent>,
 ) {
+    for ev in ev_collision_events.read() {
+        info!("{ev:?}");
+    }
 }

@@ -77,6 +77,7 @@ fn spawn_spammer(
             Grounded(true),
             EntityState::Idle,
             LockedAxes::ROTATION_LOCKED,
+            ActiveEvents::COLLISION_EVENTS,
         ));
     }
 }
