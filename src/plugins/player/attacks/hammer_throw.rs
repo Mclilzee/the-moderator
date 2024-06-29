@@ -60,6 +60,7 @@ fn mouse_button_input(
         let angle = f32::atan2(py, px);
         let x = HAMMER_SPEED * f32::cos(angle);
         let y = HAMMER_SPEED * f32::sin(angle);
+        let vec = Vec2::new(x, y);
 
         command.spawn((
             Hammer,
@@ -67,7 +68,7 @@ fn mouse_button_input(
             Collider::cuboid(14.0, 14.0),
             Sensor,
             RigidBody::KinematicVelocityBased,
-            Velocity::linear(Vec2::new(x, y)),
+            Velocity::linear(vec),
             sprite_sheet,
         ));
     }
