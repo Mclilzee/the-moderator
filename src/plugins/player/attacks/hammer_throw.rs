@@ -1,8 +1,5 @@
-const HAMMER_SPEED: f32 = 350.0;
-const ROTATION_SPEED: f32 = 2.0;
-
 use crate::{
-    components::{EntityState, Player},
+    components::{EntityState, Player, Spammer},
     plugins::{
         asset_loader::{AnimationKey, AnimationMap},
         default_plugins::CursorPosition,
@@ -14,6 +11,9 @@ use bevy_rapier2d::{
     dynamics::{RigidBody, Velocity},
     geometry::{Collider, Sensor},
 };
+
+const HAMMER_SPEED: f32 = 350.0;
+const ROTATION_SPEED: f32 = 2.0;
 
 #[derive(Component)]
 struct Hammer;
@@ -55,12 +55,6 @@ fn mouse_button_input(
 
         let p1 = p_transform.translation.truncate();
         let p2 = cursor_position.0;
-        let px = p2.x - p1.x;
-        let py = p2.y - p1.y;
-        let angle = f32::atan2(py, px);
-        let x = HAMMER_SPEED * f32::cos(angle);
-        let y = HAMMER_SPEED * f32::sin(angle);
-        let vec = Vec2::new(x, y);
 
         command.spawn((
             Hammer,
@@ -68,7 +62,7 @@ fn mouse_button_input(
             Collider::cuboid(14.0, 14.0),
             Sensor,
             RigidBody::KinematicVelocityBased,
-            Velocity::linear(vec),
+            Velocity::linear((p2 - p1).normalize() * HAMMER_SPEED),
             sprite_sheet,
         ));
     }
@@ -104,4 +98,11 @@ fn animate(
 
         transform.rotate_z(f32::to_radians(ROTATION_SPEED));
     }
+}
+
+fn collision(
+    commands: &mut Commands,
+    hammers: Query<&Collider, (With<Hammer>, Without<Spammer>)>,
+    spammers: Query<&Collider, (With<Spammer>, Without<Hammer>)>,
+) {
 }
