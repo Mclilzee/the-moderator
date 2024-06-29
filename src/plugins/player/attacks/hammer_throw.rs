@@ -1,11 +1,11 @@
-const HAMMER_SPEED: f32 = 200.0;
+const HAMMER_SPEED: f32 = 350.0;
 const ROTATION_SPEED: f32 = 2.0;
 
 use crate::{
     components::{EntityState, Player},
     plugins::{
         asset_loader::{AnimationKey, AnimationMap},
-        default_plugins::CursorDirection,
+        default_plugins::CursorPosition,
     },
     AnimationTimer,
 };
@@ -29,8 +29,8 @@ impl Plugin for HammerPlugin {
 
 fn mouse_button_input(
     mut command: Commands,
-    player_transform: Query<&Transform, With<Player>>,
-    direction: Res<CursorDirection>,
+    player: Query<&Transform, With<Player>>,
+    cursor_position: Res<CursorPosition>,
     buttons: Res<ButtonInput<MouseButton>>,
     animation_map: Res<AnimationMap>,
 ) {
@@ -40,8 +40,10 @@ fn mouse_button_input(
             .get(&AnimationKey::Hammer)
             .expect("Player animation were not found");
 
+        let p_transform = player.single();
+
         let mut sprite_sheet = SpriteSheetBundle {
-            transform: *player_transform.single(),
+            transform: *p_transform,
             ..default()
         };
 
@@ -51,13 +53,21 @@ fn mouse_button_input(
             index: 1,
         };
 
+        let p1 = p_transform.translation.truncate();
+        let p2 = cursor_position.0;
+        let px = p2.x - p1.x;
+        let py = p2.y - p1.y;
+        let angle = f32::atan2(py, px);
+        let x = HAMMER_SPEED * f32::cos(angle);
+        let y = HAMMER_SPEED * f32::sin(angle);
+
         command.spawn((
             Hammer,
             EntityState::Idle,
             Collider::cuboid(14.0, 14.0),
             Sensor,
             RigidBody::KinematicVelocityBased,
-            Velocity::linear(direction.0 * HAMMER_SPEED),
+            Velocity::linear(Vec2::new(x, y)),
             sprite_sheet,
         ));
     }
