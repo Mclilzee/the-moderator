@@ -8,10 +8,10 @@ use crate::{
     },
     AnimationTimer,
 };
-use bevy::{ecs::system::lifetimeless::SQuery, prelude::*};
+use bevy::prelude::*;
 use bevy_rapier2d::{
     dynamics::{RigidBody, Velocity},
-    geometry::{ActiveEvents, Collider, Sensor},
+    geometry::{ActiveEvents, Collider, CollisionGroups, Group, Sensor},
     plugin::RapierContext,
 };
 
@@ -64,8 +64,8 @@ fn mouse_button_input(
             Hammer,
             EntityState::Idle,
             Collider::cuboid(14.0, 14.0),
-            Sensor,
             RigidBody::KinematicVelocityBased,
+            CollisionGroups::new(Group::GROUP_2, Group::GROUP_1),
             ActiveEvents::COLLISION_EVENTS,
             Velocity::linear((p2 - p1).normalize() * HAMMER_SPEED),
             sprite_sheet,

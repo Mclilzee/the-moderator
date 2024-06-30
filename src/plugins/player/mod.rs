@@ -15,6 +15,7 @@ use crate::{
 };
 use bevy::prelude::*;
 use bevy_rapier2d::dynamics::LockedAxes;
+use bevy_rapier2d::geometry::{CollisionGroups, Group};
 use constants::{PLAYER_HEIGHT, PLAYER_WIDTH};
 
 pub struct PlayerPlugin;
@@ -35,6 +36,7 @@ fn spawn_player(
 ) {
     let mut char = (
         Actor::new(PLAYER_STARING_HP, PLAYER_WIDTH, PLAYER_HEIGHT),
+        CollisionGroups::new(Group::GROUP_2, Group::GROUP_1),
         Player,
         AvailableJumps(PLAYER_MAX_JUMPS),
         Damage(5),
