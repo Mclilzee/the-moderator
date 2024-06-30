@@ -24,6 +24,7 @@ pub struct HammerPlugin;
 impl Plugin for HammerPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Update, mouse_button_input)
+            .add_systems(Update, collision)
             .add_systems(Update, animate);
     }
 }
@@ -103,7 +104,7 @@ fn animate(
 }
 
 fn collision(
-    commands: &mut Commands,
+    mut commands: Commands,
     hammers: Query<Entity, (With<Hammer>, Without<Spammer>)>,
     spammers: Query<Entity, (With<Spammer>, Without<Hammer>)>,
     mut ev_collision_events: EventReader<CollisionEvent>,

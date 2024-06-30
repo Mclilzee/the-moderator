@@ -8,7 +8,10 @@ use crate::{
     AnimationTimer,
 };
 use bevy::prelude::*;
-use bevy_rapier2d::dynamics::{LockedAxes, Velocity};
+use bevy_rapier2d::{
+    dynamics::{LockedAxes, Velocity},
+    geometry::ActiveEvents,
+};
 use rand::Rng;
 
 const SPAMMER_STARTING_HP: i32 = 20;
