@@ -1,3 +1,5 @@
+use std::ops::Neg;
+
 use crate::{
     components::{EntityState, Player, Spammer},
     plugins::{
@@ -11,6 +13,7 @@ use bevy_rapier2d::{
     dynamics::{RigidBody, Velocity},
     geometry::{ActiveEvents, Collider, Sensor},
     pipeline::CollisionEvent,
+    plugin::RapierContext,
 };
 
 const HAMMER_SPEED: f32 = 350.0;
@@ -103,13 +106,19 @@ fn animate(
     }
 }
 
+type HammerQ<'a> = Query<'a, 'a, (Entity, &'a mut Velocity), (With<Hammer>, Without<Spammer>)>;
 fn collision(
     mut commands: Commands,
-    hammers: Query<Entity, (With<Hammer>, Without<Spammer>)>,
+    mut hammers: HammerQ,
     spammers: Query<Entity, (With<Spammer>, Without<Hammer>)>,
-    mut ev_collision_events: EventReader<CollisionEvent>,
+    rapier_context: Res<RapierContext>,
 ) {
-    for ev in ev_collision_events.read() {
-        info!("{ev:?}");
+    for (hammer, mut vel) in hammers.iter_mut() {
+        for spammer in spammers.iter() {
+            if rapier_context.intersection_pair(hammer, spammer) == Some(true) {
+                commands.entity(spammer).despawn();
+                vel.linvel = vel.linvel.neg();
+            }
+        }
     }
 }
