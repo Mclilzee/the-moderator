@@ -11,11 +11,11 @@ use crate::{
 use bevy::prelude::*;
 use bevy_rapier2d::{
     dynamics::{RigidBody, Velocity},
-    geometry::{ActiveEvents, Collider, CollisionGroups, Group, Sensor},
+    geometry::{Collider, CollisionGroups, Group},
     plugin::RapierContext,
 };
 
-const HAMMER_SPEED: f32 = 350.0;
+const HAMMER_SPEED: f32 = 600.0;
 const ROTATION_SPEED: f32 = 2.0;
 
 #[derive(Component)]
@@ -64,9 +64,8 @@ fn mouse_button_input(
             Hammer,
             EntityState::Idle,
             Collider::cuboid(14.0, 14.0),
-            RigidBody::KinematicVelocityBased,
+            RigidBody::Dynamic,
             CollisionGroups::new(Group::GROUP_2, Group::GROUP_1),
-            ActiveEvents::COLLISION_EVENTS,
             Velocity::linear((p2 - p1).normalize() * HAMMER_SPEED),
             sprite_sheet,
         ));
@@ -74,12 +73,15 @@ fn mouse_button_input(
 }
 
 fn animate(
-    mut sprite_query: Query<(&mut TextureAtlas, &mut Transform, &EntityState), With<Hammer>>,
+    mut sprite_query: Query<
+        (&mut TextureAtlas, &mut Transform, &EntityState, &Velocity),
+        With<Hammer>,
+    >,
     time: Res<Time>,
     mut timer: ResMut<AnimationTimer>,
     animation: Res<AnimationMap>,
 ) {
-    for (mut atlas, mut transform, state) in sprite_query.iter_mut() {
+    for (mut atlas, mut transform, state, velocity) in sprite_query.iter_mut() {
         let hammer_animation = &animation
             .0
             .get(&AnimationKey::Hammer)
@@ -101,21 +103,22 @@ fn animate(
             atlas.index = index;
         }
 
-        transform.rotate_z(f32::to_radians(ROTATION_SPEED));
+        if velocity.linvel.x > 5.0 || velocity.linvel.y > 5.0 {
+            transform.rotate_z(f32::to_radians(ROTATION_SPEED));
+        }
     }
 }
 
 fn collision(
     mut commands: Commands,
-    mut hammers: Query<(Entity, &mut Velocity), (With<Hammer>, Without<Spammer>)>,
+    mut hammers: Query<Entity, (With<Hammer>, Without<Spammer>)>,
     spammers: Query<Entity, (With<Spammer>, Without<Hammer>)>,
     rapier_context: Res<RapierContext>,
 ) {
-    for (hammer, mut vel) in hammers.iter_mut() {
+    for hammer in hammers.iter_mut() {
         for spammer in spammers.iter() {
-            if rapier_context.intersection_pair(hammer, spammer) == Some(true) {
+            if rapier_context.contact_pair(hammer, spammer).is_some() {
                 commands.entity(spammer).despawn();
-                vel.linvel = vel.linvel.neg();
             }
         }
     }
