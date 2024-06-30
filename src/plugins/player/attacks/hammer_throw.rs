@@ -8,11 +8,10 @@ use crate::{
     },
     AnimationTimer,
 };
-use bevy::prelude::*;
+use bevy::{ecs::system::lifetimeless::SQuery, prelude::*};
 use bevy_rapier2d::{
     dynamics::{RigidBody, Velocity},
     geometry::{ActiveEvents, Collider, Sensor},
-    pipeline::CollisionEvent,
     plugin::RapierContext,
 };
 
@@ -106,10 +105,9 @@ fn animate(
     }
 }
 
-type HammerQ<'a> = Query<'a, 'a, (Entity, &'a mut Velocity), (With<Hammer>, Without<Spammer>)>;
 fn collision(
     mut commands: Commands,
-    mut hammers: HammerQ,
+    mut hammers: Query<(Entity, &mut Velocity), (With<Hammer>, Without<Spammer>)>,
     spammers: Query<Entity, (With<Spammer>, Without<Hammer>)>,
     rapier_context: Res<RapierContext>,
 ) {
