@@ -129,7 +129,6 @@ fn collision(
 
 fn death(mut commands: Commands, hammers: Query<(Entity, &Health), With<Hammer>>) {
     for (id, health) in hammers.iter() {
-        info!("{}", health.0);
         if health.0 <= 0 {
             commands.entity(id).despawn();
         }
