@@ -1,5 +1,3 @@
-use std::ops::Neg;
-
 use crate::{
     components::{EntityState, Player, Spammer},
     plugins::{
@@ -16,7 +14,6 @@ use bevy_rapier2d::{
 };
 
 const HAMMER_SPEED: f32 = 600.0;
-const ROTATION_SPEED: f32 = 2.0;
 
 #[derive(Component)]
 struct Hammer;
@@ -103,9 +100,7 @@ fn animate(
             atlas.index = index;
         }
 
-        if velocity.linvel.x > 5.0 || velocity.linvel.y > 5.0 {
-            transform.rotate_z(f32::to_radians(ROTATION_SPEED));
-        }
+        transform.rotate_z(f32::to_radians(-f32::floor(velocity.linvel.x / 200.0)));
     }
 }
 
