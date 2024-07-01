@@ -22,9 +22,6 @@ pub struct Jumps {
 }
 
 #[derive(Component)]
-pub struct Grounded(pub bool);
-
-#[derive(Component)]
 pub struct Solid;
 
 #[derive(Eq, Hash, PartialEq, Component)]

@@ -1,6 +1,6 @@
 use crate::{
     bundles::actors::Actor,
-    components::{Grounded, Player, Spammer},
+    components::{Player, Spammer},
 };
 use crate::{
     components::EntityState,
@@ -10,7 +10,7 @@ use crate::{
 use bevy::prelude::*;
 use bevy_rapier2d::{
     dynamics::{LockedAxes, Velocity},
-    geometry::ActiveEvents,
+    geometry::{ActiveEvents, CollisionGroups, Group},
 };
 use rand::Rng;
 
@@ -77,8 +77,8 @@ fn spawn_spammer(
         commands.spawn((
             spammer,
             Spammer,
-            Grounded(true),
             EntityState::Idle,
+            CollisionGroups::new(Group::GROUP_2, Group::GROUP_1),
             LockedAxes::ROTATION_LOCKED,
             ActiveEvents::COLLISION_EVENTS,
         ));

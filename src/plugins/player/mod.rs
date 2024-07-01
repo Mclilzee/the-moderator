@@ -7,11 +7,10 @@ use self::constants::PLAYER_MAX_JUMPS;
 use self::{animation::animate, constants::PLAYER_STARING_HP, player_input::input};
 use super::asset_loader::AnimationKey;
 use super::asset_loader::AnimationMap;
-use crate::components::{EntityState, Grounded, Jumps};
+use crate::components::{EntityState, Jumps};
 use crate::{
     bundles::actors::Actor,
     components::{AvailableJumps, Damage, Player},
-    InGameSet,
 };
 use bevy::prelude::*;
 use bevy_rapier2d::dynamics::LockedAxes;
@@ -24,7 +23,7 @@ impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(attacks::AttacksPlugin)
             .add_systems(PostStartup, spawn_player)
-            .add_systems(Update, input.in_set(InGameSet::Input))
+            .add_systems(Update, input)
             .add_systems(Update, animate);
     }
 }
@@ -36,7 +35,7 @@ fn spawn_player(
 ) {
     let mut char = (
         Actor::new(PLAYER_STARING_HP, PLAYER_WIDTH, PLAYER_HEIGHT),
-        CollisionGroups::new(Group::GROUP_2, Group::GROUP_1),
+        CollisionGroups::new(Group::GROUP_1, Group::GROUP_2),
         Player,
         AvailableJumps(PLAYER_MAX_JUMPS),
         Damage(5),
@@ -44,7 +43,6 @@ fn spawn_player(
             current: 20,
             max: 2,
         },
-        Grounded(true),
         EntityState::Idle,
         LockedAxes::ROTATION_LOCKED,
     );

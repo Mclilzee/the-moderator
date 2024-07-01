@@ -14,6 +14,7 @@ use bevy_rapier2d::{
 };
 
 const HAMMER_SPEED: f32 = 600.0;
+const ROTATION_DIVIDER: f32 = 200.0;
 
 #[derive(Component)]
 struct Hammer;
@@ -62,7 +63,7 @@ fn mouse_button_input(
             EntityState::Idle,
             Collider::cuboid(14.0, 14.0),
             RigidBody::Dynamic,
-            CollisionGroups::new(Group::GROUP_2, Group::GROUP_1),
+            CollisionGroups::new(Group::GROUP_1, Group::GROUP_3 | Group::GROUP_2),
             Velocity::linear((p2 - p1).normalize() * HAMMER_SPEED),
             sprite_sheet,
         ));
@@ -100,7 +101,9 @@ fn animate(
             atlas.index = index;
         }
 
-        transform.rotate_z(f32::to_radians(-f32::floor(velocity.linvel.x / 200.0)));
+        transform.rotate_z(f32::to_radians(-f32::floor(
+            velocity.linvel.x / ROTATION_DIVIDER,
+        )));
     }
 }
 
