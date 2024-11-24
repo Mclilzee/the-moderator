@@ -1,6 +1,6 @@
 use crate::{
     bundles::actors::Actor,
-    components::{Player, Spammer},
+    components::{Health, Player, Spammer},
 };
 use crate::{
     components::EntityState,
@@ -35,7 +35,8 @@ impl Plugin for SpammerPlugins {
         app.insert_resource(timer)
             .add_systems(Update, spawn_spammer)
             .add_systems(Update, track_player)
-            .add_systems(Update, animate);
+            .add_systems(Update, animate)
+            .add_systems(Update, despawn);
     }
 }
 
@@ -141,5 +142,13 @@ pub fn animate(
         }
 
         atlas.index = index;
+    }
+}
+
+pub fn despawn(mut commands: Commands, query: Query<(Entity, &Health), With<Spammer>>) {
+    for (id, hp) in query.iter() {
+        if hp.0 <= 0 {
+            commands.entity(id).despawn();
+        }
     }
 }

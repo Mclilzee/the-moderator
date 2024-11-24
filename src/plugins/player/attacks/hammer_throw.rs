@@ -27,7 +27,7 @@ impl Plugin for HammerPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Update, mouse_button_input)
             .add_systems(Update, collision)
-            .add_systems(Update, death)
+            .add_systems(Update, despawn)
             .add_systems(Update, animate);
     }
 }
@@ -127,7 +127,7 @@ fn collision(
     }
 }
 
-fn death(mut commands: Commands, hammers: Query<(Entity, &Health), With<Hammer>>) {
+fn despawn(mut commands: Commands, hammers: Query<(Entity, &Health), With<Hammer>>) {
     for (id, health) in hammers.iter() {
         if health.0 <= 0 {
             commands.entity(id).despawn();
