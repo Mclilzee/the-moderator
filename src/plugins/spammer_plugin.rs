@@ -1,6 +1,6 @@
 use crate::{
     bundles::actors::Actor,
-    components::{Health, Player, Spammer},
+    components::{DespawnStopwatch, Health, Player, Spammer, SpammerDespawnEffect},
 };
 use crate::{
     components::EntityState,
@@ -19,6 +19,7 @@ const SPAMMER_SPEED: f32 = 40.0;
 const SPAMMER_WIDTH: f32 = 10.0;
 const SPAMMER_HEIGHT: f32 = 15.0;
 const SPAMMER_LIMIT: usize = 5;
+const DEATH_EFFECT_DURATION: f32 = 3.0;
 
 pub struct SpammerPlugins;
 
@@ -36,7 +37,8 @@ impl Plugin for SpammerPlugins {
             .add_systems(Update, spawn_spammer)
             .add_systems(Update, track_player)
             .add_systems(Update, animate)
-            .add_systems(Update, despawn);
+            .add_systems(Update, despawn)
+            .add_systems(Update, despawn_effect_progress);
     }
 }
 
@@ -104,7 +106,7 @@ fn track_player(
     }
 }
 
-pub fn animate(
+fn animate(
     mut sprite_query: Query<
         (&mut TextureAtlas, &mut Sprite, &EntityState, &Velocity),
         With<Spammer>,
@@ -145,9 +147,38 @@ pub fn animate(
     }
 }
 
-pub fn despawn(mut commands: Commands, query: Query<(Entity, &Health), With<Spammer>>) {
-    for (id, hp) in query.iter() {
+fn despawn(mut commands: Commands, query: Query<(Entity, &Health, &Transform), With<Spammer>>) {
+    for (id, hp, transform) in query.iter() {
         if hp.0 <= 0 {
+            commands.entity(id).despawn();
+            // despawn effect
+            commands.spawn((
+                SpammerDespawnEffect,
+                DespawnStopwatch::default(),
+                SpriteBundle {
+                    sprite: Sprite {
+                        custom_size: Some(Vec2::new(1.0, 1.0)),
+                        color: Color::WHITE,
+                        ..default()
+                    },
+                    transform: *transform,
+                    ..default()
+                },
+            ));
+        }
+    }
+}
+
+fn despawn_effect_progress(
+    mut commands: Commands,
+    mut query: Query<(Entity, &mut DespawnStopwatch, &mut Sprite), With<SpammerDespawnEffect>>,
+    time: Res<Time>,
+) {
+    for (id, mut stopwatch, mut sprite) in query.iter_mut() {
+        stopwatch.0.tick(time.delta());
+        let size = stopwatch.0.elapsed_secs() * 10.0;
+        sprite.custom_size = Some(Vec2::new(size, size));
+        if stopwatch.0.elapsed_secs() >= DEATH_EFFECT_DURATION {
             commands.entity(id).despawn();
         }
     }

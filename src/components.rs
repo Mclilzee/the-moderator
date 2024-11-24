@@ -13,6 +13,9 @@ pub struct Player;
 pub struct Spammer;
 
 #[derive(Component)]
+pub struct SpammerDespawnEffect;
+
+#[derive(Component)]
 pub struct AvailableJumps(pub u8);
 
 #[derive(Component)]
