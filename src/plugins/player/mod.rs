@@ -7,11 +7,13 @@ use self::constants::PLAYER_MAX_JUMPS;
 use self::{animation::animate, constants::PLAYER_STARING_HP, player_input::input};
 use super::asset_loader::AnimationKey;
 use super::asset_loader::AnimationMap;
+use super::platform::Platform;
 use crate::common_components::{EntityState, Jumps};
 use crate::{bundles::actors::Actor, common_components::Damage};
 use bevy::prelude::*;
 use bevy_rapier2d::dynamics::LockedAxes;
 use bevy_rapier2d::geometry::{CollisionGroups, Group};
+use bevy_rapier2d::plugin::RapierContext;
 use constants::{PLAYER_HEIGHT, PLAYER_WIDTH};
 
 #[derive(Component)]
@@ -24,7 +26,8 @@ impl Plugin for PlayerPlugin {
         app.add_plugins(attacks::AttacksPlugin)
             .add_systems(PostStartup, spawn_player)
             .add_systems(Update, input)
-            .add_systems(Update, animate);
+            .add_systems(Update, animate)
+            .add_systems(Update, ground_collision);
     }
 }
 
@@ -60,4 +63,19 @@ fn spawn_player(
     let player_id = commands.spawn((char, Name::new("Player"))).id();
     let id = camera_q.single();
     commands.get_entity(id).unwrap().set_parent(player_id);
+}
+
+fn ground_collision(
+    mut player: Query<(Entity, &Transform, &mut Jumps), With<Player>>,
+    platforms: Query<(Entity, &Transform), With<Platform>>,
+    rapier_context: Res<RapierContext>,
+) {
+    let (p_id, p_transform, mut jumps) = player.single_mut();
+    for (platform_id, platform_transform) in platforms.iter() {
+        if rapier_context.contact_pair(p_id, platform_id).is_some()
+            && p_transform.translation.y > platform_transform.translation.y
+        {
+            jumps.current = 0;
+        }
+    }
 }
