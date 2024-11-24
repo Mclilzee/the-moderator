@@ -23,7 +23,7 @@ pub fn input(
 
     if keys.any_just_pressed([KeyCode::ArrowUp, KeyCode::Space]) && jumps.max > jumps.current {
         velocity.linvel.y = PLAYER_JUMP_HEIGHT;
-        jumps.current -= 1;
+        jumps.current += 1;
     }
 
     if keys.pressed(KeyCode::KeyW) {
