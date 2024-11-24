@@ -70,7 +70,7 @@ fn spawn_spammer(
             .expect("Spammer animation were not found");
 
         spammer.sprite_bundle.texture = animation.texture.clone();
-        spammer.texture_atlas = TextureAtlas {
+        spammer.atlas = TextureAtlas {
             layout: animation.atlas.clone(),
             index: 1,
         };

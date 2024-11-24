@@ -53,7 +53,7 @@ fn spawn_player(
         .expect("Player animation were not found");
 
     char.0.sprite_bundle.texture = animation.texture.clone();
-    char.0.texture_atlas = TextureAtlas {
+    char.0.atlas = TextureAtlas {
         layout: animation.atlas.clone(),
         index: 1,
     };

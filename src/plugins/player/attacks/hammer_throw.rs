@@ -49,13 +49,13 @@ fn mouse_button_input(
 
         let p_transform = player.single();
 
-        let mut sprite_sheet = SpriteSheetBundle {
+        let mut sprite_bundle = SpriteBundle {
             transform: *p_transform,
             ..default()
         };
 
-        sprite_sheet.texture = animation.texture.clone();
-        sprite_sheet.atlas = TextureAtlas {
+        sprite_bundle.texture = animation.texture.clone();
+        let atlas = TextureAtlas {
             layout: animation.atlas.clone(),
             index: 1,
         };
@@ -73,7 +73,8 @@ fn mouse_button_input(
             RigidBody::Dynamic,
             CollisionGroups::new(Group::GROUP_1, Group::GROUP_3 | Group::GROUP_2),
             Velocity::linear((p2 - p1).normalize() * HAMMER_SPEED),
-            sprite_sheet,
+            atlas,
+            sprite_bundle
         ));
     }
 }

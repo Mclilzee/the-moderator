@@ -8,7 +8,7 @@ pub struct Actor {
     hp: Health,
     body: RigidBody,
     pub sprite_bundle: SpriteBundle,
-    pub texture_atlas: TextureAtlas,
+    pub atlas: TextureAtlas,
     pub vel: Velocity,
 }
 
