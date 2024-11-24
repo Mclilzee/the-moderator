@@ -1,5 +1,5 @@
 use crate::{
-    components::{Damage, EntityState, Health, Player, Spammer},
+    components::{Damage, DespawnStopwatch, EntityState, Health, Player, Spammer},
     plugins::{
         asset_loader::{AnimationKey, AnimationMap},
         default_plugins::CursorPosition,
@@ -16,7 +16,8 @@ use bevy_rapier2d::{
 const HAMMER_SPEED: f32 = 600.0;
 const ROTATION_DIVIDER: f32 = 200.0;
 const HEALTH: i32 = 2;
-const DAMAGE: i32 = 2;
+const DAMAGE: i32 = 4;
+const DESPAWN_TIMER: f32 = 5.0;
 
 #[derive(Component)]
 struct Hammer;
@@ -28,7 +29,8 @@ impl Plugin for HammerPlugin {
         app.add_systems(Update, mouse_button_input)
             .add_systems(Update, collision)
             .add_systems(Update, despawn)
-            .add_systems(Update, animate);
+            .add_systems(Update, animate)
+            .add_systems(Update, despawn_stopwatch);
     }
 }
 
@@ -63,10 +65,11 @@ fn mouse_button_input(
 
         command.spawn((
             Hammer,
-            EntityState::Idle,
-            Collider::cuboid(14.0, 14.0),
             Damage(DAMAGE),
             Health(HEALTH),
+            DespawnStopwatch::default(),
+            EntityState::Idle,
+            Collider::cuboid(14.0, 14.0),
             RigidBody::Dynamic,
             CollisionGroups::new(Group::GROUP_1, Group::GROUP_3 | Group::GROUP_2),
             Velocity::linear((p2 - p1).normalize() * HAMMER_SPEED),
@@ -130,6 +133,19 @@ fn collision(
 fn despawn(mut commands: Commands, hammers: Query<(Entity, &Health), With<Hammer>>) {
     for (id, health) in hammers.iter() {
         if health.0 <= 0 {
+            commands.entity(id).despawn();
+        }
+    }
+}
+
+fn despawn_stopwatch(
+    mut commands: Commands,
+    mut hammers: Query<(Entity, &mut DespawnStopwatch), With<Hammer>>,
+    time: Res<Time>,
+) {
+    for (id, mut stopwatch) in hammers.iter_mut() {
+        stopwatch.0.tick(time.delta());
+        if stopwatch.0.elapsed_secs() >= DESPAWN_TIMER {
             commands.entity(id).despawn();
         }
     }

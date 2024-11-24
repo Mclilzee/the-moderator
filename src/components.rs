@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, time::Stopwatch};
 
 #[derive(Component)]
 pub struct Health(pub i32);
@@ -30,3 +30,6 @@ pub enum EntityState {
     Running,
     Jumping,
 }
+
+#[derive(Component, Default)]
+pub struct DespawnStopwatch(pub Stopwatch);
