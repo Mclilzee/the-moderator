@@ -5,7 +5,8 @@ use crate::{
         default_plugins::CursorPosition,
         player::Player,
         spammer_plugin::Spammer,
-    }, AnimationTimer,
+    },
+    AnimationTimer,
 };
 use bevy::prelude::*;
 use bevy_rapier2d::{
@@ -15,7 +16,7 @@ use bevy_rapier2d::{
 };
 
 const HAMMER_SPEED: f32 = 600.0;
-const ROTATION_DIVIDER: f32 = 100.0;
+const ROATION_ANGLE: f32 = 15.0;
 const HEALTH: i32 = 2;
 const DAMAGE: i32 = 4;
 const DESPAWN_TIMER: f32 = 3.0;
@@ -85,13 +86,13 @@ fn animate(
         (&mut TextureAtlas, &mut Transform, &EntityState, &Velocity),
         With<Hammer>,
     >,
+    time: Res<Time>,
     animation_timer: Res<AnimationTimer>,
     animation: Res<AnimationMap>,
 ) {
     for (mut atlas, mut transform, state, velocity) in sprite_query.iter_mut() {
-        transform.rotate_z(f32::to_radians(-f32::floor(
-            velocity.linvel.x / ROTATION_DIVIDER,
-        )));
+        let rotation = if velocity.linvel.x > 0.0 { -ROATION_ANGLE } else { ROATION_ANGLE };
+        transform.rotate_z(rotation * time.delta_seconds());
 
         if !animation_timer.0.finished() {
             return;
@@ -114,7 +115,6 @@ fn animate(
         }
 
         atlas.index = index;
-
     }
 }
 
@@ -127,7 +127,7 @@ fn collision(
         for (s_id, mut s_health) in spammers.iter_mut() {
             if rapier_context.contact_pair(h_id, s_id).is_some() {
                 s_health.0 -= h_dmg.0;
-                h_health.0 -= 1;
+                h_health.0 = 0;
             }
         }
     }
