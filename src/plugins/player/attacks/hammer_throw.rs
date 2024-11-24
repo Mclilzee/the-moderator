@@ -17,7 +17,7 @@ const HAMMER_SPEED: f32 = 600.0;
 const ROTATION_DIVIDER: f32 = 200.0;
 const HEALTH: i32 = 2;
 const DAMAGE: i32 = 4;
-const DESPAWN_TIMER: f32 = 5.0;
+const DESPAWN_TIMER: f32 = 3.0;
 
 #[derive(Component)]
 struct Hammer;
