@@ -10,10 +10,10 @@ pub fn setup(
 ) {
     let texture: Handle<Image> = asset_server.load("knight/Knight.png");
     let layout = atlas_server.add(TextureAtlasLayout::from_grid(
-        Vec2::new(31.0, 38.0),
+        UVec2::new(31, 38),
         19,
         1,
-        Some(Vec2::new(4.0, 0.0)),
+        Some(UVec2::new(4, 0)),
         None,
     ));
 
