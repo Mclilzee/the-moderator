@@ -2,12 +2,13 @@ use crate::components::Health;
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-#[derive(Bundle)]
+#[derive(Bundle, Default)]
 pub struct Actor {
     collider: Collider,
     hp: Health,
     body: RigidBody,
-    pub sprite_sheet: SpriteSheetBundle,
+    pub sprite_bundle: SpriteBundle,
+    pub texture_atlas: TextureAtlas,
     pub vel: Velocity,
 }
 
@@ -18,7 +19,7 @@ impl Actor {
             hp: Health(hp),
             body: RigidBody::Dynamic,
             vel: Velocity::zero(),
-            sprite_sheet: SpriteSheetBundle::default(),
+            ..default()
         }
     }
 }

@@ -1,6 +1,6 @@
 use bevy::{prelude::*, time::Stopwatch};
 
-#[derive(Component)]
+#[derive(Component, Default)]
 pub struct Health(pub i32);
 
 #[derive(Component)]

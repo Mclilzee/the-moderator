@@ -52,8 +52,8 @@ fn spawn_player(
         .get(&AnimationKey::Player)
         .expect("Player animation were not found");
 
-    char.0.sprite_sheet.texture = animation.texture.clone();
-    char.0.sprite_sheet.atlas = TextureAtlas {
+    char.0.sprite_bundle.texture = animation.texture.clone();
+    char.0.texture_atlas = TextureAtlas {
         layout: animation.atlas.clone(),
         index: 1,
     };
