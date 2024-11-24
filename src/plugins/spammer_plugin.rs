@@ -156,11 +156,6 @@ fn despawn(mut commands: Commands, query: Query<(Entity, &Health, &Transform), W
                 SpammerDespawnEffect,
                 DespawnStopwatch::default(),
                 SpriteBundle {
-                    sprite: Sprite {
-                        custom_size: Some(Vec2::new(1.0, 1.0)),
-                        color: Color::WHITE,
-                        ..default()
-                    },
                     transform: *transform,
                     ..default()
                 },
