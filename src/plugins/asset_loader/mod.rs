@@ -3,7 +3,7 @@ mod spammer_assets;
 mod weapon_assets;
 use bevy::{prelude::*, utils::HashMap};
 
-use crate::components::EntityState;
+use crate::common_components::EntityState;
 
 #[derive(Resource, Default)]
 pub struct AnimationMap(pub HashMap<AnimationKey, Animation>);

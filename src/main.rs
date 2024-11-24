@@ -1,5 +1,5 @@
 mod bundles;
-mod components;
+mod common_components;
 mod plugins;
 
 use bevy::prelude::*;

@@ -1,8 +1,8 @@
 use crate::{
-    components::{Damage, DespawnStopwatch, EntityState, Health, Player, Spammer},
+    common_components::{Damage, DespawnTimer, EntityState, Health},
     plugins::{
         asset_loader::{AnimationKey, AnimationMap},
-        default_plugins::CursorPosition,
+        default_plugins::CursorPosition, player::Player, spammer_plugin::Spammer,
     },
     AnimationTimer,
 };
@@ -67,7 +67,7 @@ fn mouse_button_input(
             Hammer,
             Damage(DAMAGE),
             Health(HEALTH),
-            DespawnStopwatch::default(),
+            DespawnTimer(Timer::from_seconds(DESPAWN_TIMER, TimerMode::Once)),
             EntityState::Idle,
             Collider::cuboid(14.0, 14.0),
             RigidBody::Dynamic,
@@ -141,12 +141,12 @@ fn despawn(mut commands: Commands, hammers: Query<(Entity, &Health), With<Hammer
 
 fn despawn_stopwatch(
     mut commands: Commands,
-    mut hammers: Query<(Entity, &mut DespawnStopwatch), With<Hammer>>,
+    mut hammers: Query<(Entity, &mut DespawnTimer), With<Hammer>>,
     time: Res<Time>,
 ) {
     for (id, mut stopwatch) in hammers.iter_mut() {
         stopwatch.0.tick(time.delta());
-        if stopwatch.0.elapsed_secs() >= DESPAWN_TIMER {
+        if stopwatch.0.finished() {
             commands.entity(id).despawn();
         }
     }

@@ -1,10 +1,12 @@
 use bevy::prelude::*;
 
 use crate::{
-    components::{EntityState, Player},
+    common_components::EntityState,
     plugins::asset_loader::{AnimationKey, AnimationMap},
     AnimationTimer,
 };
+
+use super::Player;
 
 pub fn animate(
     mut sprite_query: Query<(&mut TextureAtlas, &mut Sprite, &EntityState), With<Player>>,

@@ -1,4 +1,4 @@
-use crate::components::Health;
+use crate::common_components::Health;
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 

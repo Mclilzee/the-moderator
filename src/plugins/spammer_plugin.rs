@@ -1,9 +1,9 @@
 use crate::{
     bundles::actors::Actor,
-    components::{DespawnStopwatch, Health, Player, Spammer, SpammerDespawnEffect},
+    common_components::{DespawnTimer, Health},
 };
 use crate::{
-    components::EntityState,
+    common_components::EntityState,
     plugins::asset_loader::{AnimationKey, AnimationMap},
     AnimationTimer,
 };
@@ -13,6 +13,8 @@ use bevy_rapier2d::{
     geometry::{ActiveEvents, CollisionGroups, Group},
 };
 use rand::Rng;
+
+use super::player::Player;
 
 const SPAMMER_STARTING_HP: i32 = 20;
 const SPAMMER_SPEED: f32 = 40.0;
@@ -27,6 +29,12 @@ pub struct SpammerPlugins;
 struct SpammerSpawnTimer {
     timer: Timer,
 }
+
+#[derive(Component)]
+pub struct Spammer;
+
+#[derive(Component)]
+struct SpammerDespawnEffect;
 
 impl Plugin for SpammerPlugins {
     fn build(&self, app: &mut App) {
@@ -154,7 +162,7 @@ fn despawn(mut commands: Commands, query: Query<(Entity, &Health, &Transform), W
             // despawn effect
             commands.spawn((
                 SpammerDespawnEffect,
-                DespawnStopwatch::default(),
+                DespawnTimer(Timer::from_seconds(DEATH_EFFECT_DURATION, TimerMode::Once)),
                 SpriteBundle {
                     transform: *transform,
                     ..default()
@@ -166,14 +174,14 @@ fn despawn(mut commands: Commands, query: Query<(Entity, &Health, &Transform), W
 
 fn despawn_effect_progress(
     mut commands: Commands,
-    mut query: Query<(Entity, &mut DespawnStopwatch, &mut Sprite), With<SpammerDespawnEffect>>,
+    mut query: Query<(Entity, &mut DespawnTimer, &mut Sprite), With<SpammerDespawnEffect>>,
     time: Res<Time>,
 ) {
     for (id, mut stopwatch, mut sprite) in query.iter_mut() {
         stopwatch.0.tick(time.delta());
         let size = stopwatch.0.elapsed_secs() * 20.0;
         sprite.custom_size = Some(Vec2::new(size, size));
-        if stopwatch.0.elapsed_secs() >= DEATH_EFFECT_DURATION {
+        if stopwatch.0.finished() {
             commands.entity(id).despawn();
         }
     }

@@ -7,15 +7,15 @@ use self::constants::PLAYER_MAX_JUMPS;
 use self::{animation::animate, constants::PLAYER_STARING_HP, player_input::input};
 use super::asset_loader::AnimationKey;
 use super::asset_loader::AnimationMap;
-use crate::components::{EntityState, Jumps};
-use crate::{
-    bundles::actors::Actor,
-    components::{Damage, Player},
-};
+use crate::common_components::{EntityState, Jumps};
+use crate::{bundles::actors::Actor, common_components::Damage};
 use bevy::prelude::*;
 use bevy_rapier2d::dynamics::LockedAxes;
 use bevy_rapier2d::geometry::{CollisionGroups, Group};
 use constants::{PLAYER_HEIGHT, PLAYER_WIDTH};
+
+#[derive(Component)]
+pub struct Player;
 
 pub struct PlayerPlugin;
 
