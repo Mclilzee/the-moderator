@@ -19,7 +19,7 @@ const SPAMMER_SPEED: f32 = 40.0;
 const SPAMMER_WIDTH: f32 = 10.0;
 const SPAMMER_HEIGHT: f32 = 15.0;
 const SPAMMER_LIMIT: usize = 5;
-const DEATH_EFFECT_DURATION: f32 = 3.0;
+const DEATH_EFFECT_DURATION: f32 = 1.0;
 
 pub struct SpammerPlugins;
 
@@ -171,7 +171,7 @@ fn despawn_effect_progress(
 ) {
     for (id, mut stopwatch, mut sprite) in query.iter_mut() {
         stopwatch.0.tick(time.delta());
-        let size = stopwatch.0.elapsed_secs() * 10.0;
+        let size = stopwatch.0.elapsed_secs() * 20.0;
         sprite.custom_size = Some(Vec2::new(size, size));
         if stopwatch.0.elapsed_secs() >= DEATH_EFFECT_DURATION {
             commands.entity(id).despawn();
