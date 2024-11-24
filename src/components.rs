@@ -21,9 +21,6 @@ pub struct Jumps {
     pub max: u8,
 }
 
-#[derive(Component)]
-pub struct Solid;
-
 #[derive(Eq, Hash, PartialEq, Component)]
 pub enum EntityState {
     Idle,
