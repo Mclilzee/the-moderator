@@ -1,21 +1,27 @@
 use bevy::prelude::*;
 
 use crate::{
-    common_components::EntityState,
+    common_components::{AnimationTimer, EntityState},
     plugins::asset_loader::{AnimationKey, AnimationMap},
-    AnimationTimer,
 };
 
 use super::Player;
 
 pub fn animate(
-    mut sprite_query: Query<(&mut TextureAtlas, &mut Sprite, &EntityState), With<Player>>,
+    mut sprite_query: Query<
+        (
+            &mut TextureAtlas,
+            &mut Sprite,
+            &mut AnimationTimer,
+            &EntityState,
+        ),
+        With<Player>,
+    >,
     keys: Res<ButtonInput<KeyCode>>,
     time: Res<Time>,
-    mut timer: ResMut<AnimationTimer>,
     animation: Res<AnimationMap>,
 ) {
-    let (mut atlas, mut sprite, state) = sprite_query.single_mut();
+    let (mut atlas, mut sprite, mut animation_timer, state) = sprite_query.single_mut();
 
     let player_animations = &animation
         .0
@@ -33,8 +39,8 @@ pub fn animate(
         sprite.flip_x = false;
     }
 
-    timer.0.tick(time.delta());
-    if timer.0.finished() {
+    animation_timer.0.tick(time.delta());
+    if animation_timer.0.finished() {
         let mut index = atlas.index + 1;
 
         if atlas.index >= frames.last_frame || atlas.index < frames.first_frame {

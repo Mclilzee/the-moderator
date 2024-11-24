@@ -3,9 +3,8 @@ use crate::{
     common_components::{DespawnTimer, Health},
 };
 use crate::{
-    common_components::EntityState,
+    common_components::{EntityState, AnimationTimer},
     plugins::asset_loader::{AnimationKey, AnimationMap},
-    AnimationTimer,
 };
 use bevy::prelude::*;
 use bevy_rapier2d::{
@@ -116,24 +115,22 @@ fn track_player(
 
 fn animate(
     mut sprite_query: Query<
-        (&mut TextureAtlas, &mut Sprite, &EntityState, &Velocity),
+        (&mut TextureAtlas, &mut Sprite, &mut AnimationTimer, &EntityState, &Velocity),
         With<Spammer>,
     >,
     time: Res<Time>,
-    mut timer: ResMut<AnimationTimer>,
     animation: Res<AnimationMap>,
 ) {
-    timer.0.tick(time.delta());
-    if !timer.0.finished() {
-        return;
-    }
-
     let spammer_animations = &animation
         .0
         .get(&AnimationKey::Spammer)
         .expect("Animation for spammer were not found");
 
-    for (mut atlas, mut sprite, state, velocity) in sprite_query.iter_mut() {
+    for (mut atlas, mut sprite, mut animation_timer, state, velocity) in sprite_query.iter_mut() {
+        animation_timer.0.tick(time.delta());
+        if !animation_timer.0.finished() {
+            continue;
+        }
         let frames = spammer_animations
             .indices
             .get(state)
@@ -159,7 +156,6 @@ fn despawn(mut commands: Commands, query: Query<(Entity, &Health, &Transform), W
     for (id, hp, transform) in query.iter() {
         if hp.0 <= 0 {
             commands.entity(id).despawn();
-            // despawn effect
             commands.spawn((
                 SpammerDespawnEffect,
                 DespawnTimer(Timer::from_seconds(DEATH_EFFECT_DURATION, TimerMode::Once)),

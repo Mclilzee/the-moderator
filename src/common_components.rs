@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use bevy::prelude::*;
 
 #[derive(Component, Default)]
@@ -14,6 +16,15 @@ pub struct Jumps {
 
 #[derive(Component)]
 pub struct DespawnTimer(pub Timer);
+
+#[derive(Component)]
+pub struct AnimationTimer(pub Timer);
+
+impl Default for AnimationTimer {
+    fn default() -> Self {
+        Self(Timer::new(Duration::from_millis(100), TimerMode::Repeating))
+    }
+}
 
 #[allow(dead_code)]
 #[derive(Eq, Hash, PartialEq, Component)]

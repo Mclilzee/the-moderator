@@ -1,10 +1,11 @@
 use crate::{
-    common_components::{Damage, DespawnTimer, EntityState, Health},
+    common_components::{AnimationTimer, Damage, DespawnTimer, EntityState, Health},
     plugins::{
         asset_loader::{AnimationKey, AnimationMap},
-        default_plugins::CursorPosition, player::Player, spammer_plugin::Spammer,
+        default_plugins::CursorPosition,
+        player::Player,
+        spammer_plugin::Spammer,
     },
-    AnimationTimer,
 };
 use bevy::prelude::*;
 use bevy_rapier2d::{
@@ -74,21 +75,20 @@ fn mouse_button_input(
             CollisionGroups::new(Group::GROUP_1, Group::GROUP_3 | Group::GROUP_2),
             Velocity::linear((p2 - p1).normalize() * HAMMER_SPEED),
             atlas,
-            sprite_bundle
+            sprite_bundle,
         ));
     }
 }
 
 fn animate(
     mut sprite_query: Query<
-        (&mut TextureAtlas, &mut Transform, &EntityState, &Velocity),
+        (&mut TextureAtlas, &mut Transform, &mut AnimationTimer, &EntityState, &Velocity),
         With<Hammer>,
     >,
     time: Res<Time>,
-    mut timer: ResMut<AnimationTimer>,
     animation: Res<AnimationMap>,
 ) {
-    for (mut atlas, mut transform, state, velocity) in sprite_query.iter_mut() {
+    for (mut atlas, mut transform, mut animation_timer, state, velocity) in sprite_query.iter_mut() {
         let hammer_animation = &animation
             .0
             .get(&AnimationKey::Hammer)
@@ -99,8 +99,8 @@ fn animate(
             .get(state)
             .unwrap_or(&hammer_animation.default);
 
-        timer.0.tick(time.delta());
-        if timer.0.finished() {
+        animation_timer.0.tick(time.delta());
+        if animation_timer.0.finished() {
             let mut index = atlas.index + 1;
 
             if atlas.index >= frames.last_frame || atlas.index < frames.first_frame {
