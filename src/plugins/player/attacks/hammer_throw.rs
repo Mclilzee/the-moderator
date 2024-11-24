@@ -1,11 +1,11 @@
 use crate::{
-    common_components::{AnimationTimer, Damage, DespawnTimer, EntityState, Health},
+    common_components::{Damage, DespawnTimer, EntityState, Health},
     plugins::{
         asset_loader::{AnimationKey, AnimationMap},
         default_plugins::CursorPosition,
         player::Player,
         spammer_plugin::Spammer,
-    },
+    }, AnimationTimer,
 };
 use bevy::prelude::*;
 use bevy_rapier2d::{
@@ -15,7 +15,7 @@ use bevy_rapier2d::{
 };
 
 const HAMMER_SPEED: f32 = 600.0;
-const ROTATION_DIVIDER: f32 = 200.0;
+const ROTATION_DIVIDER: f32 = 100.0;
 const HEALTH: i32 = 2;
 const DAMAGE: i32 = 4;
 const DESPAWN_TIMER: f32 = 3.0;
@@ -66,7 +66,6 @@ fn mouse_button_input(
 
         command.spawn((
             Hammer,
-            AnimationTimer::default(),
             Damage(DAMAGE),
             Health(HEALTH),
             DespawnTimer(Timer::from_seconds(DESPAWN_TIMER, TimerMode::Once)),
@@ -83,13 +82,21 @@ fn mouse_button_input(
 
 fn animate(
     mut sprite_query: Query<
-        (&mut TextureAtlas, &mut Transform, &mut AnimationTimer, &EntityState, &Velocity),
+        (&mut TextureAtlas, &mut Transform, &EntityState, &Velocity),
         With<Hammer>,
     >,
-    time: Res<Time>,
+    animation_timer: Res<AnimationTimer>,
     animation: Res<AnimationMap>,
 ) {
-    for (mut atlas, mut transform, mut animation_timer, state, velocity) in sprite_query.iter_mut() {
+    for (mut atlas, mut transform, state, velocity) in sprite_query.iter_mut() {
+        transform.rotate_z(f32::to_radians(-f32::floor(
+            velocity.linvel.x / ROTATION_DIVIDER,
+        )));
+
+        if !animation_timer.0.finished() {
+            return;
+        }
+
         let hammer_animation = &animation
             .0
             .get(&AnimationKey::Hammer)
@@ -100,20 +107,14 @@ fn animate(
             .get(state)
             .unwrap_or(&hammer_animation.default);
 
-        animation_timer.0.tick(time.delta());
-        if animation_timer.0.finished() {
-            let mut index = atlas.index + 1;
+        let mut index = atlas.index + 1;
 
-            if atlas.index >= frames.last_frame || atlas.index < frames.first_frame {
-                index = frames.first_frame;
-            }
-
-            atlas.index = index;
+        if atlas.index >= frames.last_frame || atlas.index < frames.first_frame {
+            index = frames.first_frame;
         }
 
-        transform.rotate_z(f32::to_radians(-f32::floor(
-            velocity.linvel.x / ROTATION_DIVIDER,
-        )));
+        atlas.index = index;
+
     }
 }
 

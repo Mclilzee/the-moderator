@@ -1,37 +1,20 @@
 use bevy::prelude::*;
 
 use crate::{
-    common_components::{AnimationTimer, EntityState},
+    common_components::EntityState,
     plugins::asset_loader::{AnimationKey, AnimationMap},
+    AnimationTimer,
 };
 
 use super::Player;
 
 pub fn animate(
-    mut sprite_query: Query<
-        (
-            &mut TextureAtlas,
-            &mut Sprite,
-            &mut AnimationTimer,
-            &EntityState,
-        ),
-        With<Player>,
-    >,
+    mut sprite_query: Query<(&mut TextureAtlas, &mut Sprite, &EntityState), With<Player>>,
     keys: Res<ButtonInput<KeyCode>>,
-    time: Res<Time>,
+    animation_timer: Res<AnimationTimer>,
     animation: Res<AnimationMap>,
 ) {
-    let (mut atlas, mut sprite, mut animation_timer, state) = sprite_query.single_mut();
-
-    let player_animations = &animation
-        .0
-        .get(&AnimationKey::Player)
-        .expect("Animation to be found");
-
-    let frames = player_animations
-        .indices
-        .get(state)
-        .unwrap_or(&player_animations.default);
+    let (mut atlas, mut sprite, state) = sprite_query.single_mut();
 
     if keys.any_pressed([KeyCode::ArrowLeft, KeyCode::KeyA]) {
         sprite.flip_x = true;
@@ -39,8 +22,17 @@ pub fn animate(
         sprite.flip_x = false;
     }
 
-    animation_timer.0.tick(time.delta());
     if animation_timer.0.finished() {
+        let player_animations = &animation
+            .0
+            .get(&AnimationKey::Player)
+            .expect("Animation to be found");
+
+        let frames = player_animations
+            .indices
+            .get(state)
+            .unwrap_or(&player_animations.default);
+
         let mut index = atlas.index + 1;
 
         if atlas.index >= frames.last_frame || atlas.index < frames.first_frame {

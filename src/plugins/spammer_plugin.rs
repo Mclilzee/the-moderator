@@ -1,9 +1,10 @@
 use crate::{
     bundles::actors::Actor,
     common_components::{DespawnTimer, Health},
+    AnimationTimer,
 };
 use crate::{
-    common_components::{EntityState, AnimationTimer},
+    common_components::EntityState,
     plugins::asset_loader::{AnimationKey, AnimationMap},
 };
 use bevy::prelude::*;
@@ -87,7 +88,6 @@ fn spawn_spammer(
         commands.spawn((
             spammer,
             Spammer,
-            AnimationTimer::default(),
             EntityState::Idle,
             CollisionGroups::new(Group::GROUP_2, Group::GROUP_1),
             LockedAxes::ROTATION_LOCKED,
@@ -116,22 +116,22 @@ fn track_player(
 
 fn animate(
     mut sprite_query: Query<
-        (&mut TextureAtlas, &mut Sprite, &mut AnimationTimer, &EntityState, &Velocity),
+        (&mut TextureAtlas, &mut Sprite, &EntityState, &Velocity),
         With<Spammer>,
     >,
-    time: Res<Time>,
+    animation_timer: Res<AnimationTimer>,
     animation: Res<AnimationMap>,
 ) {
+    if !animation_timer.0.finished() {
+        return;
+    }
+
     let spammer_animations = &animation
         .0
         .get(&AnimationKey::Spammer)
         .expect("Animation for spammer were not found");
 
-    for (mut atlas, mut sprite, mut animation_timer, state, velocity) in sprite_query.iter_mut() {
-        animation_timer.0.tick(time.delta());
-        if !animation_timer.0.finished() {
-            continue;
-        }
+    for (mut atlas, mut sprite, state, velocity) in sprite_query.iter_mut() {
         let frames = spammer_animations
             .indices
             .get(state)
