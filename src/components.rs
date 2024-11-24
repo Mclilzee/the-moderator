@@ -16,9 +16,6 @@ pub struct Spammer;
 pub struct SpammerDespawnEffect;
 
 #[derive(Component)]
-pub struct AvailableJumps(pub u8);
-
-#[derive(Component)]
 pub struct Jumps {
     pub current: u8,
     pub max: u8,

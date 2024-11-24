@@ -10,7 +10,7 @@ use super::asset_loader::AnimationMap;
 use crate::components::{EntityState, Jumps};
 use crate::{
     bundles::actors::Actor,
-    components::{AvailableJumps, Damage, Player},
+    components::{Damage, Player},
 };
 use bevy::prelude::*;
 use bevy_rapier2d::dynamics::LockedAxes;
@@ -37,11 +37,10 @@ fn spawn_player(
         Actor::new(PLAYER_STARING_HP, PLAYER_WIDTH, PLAYER_HEIGHT),
         CollisionGroups::new(Group::GROUP_1, Group::GROUP_2),
         Player,
-        AvailableJumps(PLAYER_MAX_JUMPS),
         Damage(5),
         Jumps {
-            current: 20,
-            max: 2,
+            current: 0,
+            max: PLAYER_MAX_JUMPS,
         },
         EntityState::Idle,
         LockedAxes::ROTATION_LOCKED,
