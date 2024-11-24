@@ -66,6 +66,7 @@ fn mouse_button_input(
 
         command.spawn((
             Hammer,
+            AnimationTimer::default(),
             Damage(DAMAGE),
             Health(HEALTH),
             DespawnTimer(Timer::from_seconds(DESPAWN_TIMER, TimerMode::Once)),

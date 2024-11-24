@@ -8,7 +8,7 @@ use self::{animation::animate, constants::PLAYER_STARING_HP, player_input::input
 use super::asset_loader::AnimationKey;
 use super::asset_loader::AnimationMap;
 use super::platform::Platform;
-use crate::common_components::{EntityState, Jumps};
+use crate::common_components::{AnimationTimer, EntityState, Jumps};
 use crate::{bundles::actors::Actor, common_components::Damage};
 use bevy::prelude::*;
 use bevy_rapier2d::dynamics::LockedAxes;
@@ -40,6 +40,7 @@ fn spawn_player(
         Actor::new(PLAYER_STARING_HP, PLAYER_WIDTH, PLAYER_HEIGHT),
         CollisionGroups::new(Group::GROUP_1, Group::GROUP_2),
         Player,
+        AnimationTimer::default(),
         Damage(5),
         Jumps {
             current: 0,

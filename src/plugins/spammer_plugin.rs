@@ -87,6 +87,7 @@ fn spawn_spammer(
         commands.spawn((
             spammer,
             Spammer,
+            AnimationTimer::default(),
             EntityState::Idle,
             CollisionGroups::new(Group::GROUP_2, Group::GROUP_1),
             LockedAxes::ROTATION_LOCKED,
