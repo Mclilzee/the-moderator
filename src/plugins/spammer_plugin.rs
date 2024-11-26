@@ -16,12 +16,15 @@ use rand::Rng;
 
 use super::player::Player;
 
+const SPAMMER_SPAWN_TIMER: f32 = 0.2;
 const SPAMMER_STARTING_HP: i32 = 20;
 const SPAMMER_SPEED: f32 = 40.0;
 const SPAMMER_WIDTH: f32 = 10.0;
 const SPAMMER_HEIGHT: f32 = 15.0;
 const SPAMMER_LIMIT: usize = 5;
-const DEATH_EFFECT_DURATION: f32 = 1.0;
+const POINTS_INCREMENT_DURATION: f32 = 1.0;
+const POINTS_INCREMENT_ASCENDING_SPEED: f32 = 200.0;
+const POINTS_SIZE: f32 = 20.0;
 
 pub struct SpammerPlugins;
 
@@ -39,8 +42,9 @@ struct PointsIncrementEffect;
 impl Plugin for SpammerPlugins {
     fn build(&self, app: &mut App) {
         let timer = SpammerSpawnTimer {
-            timer: Timer::from_seconds(0.2, TimerMode::Repeating),
+            timer: Timer::from_seconds(SPAMMER_SPAWN_TIMER, TimerMode::Repeating),
         };
+
         app.insert_resource(timer)
             .add_systems(Update, spawn_spammer)
             .add_systems(Update, track_player)
@@ -159,12 +163,12 @@ fn despawn(mut commands: Commands, query: Query<(Entity, &Health, &Transform), W
             commands.entity(id).despawn();
             commands.spawn((
                 PointsIncrementEffect,
-                DespawnTimer(Timer::from_seconds(DEATH_EFFECT_DURATION, TimerMode::Once)),
+                DespawnTimer(Timer::from_seconds(POINTS_INCREMENT_DURATION, TimerMode::Once)),
                 Text2dBundle {
                     text: Text::from_section(
                         "++",
                         TextStyle {
-                            font_size: 50.0,
+                            font_size: POINTS_SIZE,
                             ..default()
                         },
                     ),
@@ -178,14 +182,13 @@ fn despawn(mut commands: Commands, query: Query<(Entity, &Health, &Transform), W
 
 fn despawn_points_increment_effect(
     mut commands: Commands,
-    mut query: Query<(Entity, &mut DespawnTimer, &mut Sprite), With<PointsIncrementEffect>>,
+    mut query: Query<(Entity, &mut DespawnTimer, &mut Transform), With<PointsIncrementEffect>>,
     time: Res<Time>,
 ) {
-    for (id, mut stopwatch, mut sprite) in query.iter_mut() {
-        stopwatch.0.tick(time.delta());
-        let size = stopwatch.0.elapsed_secs() * 20.0;
-        sprite.custom_size = Some(Vec2::new(size, size));
-        if stopwatch.0.finished() {
+    for (id, mut timer, mut transform) in query.iter_mut() {
+        timer.0.tick(time.delta());
+        transform.translation.y += POINTS_INCREMENT_ASCENDING_SPEED * time.delta_seconds();
+        if timer.0.finished() {
             commands.entity(id).despawn();
         }
     }
