@@ -16,10 +16,10 @@ use bevy_rapier2d::{
 };
 
 const HAMMER_SPEED: f32 = 600.0;
-const ROATION_ANGLE: f32 = 15.0;
+const ROATION_ANGLE: f32 = 10.0;
 const HEALTH: i32 = 10;
 const DAMAGE: i32 = 4;
-const DESPAWN_TIMER: f32 = 3.0;
+const DESPAWN_TIMER: f32 = 30.0;
 
 #[derive(Component)]
 struct Hammer;
@@ -32,7 +32,7 @@ impl Plugin for HammerPlugin {
             .add_systems(Update, collision)
             .add_systems(Update, despawn)
             .add_systems(Update, animate)
-            .add_systems(Update, despawn_stopwatch);
+            .add_systems(Update, despawn_timer);
     }
 }
 
@@ -65,6 +65,13 @@ fn mouse_button_input(
         let p1 = p_transform.translation.truncate();
         let p2 = cursor_position.0;
 
+        let mut velocity = Velocity::linear((p2 - p1).normalize() * HAMMER_SPEED);
+        velocity.angvel = if velocity.linvel.x >= 0.0 {
+            -ROATION_ANGLE
+        } else {
+            ROATION_ANGLE
+        };
+
         command.spawn((
             Hammer,
             Damage(DAMAGE),
@@ -74,7 +81,7 @@ fn mouse_button_input(
             Collider::cuboid(14.0, 14.0),
             RigidBody::Dynamic,
             CollisionGroups::new(Group::GROUP_1, Group::GROUP_3 | Group::GROUP_2),
-            Velocity::linear((p2 - p1).normalize() * HAMMER_SPEED),
+            velocity,
             atlas,
             sprite_bundle,
         ));
@@ -91,8 +98,6 @@ fn animate(
     animation: Res<AnimationMap>,
 ) {
     for (mut atlas, mut transform, state, velocity) in sprite_query.iter_mut() {
-        transform.rotate_z(velocity.angvel);
-
         if !animation_timer.0.finished() {
             return;
         }
@@ -136,15 +141,15 @@ fn collision(
     }
 }
 
-fn despawn(mut commands: Commands, hammers: Query<(Entity, &Health), With<Hammer>>) {
-    for (id, health) in hammers.iter() {
-        if health.0 <= 0 {
+fn despawn(mut commands: Commands, hammers: Query<(Entity, &Health, &Velocity), With<Hammer>>) {
+    for (id, health, velocity) in hammers.iter() {
+        if health.0 <= 0 || velocity.linvel == Vec2::ZERO {
             commands.entity(id).despawn();
         }
     }
 }
 
-fn despawn_stopwatch(
+fn despawn_timer(
     mut commands: Commands,
     mut hammers: Query<(Entity, &mut DespawnTimer), With<Hammer>>,
     time: Res<Time>,
