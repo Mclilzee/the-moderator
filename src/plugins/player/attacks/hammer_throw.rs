@@ -115,15 +115,15 @@ fn animate(
 }
 
 fn collision(
-    mut hammers: Query<(Entity, &mut Health, &Damage), With<Hammer>>,
-    mut enemies: Query<(Entity, &mut Health), (Without<Hammer>, Without<Player>)>,
+    mut hammers: Query<(Entity, &mut Health, &Damage), (With<Hammer>, With<Collider>)>,
+    mut enemies: Query<(Entity, &mut Health, &Damage), (Without<Hammer>, Without<Player>, With<Collider>)>,
     rapier_context: Res<RapierContext>,
 ) {
-    for (h_id, mut h_health, h_dmg) in hammers.iter_mut() {
-        for (s_id, mut s_health) in enemies.iter_mut() {
-            if rapier_context.contact_pair(h_id, s_id).is_some() {
-                s_health.0 -= h_dmg.0;
-                h_health.0 -= 1;
+    for (h_id, mut h_hp, h_dmg) in hammers.iter_mut() {
+        for (e_id, mut e_hp, e_dmg) in enemies.iter_mut() {
+            if rapier_context.contact_pair(h_id, e_id).is_some() {
+                e_hp.0 -= h_dmg.0;
+                h_hp.0 -= e_dmg.0;
             }
         }
     }
