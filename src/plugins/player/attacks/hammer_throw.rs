@@ -17,7 +17,7 @@ use bevy_rapier2d::{
 
 const HAMMER_SPEED: f32 = 600.0;
 const ROATION_ANGLE: f32 = 15.0;
-const HEALTH: i32 = 2;
+const HEALTH: i32 = 10;
 const DAMAGE: i32 = 4;
 const DESPAWN_TIMER: f32 = 3.0;
 
