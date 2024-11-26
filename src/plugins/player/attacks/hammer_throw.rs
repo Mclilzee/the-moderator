@@ -89,15 +89,11 @@ fn mouse_button_input(
 }
 
 fn animate(
-    mut sprite_query: Query<
-        (&mut TextureAtlas, &mut Transform, &EntityState, &Velocity),
-        With<Hammer>,
-    >,
-    time: Res<Time>,
+    mut sprite_query: Query<(&mut TextureAtlas, &EntityState), With<Hammer>>,
     animation_timer: Res<AnimationTimer>,
     animation: Res<AnimationMap>,
 ) {
-    for (mut atlas, mut transform, state, velocity) in sprite_query.iter_mut() {
+    for (mut atlas, state) in sprite_query.iter_mut() {
         if !animation_timer.0.finished() {
             return;
         }
