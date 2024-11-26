@@ -91,12 +91,7 @@ fn animate(
     animation: Res<AnimationMap>,
 ) {
     for (mut atlas, mut transform, state, velocity) in sprite_query.iter_mut() {
-        let rotation = if velocity.linvel.x > 0.0 {
-            -ROATION_ANGLE
-        } else {
-            ROATION_ANGLE
-        };
-        transform.rotate_z(rotation * time.delta_seconds());
+        transform.rotate_z(velocity.angvel);
 
         if !animation_timer.0.finished() {
             return;
@@ -135,7 +130,7 @@ fn collision(
             if rapier_context.contact_pair(h_id, s_id).is_some() {
                 s_health.0 -= h_dmg.0;
                 h_velocity.linvel.x = -h_velocity.linvel.x;
-                h_health.0 = 0;
+                h_health.0 -= 1;
             }
         }
     }
