@@ -91,7 +91,11 @@ fn animate(
     animation: Res<AnimationMap>,
 ) {
     for (mut atlas, mut transform, state, velocity) in sprite_query.iter_mut() {
-        let rotation = if velocity.linvel.x > 0.0 { -ROATION_ANGLE } else { ROATION_ANGLE };
+        let rotation = if velocity.linvel.x > 0.0 {
+            -ROATION_ANGLE
+        } else {
+            ROATION_ANGLE
+        };
         transform.rotate_z(rotation * time.delta_seconds());
 
         if !animation_timer.0.finished() {
@@ -119,15 +123,18 @@ fn animate(
 }
 
 fn collision(
-    mut hammers: Query<(Entity, &mut Health, &mut Transform, &Damage), (With<Hammer>, Without<Spammer>)>,
+    mut hammers: Query<
+        (Entity, &mut Health, &mut Velocity, &Damage),
+        (With<Hammer>, Without<Spammer>),
+    >,
     mut spammers: Query<(Entity, &mut Health), (With<Spammer>, Without<Hammer>)>,
     rapier_context: Res<RapierContext>,
 ) {
-    for (h_id, mut h_health, mut h_transform, h_dmg) in hammers.iter_mut() {
+    for (h_id, mut h_health, mut h_velocity, h_dmg) in hammers.iter_mut() {
         for (s_id, mut s_health) in spammers.iter_mut() {
             if rapier_context.contact_pair(h_id, s_id).is_some() {
                 s_health.0 -= h_dmg.0;
-                h_transform.translation.x = -h_transform.translation.x;
+                h_velocity.linvel.x = -h_velocity.linvel.x;
                 h_health.0 = 0;
             }
         }
@@ -147,9 +154,9 @@ fn despawn_stopwatch(
     mut hammers: Query<(Entity, &mut DespawnTimer), With<Hammer>>,
     time: Res<Time>,
 ) {
-    for (id, mut stopwatch) in hammers.iter_mut() {
-        stopwatch.0.tick(time.delta());
-        if stopwatch.0.finished() {
+    for (id, mut timer) in hammers.iter_mut() {
+        timer.0.tick(time.delta());
+        if timer.0.finished() {
             commands.entity(id).despawn();
         }
     }
