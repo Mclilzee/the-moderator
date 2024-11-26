@@ -2,18 +2,13 @@ use crate::{
     common_components::{Damage, DespawnTimer, EntityState, Health},
     plugins::{
         asset_loader::{AnimationKey, AnimationMap},
-        default_plugins::CursorPosition,
-        player::Player,
-        spammer_plugin::Spammer,
+        default_plugins::CursorPosition, player::Player,
     },
     AnimationTimer,
 };
+
 use bevy::prelude::*;
-use bevy_rapier2d::{
-    dynamics::{RigidBody, Velocity},
-    geometry::{Collider, CollisionGroups, Group},
-    plugin::RapierContext,
-};
+use bevy_rapier2d::prelude::*;
 
 const HAMMER_SPEED: f32 = 600.0;
 const ROATION_ANGLE: f32 = 10.0;
@@ -79,6 +74,7 @@ fn mouse_button_input(
             DespawnTimer(Timer::from_seconds(DESPAWN_TIMER, TimerMode::Once)),
             EntityState::Idle,
             Collider::cuboid(14.0, 14.0),
+            Restitution::coefficient(0.0),
             RigidBody::Dynamic,
             CollisionGroups::new(Group::GROUP_1, Group::GROUP_3 | Group::GROUP_2),
             velocity,
@@ -119,18 +115,14 @@ fn animate(
 }
 
 fn collision(
-    mut hammers: Query<
-        (Entity, &mut Health, &mut Velocity, &Damage),
-        (With<Hammer>, Without<Spammer>),
-    >,
-    mut spammers: Query<(Entity, &mut Health), (With<Spammer>, Without<Hammer>)>,
+    mut hammers: Query<(Entity, &mut Health, &Damage), With<Hammer>>,
+    mut enemies: Query<(Entity, &mut Health), (Without<Hammer>, Without<Player>)>,
     rapier_context: Res<RapierContext>,
 ) {
-    for (h_id, mut h_health, mut h_velocity, h_dmg) in hammers.iter_mut() {
-        for (s_id, mut s_health) in spammers.iter_mut() {
+    for (h_id, mut h_health, h_dmg) in hammers.iter_mut() {
+        for (s_id, mut s_health) in enemies.iter_mut() {
             if rapier_context.contact_pair(h_id, s_id).is_some() {
                 s_health.0 -= h_dmg.0;
-                h_velocity.linvel.x = -h_velocity.linvel.x;
                 h_health.0 -= 1;
             }
         }
