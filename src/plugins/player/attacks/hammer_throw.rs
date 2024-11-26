@@ -119,14 +119,15 @@ fn animate(
 }
 
 fn collision(
-    mut hammers: Query<(Entity, &mut Health, &Damage), (With<Hammer>, Without<Spammer>)>,
+    mut hammers: Query<(Entity, &mut Health, &mut Transform, &Damage), (With<Hammer>, Without<Spammer>)>,
     mut spammers: Query<(Entity, &mut Health), (With<Spammer>, Without<Hammer>)>,
     rapier_context: Res<RapierContext>,
 ) {
-    for (h_id, mut h_health, h_dmg) in hammers.iter_mut() {
+    for (h_id, mut h_health, mut h_transform, h_dmg) in hammers.iter_mut() {
         for (s_id, mut s_health) in spammers.iter_mut() {
             if rapier_context.contact_pair(h_id, s_id).is_some() {
                 s_health.0 -= h_dmg.0;
+                h_transform.translation.x = -h_transform.translation.x;
                 h_health.0 = 0;
             }
         }

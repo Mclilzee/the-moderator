@@ -34,7 +34,7 @@ struct SpammerSpawnTimer {
 pub struct Spammer;
 
 #[derive(Component)]
-struct SpammerDespawnEffect;
+struct PointsIncrementEffect;
 
 impl Plugin for SpammerPlugins {
     fn build(&self, app: &mut App) {
@@ -46,7 +46,7 @@ impl Plugin for SpammerPlugins {
             .add_systems(Update, track_player)
             .add_systems(Update, animate)
             .add_systems(Update, despawn)
-            .add_systems(Update, despawn_effect_progress);
+            .add_systems(Update, despawn_points_increment_effect);
     }
 }
 
@@ -158,9 +158,16 @@ fn despawn(mut commands: Commands, query: Query<(Entity, &Health, &Transform), W
         if hp.0 <= 0 {
             commands.entity(id).despawn();
             commands.spawn((
-                SpammerDespawnEffect,
+                PointsIncrementEffect,
                 DespawnTimer(Timer::from_seconds(DEATH_EFFECT_DURATION, TimerMode::Once)),
-                SpriteBundle {
+                Text2dBundle {
+                    text: Text::from_section(
+                        "++",
+                        TextStyle {
+                            font_size: 50.0,
+                            ..default()
+                        },
+                    ),
                     transform: *transform,
                     ..default()
                 },
@@ -169,9 +176,9 @@ fn despawn(mut commands: Commands, query: Query<(Entity, &Health, &Transform), W
     }
 }
 
-fn despawn_effect_progress(
+fn despawn_points_increment_effect(
     mut commands: Commands,
-    mut query: Query<(Entity, &mut DespawnTimer, &mut Sprite), With<SpammerDespawnEffect>>,
+    mut query: Query<(Entity, &mut DespawnTimer, &mut Sprite), With<PointsIncrementEffect>>,
     time: Res<Time>,
 ) {
     for (id, mut stopwatch, mut sprite) in query.iter_mut() {
