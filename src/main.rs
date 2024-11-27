@@ -4,7 +4,7 @@ mod plugins;
 
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
-use plugins::{asset_loader, camera_plugin, default_plugins, platform, player, enemies};
+use plugins::{asset_loader, camera_plugin, default_plugins, enemies, platform, player};
 use std::time::Duration;
 
 const DEFAULT_ANIMATION_TIME_MILLIS: u64 = 100;
@@ -28,6 +28,7 @@ fn main() {
             Duration::from_millis(DEFAULT_ANIMATION_TIME_MILLIS),
             TimerMode::Repeating,
         )))
+        .add_event::<AnimationEvent>()
         .add_systems(PreUpdate, advance_animation_timer)
         .add_plugins(default_plugins::CustomDefaultPlugin)
         .add_plugins(camera_plugin::CameraPlugin)
@@ -40,7 +41,11 @@ fn main() {
         .run();
 }
 
-fn advance_animation_timer(mut timer: ResMut<AnimationTimer>, time: Res<Time>, mut event: EventWriter<AnimationEvent>) {
+fn advance_animation_timer(
+    mut timer: ResMut<AnimationTimer>,
+    time: Res<Time>,
+    mut event: EventWriter<AnimationEvent>,
+) {
     timer.0.tick(time.delta());
     if timer.0.finished() {
         event.send_default();
