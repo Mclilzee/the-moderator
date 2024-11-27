@@ -7,6 +7,8 @@ use super::asset_loader::AnimationMap;
 use super::platform::Platform;
 use crate::common_components::{EntityState, Jumps};
 use crate::{bundles::actors::Actor, common_components::Damage};
+use bevy::color::palettes::css::GREEN;
+use bevy::color::palettes::css::RED;
 use bevy::prelude::*;
 use bevy_rapier2d::dynamics::LockedAxes;
 use bevy_rapier2d::geometry::{CollisionGroups, Group};
@@ -55,7 +57,12 @@ fn setup(
     asset_loader: Res<AnimationMap>,
     camera_q: Query<Entity, With<Camera>>,
 ) {
-    let mut actor = Actor::new(PLAYER_STARING_HP, PLAYER_WIDTH, PLAYER_HEIGHT, AnimationKey::Player);
+    let mut actor = Actor::new(
+        PLAYER_STARING_HP,
+        PLAYER_WIDTH,
+        PLAYER_HEIGHT,
+        AnimationKey::Player,
+    );
     let animation = asset_loader
         .0
         .get(&actor.animation_key)
@@ -130,7 +137,13 @@ fn player_score_update(
 
     match score.0 {
         0..40 => score_section.value = score.0.to_string(),
-        40..100 => score_section.value = format!("Club-40: {}", score.0),
-        _ => score_section.value = format!("Moderator: {}", score.0),
+        40..100 => {
+            score_section.value = format!("Club-40: {}", score.0);
+            score_section.style.color = Color::Srgba(GREEN);
+        }
+        _ => {
+            score_section.value = format!("Moderator: {}", score.0);
+            score_section.style.color = Color::Srgba(RED);
+        }
     };
 }

@@ -18,7 +18,7 @@ fn spawn_ground(mut commands: Commands) {
         Platform,
         Platforms::cuboid(
             BLUE_VIOLET.into(),
-            Vec2::new(800.0, 20.0),
+            Vec2::new(8000.0, 20.0),
             Transform::from_xyz(-100.0, -10.0, 0.0),
         ),
     ));

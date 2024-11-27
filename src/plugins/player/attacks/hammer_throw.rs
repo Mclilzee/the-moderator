@@ -20,14 +20,14 @@ const DESPAWN_TIMER: f32 = 30.0;
 const COOLDOWN_SECS: u64 = 1;
 
 #[derive(Component)]
-struct Hammer;
+struct HammerThrow;
 
 #[derive(Resource)]
 struct Cooldown(Timer);
 
-pub struct HammerPlugin;
+pub struct HammerThrowPlugin;
 
-impl Plugin for HammerPlugin {
+impl Plugin for HammerThrowPlugin {
     fn build(&self, app: &mut App) {
         let mut cooldown = Timer::from_seconds(1.0, TimerMode::Once);
         cooldown.tick(Duration::from_secs(COOLDOWN_SECS));
@@ -83,7 +83,7 @@ fn mouse_button_input(
         };
 
         command.spawn((
-            Hammer,
+            HammerThrow,
             Damage(DAMAGE),
             Health(HEALTH),
             AnimationKey::Hammer,
@@ -101,10 +101,10 @@ fn mouse_button_input(
 }
 
 fn collision(
-    mut hammers: Query<(Entity, &mut Health, &Damage), (With<Hammer>, With<Collider>)>,
+    mut hammers: Query<(Entity, &mut Health, &Damage), (With<HammerThrow>, With<Collider>)>,
     mut enemies: Query<
         (Entity, &mut Health, &Damage),
-        (Without<Hammer>, Without<Player>, With<Collider>),
+        (Without<HammerThrow>, Without<Player>, With<Collider>),
     >,
     rapier_context: Res<RapierContext>,
 ) {
@@ -118,7 +118,7 @@ fn collision(
     }
 }
 
-fn despawn(mut commands: Commands, hammers: Query<(Entity, &Health, &Velocity), With<Hammer>>) {
+fn despawn(mut commands: Commands, hammers: Query<(Entity, &Health, &Velocity), With<HammerThrow>>) {
     for (id, health, velocity) in hammers.iter() {
         if health.0 <= 0 || velocity.linvel == Vec2::ZERO {
             commands.entity(id).despawn();
@@ -128,7 +128,7 @@ fn despawn(mut commands: Commands, hammers: Query<(Entity, &Health, &Velocity), 
 
 fn despawn_timer(
     mut commands: Commands,
-    mut hammers: Query<(Entity, &mut DespawnTimer), With<Hammer>>,
+    mut hammers: Query<(Entity, &mut DespawnTimer), With<HammerThrow>>,
     time: Res<Time>,
 ) {
     for (id, mut timer) in hammers.iter_mut() {
