@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use crate::{
     common_components::{Damage, DespawnTimer, EntityState, Health},
     plugins::{
@@ -15,19 +17,31 @@ const ROATION_ANGLE: f32 = 10.0;
 const HEALTH: i32 = 10;
 const DAMAGE: i32 = 4;
 const DESPAWN_TIMER: f32 = 30.0;
+const COOLDOWN_SECS: u64 = 1;
 
 #[derive(Component)]
 struct Hammer;
+
+#[derive(Resource)]
+struct Cooldown(Timer);
 
 pub struct HammerPlugin;
 
 impl Plugin for HammerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, mouse_button_input)
+        let mut cooldown = Timer::from_seconds(1.0, TimerMode::Once);
+        cooldown.tick(Duration::from_secs(COOLDOWN_SECS));
+
+        app.insert_resource(Cooldown(cooldown))
+            .add_systems(Update, (cooldown_tick, mouse_button_input).chain())
             .add_systems(Update, collision)
             .add_systems(Update, despawn)
             .add_systems(Update, despawn_timer);
     }
+}
+
+fn cooldown_tick(time: Res<Time>, mut cooldown_timer: ResMut<Cooldown>) {
+    cooldown_timer.0.tick(time.delta());
 }
 
 fn mouse_button_input(
@@ -36,8 +50,10 @@ fn mouse_button_input(
     cursor_position: Res<CursorPosition>,
     buttons: Res<ButtonInput<MouseButton>>,
     animation_map: Res<AnimationMap>,
+    mut cooldown: ResMut<Cooldown>,
 ) {
-    if buttons.just_pressed(MouseButton::Left) {
+    if buttons.just_pressed(MouseButton::Left) && cooldown.0.finished() {
+        cooldown.0.reset();
         let animation = animation_map
             .0
             .get(&AnimationKey::Hammer)

@@ -1,12 +1,11 @@
 mod player_assets;
 mod spammer_assets;
 mod weapon_assets;
-use std::time::Duration;
 
 use bevy::{prelude::*, utils::HashMap};
 use crate::common_components::EntityState;
 
-const DEFAULT_ANIMATION_TIME_MILLIS: u64 = 100;
+const DEFAULT_ANIMATION_TIME_SECS: f32 = 0.1;
 
 #[derive(Resource, Default)]
 pub struct AnimationMap(pub HashMap<AnimationKey, Animation>);
@@ -48,8 +47,8 @@ pub struct AssetLoaderPlugin;
 impl Plugin for AssetLoaderPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.insert_resource(AnimationMap::default())
-            .insert_resource(AnimationTimer(Timer::new(
-                Duration::from_millis(DEFAULT_ANIMATION_TIME_MILLIS),
+            .insert_resource(AnimationTimer(Timer::from_seconds(
+                DEFAULT_ANIMATION_TIME_SECS,
                 TimerMode::Repeating,
             )))
             .add_systems(PreStartup, player_assets::setup)
