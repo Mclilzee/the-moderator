@@ -16,8 +16,9 @@ pub struct Jumps {
 pub struct DespawnTimer(pub Timer);
 
 #[allow(dead_code)]
-#[derive(Eq, Hash, PartialEq, Component)]
+#[derive(Eq, Hash, PartialEq, Component, Default)]
 pub enum EntityState {
+    #[default]
     Idle,
     Running,
     Jumping,

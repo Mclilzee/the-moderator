@@ -1,5 +1,5 @@
 use crate::{
-    bundles::actors::Actor, common_components::{DespawnTimer, Health}, plugins::player::Player, AnimationTimer
+    bundles::actors::Actor, common_components::{Damage, DespawnTimer, Health}, plugins::player::Player, AnimationTimer
 };
 use crate::{
     common_components::EntityState,
@@ -14,6 +14,7 @@ use rand::Rng;
 
 const SPAMMER_SPAWN_TIMER: f32 = 0.2;
 const SPAMMER_STARTING_HP: i32 = 20;
+const SPAMMER_DAMAGE: i32 = 1;
 const SPAMMER_SPEED: f32 = 40.0;
 const SPAMMER_WIDTH: f32 = 10.0;
 const SPAMMER_HEIGHT: f32 = 15.0;
@@ -86,9 +87,10 @@ fn spawn_spammer(
         spammer.sprite_bundle.transform.translation = Vec3::new(spawn_x, 0.0, 0.0);
 
         commands.spawn((
-            spammer,
             Spammer,
-            EntityState::Idle,
+            spammer,
+            Damage(SPAMMER_DAMAGE),
+            EntityState::default(),
             CollisionGroups::new(Group::GROUP_2, Group::GROUP_1),
             LockedAxes::ROTATION_LOCKED,
             ActiveEvents::COLLISION_EVENTS,
