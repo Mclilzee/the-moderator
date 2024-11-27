@@ -4,7 +4,7 @@ mod plugins;
 
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
-use plugins::{asset_loader, camera_plugin, default_plugins, platform, player, spammer_plugin};
+use plugins::{asset_loader, camera_plugin, default_plugins, platform, player, enemies};
 use std::time::Duration;
 
 const DEFAULT_ANIMATION_TIME_MILLIS: u64 = 100;
@@ -31,7 +31,7 @@ fn main() {
         .add_plugins(asset_loader::AssetLoaderPlugin)
         .add_plugins(platform::PlatformPlugin)
         .add_plugins(player::PlayerPlugin)
-        .add_plugins(spammer_plugin::SpammerPlugins)
+        .add_plugins(enemies::EnemiesPlugin)
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
         .add_plugins(RapierDebugRenderPlugin::default())
         .run();

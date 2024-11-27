@@ -1,7 +1,5 @@
 use crate::{
-    bundles::actors::Actor,
-    common_components::{DespawnTimer, Health},
-    AnimationTimer,
+    bundles::actors::Actor, common_components::{DespawnTimer, Health}, plugins::player::Player, AnimationTimer
 };
 use crate::{
     common_components::EntityState,
@@ -14,8 +12,6 @@ use bevy_rapier2d::{
 };
 use rand::Rng;
 
-use super::player::Player;
-
 const SPAMMER_SPAWN_TIMER: f32 = 0.2;
 const SPAMMER_STARTING_HP: i32 = 20;
 const SPAMMER_SPEED: f32 = 40.0;
@@ -26,7 +22,8 @@ const POINTS_INCREMENT_DURATION: f32 = 1.0;
 const POINTS_INCREMENT_ASCENDING_SPEED: f32 = 200.0;
 const POINTS_SIZE: f32 = 20.0;
 
-pub struct SpammerPlugins;
+#[derive(Component)]
+struct Spammer;
 
 #[derive(Resource)]
 struct SpammerSpawnTimer {
@@ -34,12 +31,11 @@ struct SpammerSpawnTimer {
 }
 
 #[derive(Component)]
-pub struct Spammer;
-
-#[derive(Component)]
 struct PointsIncrementEffect;
 
-impl Plugin for SpammerPlugins {
+pub struct SpammerPlugin;
+
+impl Plugin for SpammerPlugin {
     fn build(&self, app: &mut App) {
         let timer = SpammerSpawnTimer {
             timer: Timer::from_seconds(SPAMMER_SPAWN_TIMER, TimerMode::Repeating),
