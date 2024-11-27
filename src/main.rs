@@ -1,6 +1,7 @@
 mod bundles;
 mod common_components;
 mod plugins;
+mod utils;
 
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;

@@ -3,10 +3,11 @@ use std::time::Duration;
 use crate::{
     common_components::{Damage, DespawnTimer, EntityState, Health},
     plugins::{
-        asset_loader::{AnimationKey, AnimationMap},
+        asset_loader::{AnimationEvent, AnimationKey, AnimationMap},
         default_plugins::CursorPosition,
         player::Player,
     },
+    utils::animate,
 };
 
 use bevy::prelude::*;
@@ -33,6 +34,7 @@ impl Plugin for HammerThrowPlugin {
         cooldown.tick(Duration::from_secs(COOLDOWN_SECS));
 
         app.insert_resource(Cooldown(cooldown))
+            .add_systems(Update, animate_hammer.run_if(on_event::<AnimationEvent>()))
             .add_systems(Update, (cooldown_tick, mouse_button_input).chain())
             .add_systems(Update, collision)
             .add_systems(Update, despawn)
@@ -56,7 +58,7 @@ fn mouse_button_input(
         cooldown.0.reset();
         let animation = animation_map
             .0
-            .get(&AnimationKey::Hammer)
+            .get(&AnimationKey::HammerThrow)
             .expect("Player animation were not found");
 
         let p_transform = player.single();
@@ -86,7 +88,6 @@ fn mouse_button_input(
             HammerThrow,
             Damage(DAMAGE),
             Health(HEALTH),
-            AnimationKey::Hammer,
             DespawnTimer(Timer::from_seconds(DESPAWN_TIMER, TimerMode::Once)),
             EntityState::Idle,
             Collider::cuboid(14.0, 14.0),
@@ -118,7 +119,10 @@ fn collision(
     }
 }
 
-fn despawn(mut commands: Commands, hammers: Query<(Entity, &Health, &Velocity), With<HammerThrow>>) {
+fn despawn(
+    mut commands: Commands,
+    hammers: Query<(Entity, &Health, &Velocity), With<HammerThrow>>,
+) {
     for (id, health, velocity) in hammers.iter() {
         if health.0 <= 0 || velocity.linvel == Vec2::ZERO {
             commands.entity(id).despawn();
@@ -137,4 +141,13 @@ fn despawn_timer(
             commands.entity(id).despawn();
         }
     }
+}
+
+fn animate_hammer(
+    mut query: Query<(&mut TextureAtlas, &EntityState), With<HammerThrow>>,
+    map: Res<AnimationMap>,
+) {
+    query.iter_mut().for_each(|(mut atlas, state)| {
+        animate(&mut atlas, state, &AnimationKey::HammerThrow, &map);
+    });
 }

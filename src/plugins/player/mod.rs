@@ -2,10 +2,12 @@ mod attacks;
 mod player_input;
 
 use self::player_input::input;
+use super::asset_loader::AnimationEvent;
 use super::asset_loader::AnimationKey;
 use super::asset_loader::AnimationMap;
 use super::platform::Platform;
 use crate::common_components::{EntityState, Jumps};
+use crate::utils::animate;
 use crate::{bundles::actors::Actor, common_components::Damage};
 use bevy::color::palettes::css::GREEN;
 use bevy::color::palettes::css::RED;
@@ -48,6 +50,7 @@ impl Plugin for PlayerPlugin {
             .add_systems(Update, flip_on_input)
             .add_systems(Update, ground_collision)
             .add_systems(Update, player_score_update)
+            .add_systems(Update, animate_player.run_if(on_event::<AnimationEvent>()))
             .add_plugins(attacks::AttacksPlugin);
     }
 }
@@ -57,15 +60,10 @@ fn setup(
     asset_loader: Res<AnimationMap>,
     camera_q: Query<Entity, With<Camera>>,
 ) {
-    let mut actor = Actor::new(
-        PLAYER_STARING_HP,
-        PLAYER_WIDTH,
-        PLAYER_HEIGHT,
-        AnimationKey::Player,
-    );
+    let mut actor = Actor::new(PLAYER_STARING_HP, PLAYER_WIDTH, PLAYER_HEIGHT);
     let animation = asset_loader
         .0
-        .get(&actor.animation_key)
+        .get(&AnimationKey::Player)
         .expect("Player animation were not found");
 
     actor.sprite_bundle.texture = animation.texture.clone();
@@ -146,4 +144,12 @@ fn player_score_update(
             score_section.style.color = Color::Srgba(RED);
         }
     };
+}
+
+fn animate_player(
+    mut query: Query<(&mut TextureAtlas, &EntityState), With<Player>>,
+    map: Res<AnimationMap>,
+) {
+    let (mut atlas, state) = query.single_mut();
+    animate(&mut atlas, state, &AnimationKey::Player, &map);
 }

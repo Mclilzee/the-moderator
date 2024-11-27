@@ -1,7 +1,7 @@
 use crate::{
     bundles::actors::Actor,
     common_components::{Damage, DespawnTimer, Health},
-    plugins::player::{Player, ScoreUpdateEvent},
+    plugins::{asset_loader::AnimationEvent, player::{Player, ScoreUpdateEvent}}, utils::animate,
 };
 use crate::{
     common_components::EntityState,
@@ -46,6 +46,7 @@ impl Plugin for SpammerPlugin {
         };
 
         app.insert_resource(timer)
+            .add_systems(Update, animate_spammer.run_if(on_event::<AnimationEvent>()))
             .add_systems(Update, spawn_spammer)
             .add_systems(Update, track_player)
             .add_systems(Update, flip_on_movement)
@@ -74,11 +75,10 @@ fn spawn_spammer(
         let camera_offset = camera.area.width() / 2.0;
         let spawn_x = offset + f32::copysign(camera_offset + 5.0, offset);
 
-        let mut actor = Actor::new(SPAMMER_STARTING_HP, SPAMMER_WIDTH, SPAMMER_HEIGHT, AnimationKey::Spammer);
-
+        let mut actor = Actor::new(SPAMMER_STARTING_HP, SPAMMER_WIDTH, SPAMMER_HEIGHT);
         let animation = asset_loader
             .0
-            .get(&actor.animation_key)
+            .get(&AnimationKey::Spammer)
             .expect("Spammer animation were not found");
 
         actor.sprite_bundle.texture = animation.texture.clone();
@@ -134,7 +134,7 @@ fn despawn(
     query: Query<(Entity, &Health, &Transform), With<Spammer>>,
     mut event: EventWriter<ScoreUpdateEvent>,
 ) {
-    for (id, hp, transform) in query.iter() {
+    query.iter().for_each(|(id, hp, transform)| {
         if hp.0 <= 0 {
             commands.entity(id).despawn();
             commands.spawn((
@@ -160,7 +160,7 @@ fn despawn(
                 gained_points: POINTS_REWARDED,
             });
         }
-    }
+    });
 }
 
 fn despawn_points_increment_effect(
@@ -175,4 +175,13 @@ fn despawn_points_increment_effect(
             commands.entity(id).despawn();
         }
     }
+}
+
+fn animate_spammer(
+    mut query: Query<(&mut TextureAtlas, &EntityState), With<Spammer>>,
+    map: Res<AnimationMap>,
+) {
+    query.iter_mut().for_each(|(mut atlas, state)| {
+        animate(&mut atlas, state, &AnimationKey::Spammer, &map);
+    });
 }

@@ -2,20 +2,19 @@ mod player_assets;
 mod spammer_assets;
 mod weapon_assets;
 
-use bevy::{prelude::*, utils::HashMap};
 use crate::common_components::EntityState;
+use bevy::{prelude::*, utils::HashMap};
 
 const DEFAULT_ANIMATION_TIME_SECS: f32 = 0.1;
 
 #[derive(Resource, Default)]
 pub struct AnimationMap(pub HashMap<AnimationKey, Animation>);
 
-#[derive(Eq, Hash, PartialEq, Component, Default)]
+#[derive(Eq, Hash, PartialEq)]
 pub enum AnimationKey {
-    #[default]
     Player,
     Spammer,
-    Hammer,
+    HammerThrow,
 }
 
 pub struct Animation {
@@ -34,6 +33,9 @@ pub struct AnimationIndices {
     pub last_frame: usize,
 }
 
+#[derive(Event, Default)]
+pub struct AnimationEvent;
+
 impl AnimationIndices {
     fn new(first_frame: usize, last_frame: usize) -> Self {
         AnimationIndices {
@@ -51,38 +53,21 @@ impl Plugin for AssetLoaderPlugin {
                 DEFAULT_ANIMATION_TIME_SECS,
                 TimerMode::Repeating,
             )))
+            .add_event::<AnimationEvent>()
             .add_systems(PreStartup, player_assets::setup)
             .add_systems(PreStartup, spammer_assets::setup)
             .add_systems(PreStartup, weapon_assets::setup)
-            .add_systems(Update, animate);
+            .add_systems(Update, timer_tick);
     }
 }
 
-fn animate(
-    mut animations: Query<(&mut TextureAtlas, &EntityState, &AnimationKey)>,
-    animation: Res<AnimationMap>,
+fn timer_tick(
     mut timer: ResMut<AnimationTimer>,
     time: Res<Time>,
+    mut event: EventWriter<AnimationEvent>
 ) {
     timer.0.tick(time.delta());
-    if !timer.0.finished() {
-        return;
-    }
-
-    for (mut atlas, state, key) in animations.iter_mut() {
-        let player_animations = &animation.0.get(key).expect("Animation were not found");
-
-        let frames = player_animations
-            .indices
-            .get(state)
-            .unwrap_or(&player_animations.default);
-
-        let mut index = atlas.index + 1;
-
-        if atlas.index >= frames.last_frame || atlas.index < frames.first_frame {
-            index = frames.first_frame;
-        }
-
-        atlas.index = index;
+    if timer.0.finished() {
+        event.send_default();
     }
 }
