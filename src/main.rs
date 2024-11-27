@@ -16,7 +16,10 @@ pub enum InGameSet {
 }
 
 #[derive(Resource)]
-pub struct AnimationTimer(pub Timer);
+struct AnimationTimer(pub Timer);
+
+#[derive(Event, Default)]
+pub struct AnimationEvent;
 
 fn main() {
     App::new()
@@ -37,7 +40,9 @@ fn main() {
         .run();
 }
 
-
-fn advance_animation_timer(mut timer: ResMut<AnimationTimer>, time: Res<Time>) {
+fn advance_animation_timer(mut timer: ResMut<AnimationTimer>, time: Res<Time>, mut event: EventWriter<AnimationEvent>) {
     timer.0.tick(time.delta());
+    if timer.0.finished() {
+        event.send_default();
+    }
 }

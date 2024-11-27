@@ -1,8 +1,5 @@
 use crate::{
-    bundles::actors::Actor,
-    common_components::{Damage, DespawnTimer, Health},
-    plugins::player::{Player, ScoreUpdateEvent},
-    AnimationTimer,
+    bundles::actors::Actor, common_components::{Damage, DespawnTimer, Health}, plugins::player::{Player, ScoreUpdateEvent}, AnimationEvent
 };
 use crate::{
     common_components::EntityState,
@@ -49,7 +46,8 @@ impl Plugin for SpammerPlugin {
         app.insert_resource(timer)
             .add_systems(Update, spawn_spammer)
             .add_systems(Update, track_player)
-            .add_systems(Update, animate)
+            .add_systems(Update, animate.run_if(on_event::<AnimationEvent>()))
+            .add_systems(Update, flip_on_movement)
             .add_systems(Update, despawn)
             .add_systems(Update, despawn_points_increment_effect);
     }
@@ -122,32 +120,23 @@ fn track_player(
 
 fn animate(
     mut sprite_query: Query<
-        (&mut TextureAtlas, &mut Sprite, &EntityState, &Velocity),
+        (&mut TextureAtlas, &EntityState),
         With<Spammer>,
     >,
-    animation_timer: Res<AnimationTimer>,
     animation: Res<AnimationMap>,
 ) {
-    if !animation_timer.0.finished() {
-        return;
-    }
 
     let spammer_animations = &animation
         .0
         .get(&AnimationKey::Spammer)
         .expect("Animation for spammer were not found");
 
-    for (mut atlas, mut sprite, state, velocity) in sprite_query.iter_mut() {
+    for (mut atlas, state) in sprite_query.iter_mut() {
         let frames = spammer_animations
             .indices
             .get(state)
             .unwrap_or(&spammer_animations.default);
 
-        if velocity.linvel.x < 0.0 {
-            sprite.flip_x = true;
-        } else if velocity.linvel.x > 0.0 {
-            sprite.flip_x = false;
-        }
 
         let mut index = atlas.index + 1;
 
@@ -156,6 +145,16 @@ fn animate(
         }
 
         atlas.index = index;
+    }
+}
+
+fn flip_on_movement(mut spammers: Query<(&mut Sprite, &Velocity), With<Spammer>>) {
+    for (mut sprite, velocity) in spammers.iter_mut() {
+        if velocity.linvel.x < 0.0 {
+            sprite.flip_x = true;
+        } else if velocity.linvel.x > 0.0 {
+            sprite.flip_x = false;
+        }
     }
 }
 

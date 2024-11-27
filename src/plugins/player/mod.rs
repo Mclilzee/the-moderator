@@ -7,7 +7,9 @@ use super::asset_loader::AnimationKey;
 use super::asset_loader::AnimationMap;
 use super::platform::Platform;
 use crate::common_components::{EntityState, Jumps};
+use crate::AnimationEvent;
 use crate::{bundles::actors::Actor, common_components::Damage};
+use animation::flip_on_input;
 use bevy::prelude::*;
 use bevy_rapier2d::dynamics::LockedAxes;
 use bevy_rapier2d::geometry::{CollisionGroups, Group};
@@ -43,7 +45,8 @@ impl Plugin for PlayerPlugin {
             .add_event::<ScoreUpdateEvent>()
             .add_systems(PostStartup, setup)
             .add_systems(Update, input)
-            .add_systems(Update, animate)
+            .add_systems(Update, animate.run_if(on_event::<AnimationEvent>()))
+            .add_systems(Update, flip_on_input)
             .add_systems(Update, ground_collision)
             .add_systems(Update, player_score_update)
             .add_plugins(attacks::AttacksPlugin);

@@ -2,9 +2,10 @@ use crate::{
     common_components::{Damage, DespawnTimer, EntityState, Health},
     plugins::{
         asset_loader::{AnimationKey, AnimationMap},
-        default_plugins::CursorPosition, player::Player,
+        default_plugins::CursorPosition,
+        player::Player,
     },
-    AnimationTimer,
+    AnimationEvent,
 };
 
 use bevy::prelude::*;
@@ -26,7 +27,7 @@ impl Plugin for HammerPlugin {
         app.add_systems(Update, mouse_button_input)
             .add_systems(Update, collision)
             .add_systems(Update, despawn)
-            .add_systems(Update, animate)
+            .add_systems(Update, animate.run_if(on_event::<AnimationEvent>()))
             .add_systems(Update, despawn_timer);
     }
 }
@@ -86,14 +87,9 @@ fn mouse_button_input(
 
 fn animate(
     mut sprite_query: Query<(&mut TextureAtlas, &EntityState), With<Hammer>>,
-    animation_timer: Res<AnimationTimer>,
     animation: Res<AnimationMap>,
 ) {
     for (mut atlas, state) in sprite_query.iter_mut() {
-        if !animation_timer.0.finished() {
-            return;
-        }
-
         let hammer_animation = &animation
             .0
             .get(&AnimationKey::Hammer)
@@ -116,7 +112,10 @@ fn animate(
 
 fn collision(
     mut hammers: Query<(Entity, &mut Health, &Damage), (With<Hammer>, With<Collider>)>,
-    mut enemies: Query<(Entity, &mut Health, &Damage), (Without<Hammer>, Without<Player>, With<Collider>)>,
+    mut enemies: Query<
+        (Entity, &mut Health, &Damage),
+        (Without<Hammer>, Without<Player>, With<Collider>),
+    >,
     rapier_context: Res<RapierContext>,
 ) {
     for (h_id, mut h_hp, h_dmg) in hammers.iter_mut() {
