@@ -19,23 +19,38 @@ pub const PLAYER_STARING_HP: i32 = 100;
 pub const PLAYER_MAX_JUMPS: u8 = 2;
 pub const PLAYER_HEIGHT: f32 = 17.0;
 pub const PLAYER_WIDTH: f32 = 7.0;
+const SCORE_TEXT_SIZE: f32 = 40.0;
 
 #[derive(Component)]
 pub struct Player;
+
+#[derive(Component)]
+struct ScoreTextUi;
+
+#[derive(Event)]
+pub struct ScoreUpdateEvent {
+    pub gained_points: u32,
+}
+
+#[derive(Resource)]
+pub struct Score(pub u32);
 
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(attacks::AttacksPlugin)
-            .add_systems(PostStartup, spawn_player)
+        app.insert_resource(Score(0))
+            .add_event::<ScoreUpdateEvent>()
+            .add_systems(PostStartup, setup)
             .add_systems(Update, input)
             .add_systems(Update, animate)
-            .add_systems(Update, ground_collision);
+            .add_systems(Update, ground_collision)
+            .add_systems(Update, player_score_update)
+            .add_plugins(attacks::AttacksPlugin);
     }
 }
 
-fn spawn_player(
+fn setup(
     mut commands: Commands,
     asset_loader: Res<AnimationMap>,
     camera_q: Query<Entity, With<Camera>>,
@@ -67,6 +82,22 @@ fn spawn_player(
     let player_id = commands.spawn((char, Name::new("Player"))).id();
     let id = camera_q.single();
     commands.get_entity(id).unwrap().set_parent(player_id);
+    commands.spawn((
+        TextBundle::from_section(
+            "0",
+            TextStyle {
+                font_size: SCORE_TEXT_SIZE,
+                ..default()
+            },
+        )
+        .with_style(Style {
+            position_type: PositionType::Absolute,
+            top: Val::Px(5.0),
+            left: Val::Px(5.0),
+            ..default()
+        }),
+        ScoreTextUi,
+    ));
 }
 
 fn ground_collision(
@@ -82,4 +113,24 @@ fn ground_collision(
             jumps.current = 0;
         }
     }
+}
+
+fn player_score_update(
+    mut score: ResMut<Score>,
+    mut score_text: Query<&mut Text, With<ScoreTextUi>>,
+    mut event: EventReader<ScoreUpdateEvent>,
+) {
+    for event in event.read() {
+        score.0 += event.gained_points;
+    }
+
+    let mut sections = score_text.single_mut();
+
+    let score_section = sections.sections.first_mut().expect("Score does not exist");
+
+    match score.0 {
+        0..40 => score_section.value = score.0.to_string(),
+        40..100 => score_section.value = format!("Club-40: {}", score.0),
+        _ => score_section.value = format!("Moderator: {}", score.0),
+    };
 }

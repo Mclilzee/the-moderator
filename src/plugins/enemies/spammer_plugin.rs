@@ -1,5 +1,8 @@
 use crate::{
-    bundles::actors::Actor, common_components::{Damage, DespawnTimer, Health}, plugins::player::Player, AnimationTimer
+    bundles::actors::Actor,
+    common_components::{Damage, DespawnTimer, Health},
+    plugins::player::{Player, ScoreUpdateEvent},
+    AnimationTimer,
 };
 use crate::{
     common_components::EntityState,
@@ -22,6 +25,7 @@ const SPAMMER_LIMIT: usize = 5;
 const POINTS_INCREMENT_DURATION: f32 = 1.0;
 const POINTS_INCREMENT_ASCENDING_SPEED: f32 = 200.0;
 const POINTS_SIZE: f32 = 20.0;
+const POINTS_REWARDED: u32 = 1;
 
 #[derive(Component)]
 struct Spammer;
@@ -155,13 +159,20 @@ fn animate(
     }
 }
 
-fn despawn(mut commands: Commands, query: Query<(Entity, &Health, &Transform), With<Spammer>>) {
+fn despawn(
+    mut commands: Commands,
+    query: Query<(Entity, &Health, &Transform), With<Spammer>>,
+    mut event: EventWriter<ScoreUpdateEvent>
+) {
     for (id, hp, transform) in query.iter() {
         if hp.0 <= 0 {
             commands.entity(id).despawn();
             commands.spawn((
                 PointsIncrementEffect,
-                DespawnTimer(Timer::from_seconds(POINTS_INCREMENT_DURATION, TimerMode::Once)),
+                DespawnTimer(Timer::from_seconds(
+                    POINTS_INCREMENT_DURATION,
+                    TimerMode::Once,
+                )),
                 Text2dBundle {
                     text: Text::from_section(
                         "++",
@@ -174,6 +185,8 @@ fn despawn(mut commands: Commands, query: Query<(Entity, &Health, &Transform), W
                     ..default()
                 },
             ));
+
+            event.send( ScoreUpdateEvent { gained_points: POINTS_REWARDED });
         }
     }
 }
