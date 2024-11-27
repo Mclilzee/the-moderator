@@ -34,3 +34,16 @@ pub fn input(
         velocity.linvel.y = -PLAYER_SPEED;
     }
 }
+
+pub fn flip_on_input(
+    keys: Res<ButtonInput<KeyCode>>,
+    mut sprite: Query<&mut Sprite, With<Player>>,
+) {
+    let mut sprite = sprite.single_mut();
+
+    if keys.any_pressed([KeyCode::ArrowLeft, KeyCode::KeyA]) {
+        sprite.flip_x = true;
+    } else if keys.any_pressed([KeyCode::ArrowRight, KeyCode::KeyD]) {
+        sprite.flip_x = false;
+    }
+}

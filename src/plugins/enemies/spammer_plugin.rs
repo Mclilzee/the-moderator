@@ -1,5 +1,7 @@
 use crate::{
-    bundles::actors::Actor, common_components::{Damage, DespawnTimer, Health}, plugins::player::{Player, ScoreUpdateEvent}, AnimationEvent
+    bundles::actors::Actor,
+    common_components::{Damage, DespawnTimer, Health},
+    plugins::player::{Player, ScoreUpdateEvent},
 };
 use crate::{
     common_components::EntityState,
@@ -46,7 +48,6 @@ impl Plugin for SpammerPlugin {
         app.insert_resource(timer)
             .add_systems(Update, spawn_spammer)
             .add_systems(Update, track_player)
-            .add_systems(Update, animate.run_if(on_event::<AnimationEvent>()))
             .add_systems(Update, flip_on_movement)
             .add_systems(Update, despawn)
             .add_systems(Update, despawn_points_increment_effect);
@@ -73,24 +74,24 @@ fn spawn_spammer(
         let camera_offset = camera.area.width() / 2.0;
         let spawn_x = offset + f32::copysign(camera_offset + 5.0, offset);
 
-        let mut spammer = Actor::new(SPAMMER_STARTING_HP, SPAMMER_WIDTH, SPAMMER_HEIGHT);
+        let mut actor = Actor::new(SPAMMER_STARTING_HP, SPAMMER_WIDTH, SPAMMER_HEIGHT, AnimationKey::Spammer);
 
         let animation = asset_loader
             .0
-            .get(&AnimationKey::Spammer)
+            .get(&actor.animation_key)
             .expect("Spammer animation were not found");
 
-        spammer.sprite_bundle.texture = animation.texture.clone();
-        spammer.atlas = TextureAtlas {
+        actor.sprite_bundle.texture = animation.texture.clone();
+        actor.atlas = TextureAtlas {
             layout: animation.atlas.clone(),
             index: 1,
         };
 
-        spammer.sprite_bundle.transform.translation = Vec3::new(spawn_x, 0.0, 0.0);
+        actor.sprite_bundle.transform.translation = Vec3::new(spawn_x, 0.0, 0.0);
 
         commands.spawn((
+            actor,
             Spammer,
-            spammer,
             Damage(SPAMMER_DAMAGE),
             EntityState::default(),
             CollisionGroups::new(Group::GROUP_2, Group::GROUP_1),
@@ -118,36 +119,6 @@ fn track_player(
     }
 }
 
-fn animate(
-    mut sprite_query: Query<
-        (&mut TextureAtlas, &EntityState),
-        With<Spammer>,
-    >,
-    animation: Res<AnimationMap>,
-) {
-
-    let spammer_animations = &animation
-        .0
-        .get(&AnimationKey::Spammer)
-        .expect("Animation for spammer were not found");
-
-    for (mut atlas, state) in sprite_query.iter_mut() {
-        let frames = spammer_animations
-            .indices
-            .get(state)
-            .unwrap_or(&spammer_animations.default);
-
-
-        let mut index = atlas.index + 1;
-
-        if atlas.index >= frames.last_frame || atlas.index < frames.first_frame {
-            index = frames.first_frame;
-        }
-
-        atlas.index = index;
-    }
-}
-
 fn flip_on_movement(mut spammers: Query<(&mut Sprite, &Velocity), With<Spammer>>) {
     for (mut sprite, velocity) in spammers.iter_mut() {
         if velocity.linvel.x < 0.0 {
@@ -161,7 +132,7 @@ fn flip_on_movement(mut spammers: Query<(&mut Sprite, &Velocity), With<Spammer>>
 fn despawn(
     mut commands: Commands,
     query: Query<(Entity, &Health, &Transform), With<Spammer>>,
-    mut event: EventWriter<ScoreUpdateEvent>
+    mut event: EventWriter<ScoreUpdateEvent>,
 ) {
     for (id, hp, transform) in query.iter() {
         if hp.0 <= 0 {
@@ -185,7 +156,9 @@ fn despawn(
                 },
             ));
 
-            event.send( ScoreUpdateEvent { gained_points: POINTS_REWARDED });
+            event.send(ScoreUpdateEvent {
+                gained_points: POINTS_REWARDED,
+            });
         }
     }
 }

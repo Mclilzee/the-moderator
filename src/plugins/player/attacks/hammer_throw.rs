@@ -5,7 +5,6 @@ use crate::{
         default_plugins::CursorPosition,
         player::Player,
     },
-    AnimationEvent,
 };
 
 use bevy::prelude::*;
@@ -27,7 +26,6 @@ impl Plugin for HammerPlugin {
         app.add_systems(Update, mouse_button_input)
             .add_systems(Update, collision)
             .add_systems(Update, despawn)
-            .add_systems(Update, animate.run_if(on_event::<AnimationEvent>()))
             .add_systems(Update, despawn_timer);
     }
 }
@@ -72,6 +70,7 @@ fn mouse_button_input(
             Hammer,
             Damage(DAMAGE),
             Health(HEALTH),
+            AnimationKey::Hammer,
             DespawnTimer(Timer::from_seconds(DESPAWN_TIMER, TimerMode::Once)),
             EntityState::Idle,
             Collider::cuboid(14.0, 14.0),
@@ -82,31 +81,6 @@ fn mouse_button_input(
             atlas,
             sprite_bundle,
         ));
-    }
-}
-
-fn animate(
-    mut sprite_query: Query<(&mut TextureAtlas, &EntityState), With<Hammer>>,
-    animation: Res<AnimationMap>,
-) {
-    for (mut atlas, state) in sprite_query.iter_mut() {
-        let hammer_animation = &animation
-            .0
-            .get(&AnimationKey::Hammer)
-            .expect("Animation were not found");
-
-        let frames = hammer_animation
-            .indices
-            .get(state)
-            .unwrap_or(&hammer_animation.default);
-
-        let mut index = atlas.index + 1;
-
-        if atlas.index >= frames.last_frame || atlas.index < frames.first_frame {
-            index = frames.first_frame;
-        }
-
-        atlas.index = index;
     }
 }
 

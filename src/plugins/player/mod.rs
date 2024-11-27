@@ -2,18 +2,17 @@ mod animation;
 mod attacks;
 mod player_input;
 
-use self::{animation::animate, player_input::input};
+use self::player_input::input;
 use super::asset_loader::AnimationKey;
 use super::asset_loader::AnimationMap;
 use super::platform::Platform;
 use crate::common_components::{EntityState, Jumps};
-use crate::AnimationEvent;
 use crate::{bundles::actors::Actor, common_components::Damage};
-use animation::flip_on_input;
 use bevy::prelude::*;
 use bevy_rapier2d::dynamics::LockedAxes;
 use bevy_rapier2d::geometry::{CollisionGroups, Group};
 use bevy_rapier2d::plugin::RapierContext;
+use player_input::flip_on_input;
 
 pub const PLAYER_SPEED: f32 = 150.0;
 pub const PLAYER_JUMP_HEIGHT: f32 = 300.0;
@@ -45,7 +44,6 @@ impl Plugin for PlayerPlugin {
             .add_event::<ScoreUpdateEvent>()
             .add_systems(PostStartup, setup)
             .add_systems(Update, input)
-            .add_systems(Update, animate.run_if(on_event::<AnimationEvent>()))
             .add_systems(Update, flip_on_input)
             .add_systems(Update, ground_collision)
             .add_systems(Update, player_score_update)
@@ -58,8 +56,19 @@ fn setup(
     asset_loader: Res<AnimationMap>,
     camera_q: Query<Entity, With<Camera>>,
 ) {
-    let mut char = (
-        Actor::new(PLAYER_STARING_HP, PLAYER_WIDTH, PLAYER_HEIGHT),
+    let mut actor = Actor::new(PLAYER_STARING_HP, PLAYER_WIDTH, PLAYER_HEIGHT, AnimationKey::Player);
+    let animation = asset_loader
+        .0
+        .get(&actor.animation_key)
+        .expect("Player animation were not found");
+
+    actor.sprite_bundle.texture = animation.texture.clone();
+    actor.atlas = TextureAtlas {
+        layout: animation.atlas.clone(),
+        index: 1,
+    };
+
+    let char = (
         CollisionGroups::new(Group::GROUP_1, Group::GROUP_2),
         Player,
         Damage(5),
@@ -71,18 +80,7 @@ fn setup(
         LockedAxes::ROTATION_LOCKED,
     );
 
-    let animation = asset_loader
-        .0
-        .get(&AnimationKey::Player)
-        .expect("Player animation were not found");
-
-    char.0.sprite_bundle.texture = animation.texture.clone();
-    char.0.atlas = TextureAtlas {
-        layout: animation.atlas.clone(),
-        index: 1,
-    };
-
-    let player_id = commands.spawn((char, Name::new("Player"))).id();
+    let player_id = commands.spawn((char, actor, Name::new("Player"))).id();
     let id = camera_q.single();
     commands.get_entity(id).unwrap().set_parent(player_id);
     commands.spawn((
