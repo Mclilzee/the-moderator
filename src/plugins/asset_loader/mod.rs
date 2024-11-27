@@ -71,7 +71,7 @@ fn animate(
     }
 
     for (mut atlas, state, key) in animations.iter_mut() {
-        let player_animations = &animation.0.get(key).expect("Animation to be found");
+        let player_animations = &animation.0.get(key).expect("Animation were not found");
 
         let frames = player_animations
             .indices
