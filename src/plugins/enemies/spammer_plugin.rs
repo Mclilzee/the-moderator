@@ -1,6 +1,6 @@
 use crate::{
     bundles::actors::Actor,
-    common_components::{Damage, DespawnTimer, Health},
+    common_components::{Damage, DespawnTimer, Enemy, Health},
     plugins::{asset_loader::AnimationEvent, player::{Player, ScoreUpdateEvent}}, utils::animate,
 };
 use crate::{
@@ -93,6 +93,7 @@ fn spawn_spammer(
             actor,
             Spammer,
             Damage(SPAMMER_DAMAGE),
+            Enemy,
             EntityState::default(),
             CollisionGroups::new(Group::GROUP_2, Group::GROUP_1),
             LockedAxes::ROTATION_LOCKED,

@@ -1,4 +1,9 @@
 use bevy::prelude::*;
+#[derive(Component)]
+pub struct Enemy;
+
+#[derive(Component)]
+pub struct Friendly;
 
 #[derive(Component, Default)]
 pub struct Health(pub i32);

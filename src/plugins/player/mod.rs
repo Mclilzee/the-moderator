@@ -6,6 +6,8 @@ use super::asset_loader::AnimationEvent;
 use super::asset_loader::AnimationKey;
 use super::asset_loader::AnimationMap;
 use super::platform::Platform;
+use crate::common_components::Enemy;
+use crate::common_components::Friendly;
 use crate::common_components::{EntityState, Jumps};
 use crate::utils::animate;
 use crate::{bundles::actors::Actor, common_components::Damage};
@@ -76,6 +78,7 @@ fn setup(
         CollisionGroups::new(Group::GROUP_1, Group::GROUP_2),
         Player,
         Damage(5),
+        Friendly,
         Jumps {
             current: 0,
             max: PLAYER_MAX_JUMPS,

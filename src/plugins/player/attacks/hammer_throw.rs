@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use crate::{
-    common_components::{Damage, DespawnTimer, EntityState, Health},
+    common_components::{Damage, DespawnTimer, Enemy, EntityState, Friendly, Health},
     plugins::{
         asset_loader::{AnimationEvent, AnimationKey, AnimationMap},
         default_plugins::CursorPosition,
@@ -88,6 +88,7 @@ fn mouse_button_input(
             HammerThrow,
             Damage(DAMAGE),
             Health(HEALTH),
+            Friendly,
             DespawnTimer(Timer::from_seconds(DESPAWN_TIMER, TimerMode::Once)),
             EntityState::Idle,
             Collider::cuboid(14.0, 14.0),
@@ -103,10 +104,7 @@ fn mouse_button_input(
 
 fn collision(
     mut hammers: Query<(Entity, &mut Health, &Damage), (With<HammerThrow>, With<Collider>)>,
-    mut enemies: Query<
-        (Entity, &mut Health, &Damage),
-        (Without<HammerThrow>, Without<Player>, With<Collider>),
-    >,
+    mut enemies: Query<(Entity, &mut Health, &Damage), (Without<HammerThrow>, With<Collider>, With<Enemy>)>,
     rapier_context: Res<RapierContext>,
 ) {
     for (h_id, mut h_hp, h_dmg) in hammers.iter_mut() {
