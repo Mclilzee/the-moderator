@@ -2,7 +2,7 @@ use crate::common_components::{EntityState, Jumps};
 use bevy::prelude::*;
 use bevy_rapier2d::dynamics::Velocity;
 
-use super::{constants::{PLAYER_JUMP_HEIGHT, PLAYER_SPEED}, Player};
+use super::{Player, PLAYER_JUMP_HEIGHT, PLAYER_SPEED};
 
 pub fn input(
     keys: Res<ButtonInput<KeyCode>>,
