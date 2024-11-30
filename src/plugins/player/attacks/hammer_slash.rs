@@ -37,7 +37,7 @@ impl Plugin for HammerSlashPlugin {
 
 fn spawn(
     mut commands: Commands,
-    player_query: Query<&Transform, With<Player>>,
+    player_query: Query<(Entity, &Transform), With<Player>>,
     cursor_position: Res<CursorPosition>,
     buttons: Res<ButtonInput<MouseButton>>,
     mut cooldown: ResMut<Cooldown>,
@@ -46,19 +46,26 @@ fn spawn(
     cooldown.0.tick(time.delta());
     if buttons.just_pressed(MouseButton::Right) && cooldown.0.finished() {
         cooldown.0.reset();
-        let p_transform = player_query.single();
+        let (p_id, p_transform) = player_query.single();
         let p1 = p_transform.translation.truncate();
         let p2 = cursor_position.0;
 
-        commands.spawn((
-            HammerSlash,
-            Damage(DAMAGE),
-            Collider::cuboid(WIDTH, HEIGHT),
-            Friendly,
-            Sensor,
-            CollisionGroups::new(Group::GROUP_1, Group::GROUP_2 | Group::GROUP_3),
-            p_transform.looking_at((p1 - p2).extend(0.0), Vec3::Y),
-        ));
+        commands
+            .spawn((
+                TransformBundle {
+                    local: Transform::from_translation(
+                        ((p2 - p1).normalize() * Vec2::new(0.0, HEIGHT)).extend(0.0),
+                    ),
+                    ..default()
+                },
+                HammerSlash,
+                Damage(DAMAGE),
+                Collider::cuboid(WIDTH, HEIGHT),
+                Friendly,
+                Sensor,
+                CollisionGroups::new(Group::GROUP_1, Group::GROUP_2 | Group::GROUP_3),
+            ))
+            .set_parent(p_id);
     }
 }
 
