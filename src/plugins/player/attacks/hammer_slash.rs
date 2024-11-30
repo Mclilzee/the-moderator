@@ -30,45 +30,49 @@ impl Plugin for HammerSlashPlugin {
         cooldown.tick(Duration::from_millis(COOLDOWN_MILLIS));
 
         app.insert_resource(Cooldown(cooldown))
-            .add_systems(Update, (cooldown_tick, spawn).chain())
+            .add_systems(Update, (despawn, spawn).chain())
             .add_systems(Update, collision);
     }
 }
 
-fn cooldown_tick(time: Res<Time>, mut cooldown_timer: ResMut<Cooldown>) {
-    cooldown_timer.0.tick(time.delta());
-}
-
 fn spawn(
     mut commands: Commands,
-    player_query: Query<Entity, With<Player>>,
-    hammer_slash: Query<Entity, With<HammerSlash>>,
+    player_query: Query<&Transform, With<Player>>,
+    cursor_position: Res<CursorPosition>,
     buttons: Res<ButtonInput<MouseButton>>,
     mut cooldown: ResMut<Cooldown>,
+    time: Res<Time>,
 ) {
-    if !cooldown.0.finished() {
-        return;
+    cooldown.0.tick(time.delta());
+    if buttons.just_pressed(MouseButton::Right) && cooldown.0.finished() {
+        cooldown.0.reset();
+        let p_transform = player_query.single();
+        let p1 = p_transform.translation.truncate();
+        let p2 = cursor_position.0;
+
+        commands.spawn((
+            HammerSlash,
+            Damage(DAMAGE),
+            Collider::cuboid(WIDTH, HEIGHT),
+            Friendly,
+            Sensor,
+            CollisionGroups::new(Group::GROUP_1, Group::GROUP_2 | Group::GROUP_3),
+            p_transform.looking_at((p1 - p2).extend(0.0), Vec3::Y),
+        ));
     }
+}
 
-    hammer_slash.iter().for_each(|id| {
-        if let Some(mut entity) = commands.get_entity(id) {
-            entity.despawn();
-        }
-    });
-
-    cooldown.0.reset();
-    if buttons.just_pressed(MouseButton::Right) {
-        commands
-            .spawn((
-                HammerSlash,
-                Damage(DAMAGE),
-                Collider::cuboid(HEIGHT, WIDTH),
-                Friendly,
-                Sensor,
-                Restitution::coefficient(0.0),
-                CollisionGroups::new(Group::GROUP_1, Group::GROUP_2 | Group::GROUP_3),
-            ))
-            .set_parent(player_query.single());
+fn despawn(
+    mut commands: Commands,
+    hammers: Query<Entity, With<HammerSlash>>,
+    cooldown: Res<Cooldown>,
+) {
+    if cooldown.0.finished() {
+        hammers.iter().for_each(|id| {
+            if let Some(mut entity) = commands.get_entity(id) {
+                entity.despawn();
+            }
+        });
     }
 }
 
