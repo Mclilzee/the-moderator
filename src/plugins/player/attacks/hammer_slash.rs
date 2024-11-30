@@ -41,47 +41,34 @@ fn cooldown_tick(time: Res<Time>, mut cooldown_timer: ResMut<Cooldown>) {
 
 fn spawn(
     mut commands: Commands,
-    player_query: Query<(Entity, &Transform, &Collider), With<Player>>,
+    player_query: Query<Entity, With<Player>>,
     hammer_slash: Query<Entity, With<HammerSlash>>,
-    cursor_position: Res<CursorPosition>,
     buttons: Res<ButtonInput<MouseButton>>,
     mut cooldown: ResMut<Cooldown>,
 ) {
-    if buttons.just_pressed(MouseButton::Right) && cooldown.0.finished() {
-        cooldown.0.reset();
-        hammer_slash.iter().for_each(|id| {
-            if let Some(mut entity) = commands.get_entity(id) {
-                entity.despawn();
-            }
-        });
+    if !cooldown.0.finished() {
+        return;
+    }
 
-        let (p_entity, p_transform, p_collider) = player_query.single();
-        let p1 = p_transform.translation.truncate();
-        let p2 = cursor_position.0;
-        let x = p2 - p1;
-        let mut transform = *p_transform;
-        let circular_base_id = commands
+    hammer_slash.iter().for_each(|id| {
+        if let Some(mut entity) = commands.get_entity(id) {
+            entity.despawn();
+        }
+    });
+
+    cooldown.0.reset();
+    if buttons.just_pressed(MouseButton::Right) {
+        commands
             .spawn((
-                Collider::ball(50.0),
+                HammerSlash,
+                Damage(DAMAGE),
+                Collider::cuboid(HEIGHT, WIDTH),
+                Friendly,
                 Sensor,
-                SpriteBundle {
-                    transform,
-                    ..default()
-                },
+                Restitution::coefficient(0.0),
+                CollisionGroups::new(Group::GROUP_1, Group::GROUP_2 | Group::GROUP_3),
             ))
-            .id();
-
-        let mut hammer_slash = commands.spawn((
-            HammerSlash,
-            Damage(DAMAGE),
-            Collider::cuboid(WIDTH, HEIGHT),
-            Friendly,
-            Sensor,
-            Restitution::coefficient(0.0),
-            CollisionGroups::new(Group::GROUP_1, Group::GROUP_2 | Group::GROUP_3),
-        ));
-
-        hammer_slash.set_parent(circular_base_id);
+            .set_parent(player_query.single());
     }
 }
 

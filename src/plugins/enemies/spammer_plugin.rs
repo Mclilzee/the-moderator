@@ -1,7 +1,11 @@
 use crate::{
     bundles::actors::Actor,
     common_components::{Damage, DespawnTimer, Enemy, Health},
-    plugins::{asset_loader::AnimationEvent, player::{Player, ScoreUpdateEvent}}, utils::animate,
+    plugins::{
+        asset_loader::AnimationEvent,
+        player::{Player, ScoreUpdateEvent},
+    },
+    utils::animate,
 };
 use crate::{
     common_components::EntityState,
@@ -60,7 +64,8 @@ fn spawn_spammer(
     mut spawn_timer: ResMut<SpammerSpawnTimer>,
     spammers_query: Query<&Spammer>,
     time: Res<Time>,
-    camera_query: Query<&OrthographicProjection, (With<Camera>, Without<Player>)>,
+    camera_query: Query<&OrthographicProjection, With<Camera>>,
+    player_query: Query<&Transform, With<Player>>,
     asset_loader: Res<AnimationMap>,
 ) {
     if spammers_query.iter().count() > SPAMMER_LIMIT {
@@ -70,12 +75,14 @@ fn spawn_spammer(
     spawn_timer.timer.tick(time.delta());
     if spawn_timer.timer.just_finished() {
         let camera = camera_query.single();
+        let player_x = player_query.single().translation.x;
         let mut random = rand::thread_rng();
         let offset = random.gen_range(-50.0..50.0);
-        let camera_offset = camera.area.width() / 2.0;
-        let spawn_x = offset + f32::copysign(camera_offset + 5.0, offset);
-
+        let half_screen = camera.area.width() / 2.0;
+        let screen_side = offset + f32::copysign(half_screen + 20.0, offset);
+        let spawn_x = f32::copysign(player_x, offset) + screen_side;
         let mut actor = Actor::new(SPAMMER_STARTING_HP, SPAMMER_WIDTH, SPAMMER_HEIGHT);
+
         let animation = asset_loader
             .0
             .get(&AnimationKey::Spammer)
