@@ -29,7 +29,7 @@ impl Plugin for GroundSmashPlugin {
         let mut cooldown = Timer::from_seconds(1.0, TimerMode::Once);
         cooldown.tick(Duration::from_millis(COOLDOWN_MILLIS));
 
-        app.insert_resource(Cooldown(cooldown))
+        app.insert_resource(Cooldown(cooldown)).insert_resource(DespawnTimer(Timer::from_seconds(0.2, TimerMode::Repeating)))
             .add_systems(Update, (spawn, collision).chain())
             .add_systems(Update, despawn);
     }

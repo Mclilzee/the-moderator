@@ -8,19 +8,19 @@ pub fn setup(
     mut atlas_server: ResMut<Assets<TextureAtlasLayout>>,
     mut animations: ResMut<AnimationMap>,
 ) {
-    let texture: Handle<Image> = asset_server.load("knight/Knight.png");
+    let texture: Handle<Image> = asset_server.load("fred/idle.png");
     let layout = atlas_server.add(TextureAtlasLayout::from_grid(
-        UVec2::new(31, 38),
-        19,
+        UVec2::new(32, 32),
+        11,
         1,
-        Some(UVec2::new(4, 0)),
+        None,
         None,
     ));
 
-    let idle_animation = AnimationIndices::new(0, 8);
+    let idle_animation = AnimationIndices::new(0, 10);
     let mut range: HashMap<EntityState, AnimationIndices> = HashMap::new();
     range.insert(EntityState::Idle, idle_animation);
-    range.insert(EntityState::Running, AnimationIndices::new(9, 18));
+    //range.insert(EntityState::Running, AnimationIndices::new(9, 18));
 
     let range = Animation {
         texture,
