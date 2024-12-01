@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use crate::{
     common_components::{Damage, Enemy, Friendly, Health},
-    plugins::{asset_loader::AnimationMap, default_plugins::CursorPosition, player::{Player, PLAYER_HEIGHT}},
+    plugins::player::{Player, PLAYER_HEIGHT},
 };
 
 use bevy::prelude::*;
@@ -10,25 +10,28 @@ use bevy_rapier2d::prelude::*;
 
 const SMASH_WIDTH: f32 = 60.0;
 const SMASH_HEIGHT: f32 = 1.0;
-const DAMAGE: i32 = 1;
+const DAMAGE: i32 = 10;
 const COOLDOWN_MILLIS: u64 = 500;
 
 #[derive(Component)]
 struct GroundSmash;
 
-#[derive(Resource)]
+#[derive(Resource, Deref, DerefMut)]
 struct Cooldown(Timer);
 
-pub struct HammerSlashPlugin;
+#[derive(Resource, Deref, DerefMut)]
+struct DespawnTimer(Timer);
 
-impl Plugin for HammerSlashPlugin {
+pub struct GroundSmashPlugin;
+
+impl Plugin for GroundSmashPlugin {
     fn build(&self, app: &mut App) {
         let mut cooldown = Timer::from_seconds(1.0, TimerMode::Once);
         cooldown.tick(Duration::from_millis(COOLDOWN_MILLIS));
 
         app.insert_resource(Cooldown(cooldown))
-            .add_systems(Update, (despawn, spawn).chain())
-            .add_systems(Update, collision);
+            .add_systems(Update, (spawn, collision).chain())
+            .add_systems(Update, despawn);
     }
 }
 
@@ -42,23 +45,27 @@ fn spawn(
     cooldown.0.tick(time.delta());
     if buttons.just_pressed(MouseButton::Right) && cooldown.0.finished() {
         cooldown.0.reset();
-        commands.spawn((
-            TransformBundle::from_transform(Transform::from_xyz(0.0, 0.0 - PLAYER_HEIGHT, 0.0)),
-            GroundSmash,
-            Damage(DAMAGE),
-            Collider::cuboid(SMASH_WIDTH, SMASH_HEIGHT),
-            Friendly,
-            Sensor,
-        )).set_parent(player.single());
+        commands
+            .spawn((
+                TransformBundle::from_transform(Transform::from_xyz(0.0, 0.0 - PLAYER_HEIGHT, 0.0)),
+                GroundSmash,
+                Damage(DAMAGE),
+                Collider::cuboid(SMASH_WIDTH, SMASH_HEIGHT),
+                Friendly,
+                Sensor,
+            ))
+            .set_parent(player.single());
     }
 }
 
 fn despawn(
     mut commands: Commands,
     hammers: Query<Entity, With<GroundSmash>>,
-    cooldown: Res<Cooldown>,
+    mut despawn_timer: ResMut<DespawnTimer>,
+    time: Res<Time>,
 ) {
-    if cooldown.0.finished() {
+    despawn_timer.tick(time.delta());
+    if despawn_timer.finished() {
         hammers.iter().for_each(|id| {
             if let Some(mut entity) = commands.get_entity(id) {
                 entity.despawn();
@@ -66,6 +73,8 @@ fn despawn(
         });
     }
 }
+
+// TODO: add animation aand despawn after animation finish
 
 fn collision(
     mut hammers: Query<(Entity, &Damage), (With<GroundSmash>, With<Collider>)>,
