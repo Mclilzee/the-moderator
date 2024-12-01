@@ -2,22 +2,19 @@ use std::time::Duration;
 
 use crate::{
     common_components::{Damage, Enemy, Friendly, Health},
-    plugins::{asset_loader::AnimationMap, default_plugins::CursorPosition, player::Player},
+    plugins::{asset_loader::AnimationMap, default_plugins::CursorPosition, player::{Player, PLAYER_HEIGHT}},
 };
 
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-const SLASH_SPEED: f32 = 600.0;
-const WIDTH: f32 = 6.0;
-const HEIGHT: f32 = 40.0;
-const TRANSFORM_PADDING: f32 = 5.0;
+const SMASH_WIDTH: f32 = 60.0;
+const SMASH_HEIGHT: f32 = 1.0;
 const DAMAGE: i32 = 1;
 const COOLDOWN_MILLIS: u64 = 500;
-const HAMMER_SWING_RADIUS: f32 = 90.0;
 
 #[derive(Component)]
-struct HammerSlash;
+struct GroundSmash;
 
 #[derive(Resource)]
 struct Cooldown(Timer);
@@ -37,8 +34,7 @@ impl Plugin for HammerSlashPlugin {
 
 fn spawn(
     mut commands: Commands,
-    player_query: Query<(Entity, &Transform), With<Player>>,
-    cursor_position: Res<CursorPosition>,
+    player: Query<Entity, With<Player>>,
     buttons: Res<ButtonInput<MouseButton>>,
     mut cooldown: ResMut<Cooldown>,
     time: Res<Time>,
@@ -46,32 +42,20 @@ fn spawn(
     cooldown.0.tick(time.delta());
     if buttons.just_pressed(MouseButton::Right) && cooldown.0.finished() {
         cooldown.0.reset();
-        let (p_id, p_transform) = player_query.single();
-        let p1 = p_transform.translation.truncate();
-        let p2 = cursor_position.0;
-
-        commands
-            .spawn((
-                TransformBundle {
-                    local: Transform::from_translation(
-                        ((p2 - p1).normalize() * Vec2::new(0.0, HEIGHT)).extend(0.0),
-                    ),
-                    ..default()
-                },
-                HammerSlash,
-                Damage(DAMAGE),
-                Collider::cuboid(WIDTH, HEIGHT),
-                Friendly,
-                Sensor,
-                CollisionGroups::new(Group::GROUP_1, Group::GROUP_2 | Group::GROUP_3),
-            ))
-            .set_parent(p_id);
+        commands.spawn((
+            TransformBundle::from_transform(Transform::from_xyz(0.0, 0.0 - PLAYER_HEIGHT, 0.0)),
+            GroundSmash,
+            Damage(DAMAGE),
+            Collider::cuboid(SMASH_WIDTH, SMASH_HEIGHT),
+            Friendly,
+            Sensor,
+        )).set_parent(player.single());
     }
 }
 
 fn despawn(
     mut commands: Commands,
-    hammers: Query<Entity, With<HammerSlash>>,
+    hammers: Query<Entity, With<GroundSmash>>,
     cooldown: Res<Cooldown>,
 ) {
     if cooldown.0.finished() {
@@ -84,8 +68,8 @@ fn despawn(
 }
 
 fn collision(
-    mut hammers: Query<(Entity, &Damage), (With<HammerSlash>, With<Collider>)>,
-    mut enemies: Query<(Entity, &mut Health), (Without<HammerSlash>, With<Enemy>, With<Collider>)>,
+    mut hammers: Query<(Entity, &Damage), (With<GroundSmash>, With<Collider>)>,
+    mut enemies: Query<(Entity, &mut Health), (Without<GroundSmash>, With<Enemy>, With<Collider>)>,
     rapier_context: Res<RapierContext>,
 ) {
     for (h_id, h_dmg) in hammers.iter_mut() {
