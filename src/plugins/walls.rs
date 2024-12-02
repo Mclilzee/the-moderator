@@ -5,7 +5,7 @@ use bevy_ecs_ldtk::assets::LdtkProject;
 use bevy_ecs_ldtk::ldtk::LayerInstance;
 use bevy_ecs_ldtk::{GridCoords, LdtkIntCell, LevelIid};
 use bevy_rapier2d::geometry::Collider;
-use bevy_rapier2d::prelude::{Friction, RigidBody};
+use bevy_rapier2d::prelude::{CollisionGroups, Friction, Group, RigidBody};
 
 #[derive(Default, Component)]
 pub struct Wall;
@@ -19,7 +19,8 @@ pub struct WallPlugin;
 
 impl Plugin for WallPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, spawn_wall_collision).register_ldtk_int_cell::<WallBundle>(1);
+        app.add_systems(Update, spawn_wall_collision)
+            .register_ldtk_int_cell::<WallBundle>(1);
     }
 }
 
@@ -159,8 +160,7 @@ fn spawn_wall_collision(
                                     * grid_size as f32
                                     / 2.,
                             ))
-                            .insert(RigidBody::Fixed)
-                            .insert(Friction::new(1.0))
+                            .insert(CollisionGroups::new(Group::GROUP_3, Group::GROUP_1))
                             .insert(Transform::from_xyz(
                                 (wall_rect.left + wall_rect.right + 1) as f32 * grid_size as f32
                                     / 2.,

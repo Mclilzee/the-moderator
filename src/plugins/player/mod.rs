@@ -49,7 +49,7 @@ impl Plugin for PlayerPlugin {
             .add_systems(PostStartup, setup)
             .add_systems(Update, input)
             .add_systems(Update, flip_on_input)
-            .add_systems(Update, ground_collision)
+            .add_systems(Update, wall_collision)
             .add_systems(Update, player_score_update)
             .add_systems(Update, animate_player.run_if(on_event::<AnimationEvent>()))
             .add_plugins(attacks::AttacksPlugin);
@@ -108,7 +108,7 @@ fn setup(
     ));
 }
 
-fn ground_collision(
+fn wall_collision(
     mut player: Query<(Entity, &Transform, &mut Jumps), With<Player>>,
     platforms: Query<(Entity, &Transform), With<Wall>>,
     rapier_context: Res<RapierContext>,
@@ -116,7 +116,7 @@ fn ground_collision(
     let (p_id, p_transform, mut jumps) = player.single_mut();
     for (platform_id, platform_transform) in platforms.iter() {
         if rapier_context.contact_pair(p_id, platform_id).is_some()
-            && p_transform.translation.y > platform_transform.translation.y
+        && p_transform.translation.y > platform_transform.translation.y
         {
             jumps.current = 0;
         }
