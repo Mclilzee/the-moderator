@@ -160,7 +160,6 @@ fn spawn_wall_collision(
                                     * grid_size as f32
                                     / 2.,
                             ))
-                            .insert(CollisionGroups::new(Group::GROUP_3, Group::GROUP_1))
                             .insert(Transform::from_xyz(
                                 (wall_rect.left + wall_rect.right + 1) as f32 * grid_size as f32
                                     / 2.,

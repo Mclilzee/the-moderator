@@ -25,6 +25,7 @@ const PLAYER_MAX_JUMPS: u8 = 2;
 pub const PLAYER_HEIGHT: f32 = 17.0;
 const PLAYER_WIDTH: f32 = 7.0;
 const SCORE_TEXT_SIZE: f32 = 40.0;
+const PLAYER_STARTING_TRANSFORM: Transform = Transform::from_xyz(1312., 150., 10.0);
 
 #[derive(Component)]
 pub struct Player;
@@ -68,7 +69,7 @@ fn setup(
         .expect("Player animation were not found");
 
     actor.sprite_bundle.texture = animation.texture.clone();
-    actor.sprite_bundle.transform = Transform::from_xyz(1312., 640., 10.0);
+    actor.sprite_bundle.transform = PLAYER_STARTING_TRANSFORM;
     actor.atlas = TextureAtlas {
         layout: animation.atlas.clone(),
         index: 1,

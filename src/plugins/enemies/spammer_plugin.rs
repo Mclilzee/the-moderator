@@ -25,6 +25,7 @@ const SPAMMER_SPEED: f32 = 40.0;
 const SPAMMER_WIDTH: f32 = 10.0;
 const SPAMMER_HEIGHT: f32 = 15.0;
 const SPAMMER_LIMIT: usize = 5;
+const SPAMMER_Z_INDEX: f32 = 10.0;
 const POINTS_INCREMENT_DURATION: f32 = 1.0;
 const POINTS_INCREMENT_ASCENDING_SPEED: f32 = 200.0;
 const POINTS_SIZE: f32 = 20.0;
@@ -75,12 +76,11 @@ fn spawn_spammer(
     spawn_timer.timer.tick(time.delta());
     if spawn_timer.timer.just_finished() {
         let camera = camera_query.single();
-        let player_x = player_query.single().translation.x;
+        let player_translation = player_query.single().translation;
         let mut random = rand::thread_rng();
         let offset = random.gen_range(-50.0..50.0);
-        let half_screen = camera.area.width() / 2.0;
-        let screen_side = offset + f32::copysign(half_screen + 20.0, offset);
-        let spawn_x = f32::copysign(player_x, offset) + screen_side;
+        let offset = ((camera.area.width() / 2.0) + 20.0).copysign(offset);
+        let spammer_translation = player_translation + Vec3::new(offset, 0.0, 0.0);
         let mut actor = Actor::new(SPAMMER_STARTING_HP, SPAMMER_WIDTH, SPAMMER_HEIGHT);
 
         let animation = asset_loader
@@ -93,8 +93,7 @@ fn spawn_spammer(
             layout: animation.atlas.clone(),
             index: 1,
         };
-
-        actor.sprite_bundle.transform.translation = Vec3::new(spawn_x, 0.0, 0.0);
+        actor.sprite_bundle.transform.translation = spammer_translation;
 
         commands.spawn((
             actor,
