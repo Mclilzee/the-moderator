@@ -69,6 +69,7 @@ fn setup(
         .expect("Player animation were not found");
 
     actor.sprite_bundle.texture = animation.texture.clone();
+    actor.sprite_bundle.transform = Transform::from_xyz(1312., 640., 1.0);
     actor.atlas = TextureAtlas {
         layout: animation.atlas.clone(),
         index: 1,
