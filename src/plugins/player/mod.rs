@@ -5,7 +5,7 @@ use self::player_input::input;
 use super::asset_loader::AnimationEvent;
 use super::asset_loader::AnimationKey;
 use super::asset_loader::AnimationMap;
-use super::platform::Platform;
+use super::ground::Ground;
 use crate::common_components::Enemy;
 use crate::common_components::Friendly;
 use crate::common_components::{EntityState, Jumps};
@@ -111,7 +111,7 @@ fn setup(
 
 fn ground_collision(
     mut player: Query<(Entity, &Transform, &mut Jumps), With<Player>>,
-    platforms: Query<(Entity, &Transform), With<Platform>>,
+    platforms: Query<(Entity, &Transform), With<Ground>>,
     rapier_context: Res<RapierContext>,
 ) {
     let (p_id, p_transform, mut jumps) = player.single_mut();
