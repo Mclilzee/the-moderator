@@ -6,7 +6,6 @@ mod utils;
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use bevy_rapier2d::prelude::*;
-use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use plugins::{asset_loader, camera_plugin, default_plugins, enemies, player, ground};
 
 #[derive(Clone, PartialEq, Eq, Debug, Hash, SystemSet)]
@@ -26,10 +25,9 @@ fn main() {
         .add_plugins(ground::GroundPlugin)
         .add_plugins(player::PlayerPlugin)
         .add_plugins(enemies::EnemiesPlugin)
-        .add_plugins(WorldInspectorPlugin::new())
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0));
 
     //#[cfg(dev)]
-    //app.add_plugins(RapierDebugRenderPlugin::default());
+    app.add_plugins(RapierDebugRenderPlugin::default());
     app.run();
 }

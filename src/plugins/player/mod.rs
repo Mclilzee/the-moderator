@@ -6,7 +6,6 @@ use super::asset_loader::AnimationEvent;
 use super::asset_loader::AnimationKey;
 use super::asset_loader::AnimationMap;
 use super::ground::Ground;
-use crate::common_components::Enemy;
 use crate::common_components::Friendly;
 use crate::common_components::{EntityState, Jumps};
 use crate::utils::animate;
