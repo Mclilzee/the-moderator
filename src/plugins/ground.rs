@@ -6,20 +6,11 @@ use bevy_rapier2d::geometry::Collider;
 #[derive(Default, Component)]
 pub struct Ground;
 
-#[derive(Bundle, LdtkIntCell)]
+#[derive(Default, Bundle, LdtkIntCell)]
 pub struct GroundBundle {
     collider: Collider,
     sprite_sheet: SpriteBundle,
     ground: Ground,
-}
-
-impl Default for GroundBundle {
-    fn default() -> Self {
-        Self {
-            collider: Collider::cuboid(2.0, 2.0),
-            ..default()
-        }
-    }
 }
 
 pub struct GroundPlugin;
