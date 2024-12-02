@@ -30,7 +30,7 @@ impl Plugin for CustomDefaultPlugin {
 
 fn create_window() -> Window {
     Window {
-        title: "Fred's Revenge".to_string(),
+        title: "The Moderator: Fred's Revenge".to_string(),
         resolution: (800.0, 600.0).into(),
         resizable: true,
         cursor: Cursor {
@@ -42,7 +42,7 @@ fn create_window() -> Window {
 }
 
 fn spawn_cursor(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let texture: Handle<Image> = asset_server.load("Cursor.png");
+    let texture: Handle<Image> = asset_server.load("cursor.png");
     commands.spawn((
         CustomCursor,
         SpriteBundle {

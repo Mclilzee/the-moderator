@@ -4,6 +4,7 @@ mod weapon_assets;
 
 use crate::common_components::EntityState;
 use bevy::{prelude::*, utils::HashMap};
+use bevy_ecs_ldtk::{LdtkWorldBundle, LevelSelection};
 
 const DEFAULT_ANIMATION_TIME_SECS: f32 = 0.1;
 
@@ -57,14 +58,23 @@ impl Plugin for AssetLoaderPlugin {
             .add_systems(PreStartup, player_assets::setup)
             .add_systems(PreStartup, spammer_assets::setup)
             .add_systems(PreStartup, weapon_assets::setup)
+            .add_systems(PreStartup, load_ldtk)
+            .insert_resource(LevelSelection::index(0))
             .add_systems(Update, timer_tick);
     }
+}
+
+fn load_ldtk(mut commands: Commands, asset_server: Res<AssetServer>) {
+    commands.spawn(LdtkWorldBundle {
+        ldtk_handle: asset_server.load("world.ldtk"),
+        ..default()
+    });
 }
 
 fn timer_tick(
     mut timer: ResMut<AnimationTimer>,
     time: Res<Time>,
-    mut event: EventWriter<AnimationEvent>
+    mut event: EventWriter<AnimationEvent>,
 ) {
     timer.0.tick(time.delta());
     if timer.0.finished() {
