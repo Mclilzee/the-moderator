@@ -6,7 +6,7 @@ mod utils;
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use bevy_rapier2d::prelude::*;
-use plugins::{asset_loader, camera_plugin, default_plugins, enemies, player, ground};
+use plugins::{asset_loader, camera_plugin, default_plugins, enemies, player, walls};
 
 #[derive(Clone, PartialEq, Eq, Debug, Hash, SystemSet)]
 pub enum InGameSet {
@@ -22,7 +22,7 @@ fn main() {
         .add_plugins(LdtkPlugin)
         .add_plugins(camera_plugin::CameraPlugin)
         .add_plugins(asset_loader::AssetLoaderPlugin)
-        .add_plugins(ground::GroundPlugin)
+        .add_plugins(walls::WallPlugin)
         .add_plugins(player::PlayerPlugin)
         .add_plugins(enemies::EnemiesPlugin)
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0));
