@@ -10,7 +10,7 @@ use crate::{
     utils::animate,
 };
 
-use avian2d::prelude::{AngularVelocity, Collider, Collision, CollisionLayers, LinearVelocity, Restitution, RigidBody};
+use avian2d::prelude::{AngularVelocity, Collider, ColliderDensity, Collision, CollisionLayers, LinearVelocity, Restitution, RigidBody};
 use bevy::prelude::*;
 
 const HAMMER_SPEED: f32 = 600.0;
@@ -91,8 +91,9 @@ fn mouse_button_input(
             Friendly,
             DespawnTimer(Timer::from_seconds(DESPAWN_TIMER, TimerMode::Once)),
             EntityState::Idle,
-            Collider::capsule(14.0, 14.0),
-            Restitution::new(100.0),
+            Collider::regular_polygon(13.0, 5),
+            Restitution::PERFECTLY_INELASTIC,
+            ColliderDensity(20.0),
             RigidBody::Dynamic,
             CollisionLayers::new(CollisionLayer::Friendly, [CollisionLayer::Enemy, CollisionLayer::Wall]),
             l_velocity,

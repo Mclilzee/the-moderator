@@ -99,7 +99,6 @@ fn spawn_spammer(
             EntityState::default(),
             CollisionLayers::new(CollisionLayer::Enemy, [CollisionLayer::Friendly, CollisionLayer::Wall]),
             LockedAxes::ROTATION_LOCKED,
-            //ActiveEvents::COLLISION_EVENTS,
         ));
     }
 }

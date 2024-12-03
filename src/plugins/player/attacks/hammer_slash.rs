@@ -8,8 +8,8 @@ use crate::{
 use avian2d::prelude::{Collider, Sensor};
 use bevy::prelude::*;
 
-const SMASH_WIDTH: f32 = 60.0;
-const SMASH_HEIGHT: f32 = 1.0;
+const SMASH_WIDTH: f32 = 120.0;
+const SMASH_HEIGHT: f32 = 2.0;
 const DAMAGE: i32 = 10;
 const COOLDOWN_MILLIS: u64 = 500;
 
@@ -50,7 +50,7 @@ fn spawn(
                 TransformBundle::from_transform(Transform::from_xyz(0.0, 0.0 - PLAYER_HEIGHT, 0.0)),
                 GroundSmash,
                 Damage(DAMAGE),
-                Collider::capsule(SMASH_WIDTH, SMASH_HEIGHT),
+                Collider::rectangle(SMASH_WIDTH, SMASH_HEIGHT),
                 Friendly,
                 Sensor,
             ))

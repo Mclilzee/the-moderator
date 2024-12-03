@@ -15,6 +15,7 @@ use avian2d::prelude::CollidingEntities;
 use avian2d::prelude::CollisionLayers;
 use avian2d::prelude::LinearVelocity;
 use avian2d::prelude::LockedAxes;
+use avian2d::prelude::Restitution;
 use bevy::color::palettes::css::GREEN;
 use bevy::color::palettes::css::RED;
 use bevy::prelude::*;
@@ -78,11 +79,11 @@ fn setup(
     };
 
     let char = (
-        //CollisionGroups::new(Group::GROUP_1, Group::GROUP_2),
         Player,
         Damage(5),
         Friendly,
         EntityState::Idle,
+        Restitution::ZERO,
         LockedAxes::ROTATION_LOCKED,
         CollisionLayers::new(CollisionLayer::Friendly, [CollisionLayer::Enemy, CollisionLayer::Wall])
     );
@@ -121,13 +122,6 @@ fn wall_collision(
     //        *state = EntityState::Idle;
     //    }
     //}
-    for (entity, colliding_entities) in &query {
-        println!(
-            "{:?} is colliding with the following entities: {:?}",
-            entity,
-            colliding_entities
-        );
-    }
 }
 
 fn player_score_update(
