@@ -7,25 +7,31 @@ pub fn setup(
     asset_server: Res<AssetServer>,
     mut atlas_server: ResMut<Assets<TextureAtlasLayout>>,
     mut animations: ResMut<AnimationMap>,
-    textures: ResMut<Assets<Image>>,
 ) {
-    let mut builder = TextureAtlasBuilder::default();
-    let texture: Handle<Image> = asset_server.load("fred/idle.png");
-    builder.add_texture(Some(texture.id()), texture);
-    let texture: Handle<Image> = asset_server.load("fred/run.png");
-    builder.add_texture(Some(texture.id()), textures.get(texture.id()).unwrap());
-
-    let (layout, image) = builder.build().unwrap();
-
+    let texture: Handle<Image> = asset_server.load("fred.png");
+    let atlas = atlas_server.add(TextureAtlasLayout::from_grid(
+        UVec2::new(32, 32),
+        12,
+        3,
+        None,
+        None,
+    ));
     let idle_animation = AnimationIndices::new(0, 10);
-    let run_animation = AnimationIndices::new(10, 22);
+    let run_animation = AnimationIndices::new(11, 22);
+    let jump_animation = AnimationIndices::new(22, 23);
+    let fall_animation = AnimationIndices::new(23, 24);
+    let double_jump = AnimationIndices::new(24, 30);
+
     let mut range: HashMap<EntityState, AnimationIndices> = HashMap::new();
     range.insert(EntityState::Idle, idle_animation);
     range.insert(EntityState::Running, run_animation);
+    range.insert(EntityState::Jumping, jump_animation);
+    range.insert(EntityState::DoubleJumping, double_jump);
+    range.insert(EntityState::Falling, fall_animation);
 
     let range = Animation {
-        texture: asset_server.add(image),
-        atlas: atlas_server.add(layout),
+        texture,
+        atlas,
         indices: range,
         default: idle_animation,
     };

@@ -27,4 +27,6 @@ pub enum EntityState {
     Idle,
     Running,
     Jumping,
+    Falling,
+    DoubleJumping
 }
