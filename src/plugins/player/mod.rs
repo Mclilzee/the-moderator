@@ -6,8 +6,8 @@ use super::asset_loader::AnimationEvent;
 use super::asset_loader::AnimationKey;
 use super::asset_loader::AnimationMap;
 use super::walls::Wall;
+use crate::common_components::EntityState;
 use crate::common_components::Friendly;
-use crate::common_components::{EntityState, Jumps};
 use crate::utils::animate;
 use crate::{bundles::actors::Actor, common_components::Damage};
 use bevy::color::palettes::css::GREEN;
@@ -80,10 +80,6 @@ fn setup(
         Player,
         Damage(5),
         Friendly,
-        Jumps {
-            current: 0,
-            max: PLAYER_MAX_JUMPS,
-        },
         EntityState::Idle,
         LockedAxes::ROTATION_LOCKED,
     );
@@ -110,16 +106,16 @@ fn setup(
 }
 
 fn wall_collision(
-    mut player: Query<(Entity, &Transform, &mut Jumps), With<Player>>,
+    mut player: Query<(Entity, &Transform, &mut EntityState), With<Player>>,
     platforms: Query<(Entity, &Transform), With<Wall>>,
     rapier_context: Res<RapierContext>,
 ) {
-    let (p_id, p_transform, mut jumps) = player.single_mut();
+    let (p_id, p_transform, mut state) = player.single_mut();
     for (platform_id, platform_transform) in platforms.iter() {
         if rapier_context.contact_pair(p_id, platform_id).is_some()
-        && p_transform.translation.y > platform_transform.translation.y
+            && p_transform.translation.y > platform_transform.translation.y
         {
-            jumps.current = 0;
+            *state = EntityState::Idle;
         }
     }
 }

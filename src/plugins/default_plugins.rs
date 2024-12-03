@@ -3,6 +3,8 @@ use bevy::{
     window::{Cursor, PrimaryWindow},
 };
 
+const CURSOR_Z_INDEX: f32 = 100.0;
+
 pub struct CustomDefaultPlugin;
 
 #[derive(Component)]
@@ -66,7 +68,7 @@ fn move_cursor(
         .and_then(|cursor| camera.viewport_to_world(camera_transform, cursor))
         .map(|ray| ray.origin.truncate())
     {
-        transform_q.single_mut().translation = vec.extend(5.0);
+        transform_q.single_mut().translation = vec.extend(CURSOR_Z_INDEX);
         cursor_position.0 = vec;
     }
 }

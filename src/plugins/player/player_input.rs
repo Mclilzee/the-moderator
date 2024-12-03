@@ -1,4 +1,4 @@
-use crate::common_components::{EntityState, Jumps};
+use crate::common_components::EntityState;
 use bevy::prelude::*;
 use bevy_rapier2d::dynamics::Velocity;
 
@@ -12,21 +12,30 @@ pub fn input(
     velocity.linvel.x = 0.0;
 
     if keys.any_pressed([KeyCode::ArrowRight, KeyCode::KeyD]) {
-        *state = EntityState::Running;
         velocity.linvel.x = PLAYER_SPEED;
     }
 
     if keys.any_pressed([KeyCode::ArrowLeft, KeyCode::KeyA]) {
-        *state = EntityState::Running;
         velocity.linvel.x = -PLAYER_SPEED;
     }
 
-    if keys.any_just_pressed([KeyCode::ArrowUp, KeyCode::Space]) && *state != EntityState::DoubleJumping {
+    if keys.any_just_pressed([KeyCode::ArrowUp, KeyCode::Space])
+        && *state != EntityState::DoubleJumping
+    {
         velocity.linvel.y = PLAYER_JUMP_HEIGHT;
         match *state {
             EntityState::Jumping | EntityState::Falling => *state = EntityState::DoubleJumping,
             _ => *state = EntityState::Jumping,
         }
+    }
+
+    if velocity.linvel.x != 0.0
+        && !matches!(
+            *state,
+            EntityState::Jumping | EntityState::Falling | EntityState::DoubleJumping
+        )
+    {
+        *state = EntityState::Running;
     }
 }
 
