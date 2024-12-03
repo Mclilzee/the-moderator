@@ -1,4 +1,4 @@
-use avian2d::prelude::Collider;
+use avian2d::prelude::{Collider, RigidBody};
 use bevy::prelude::*;
 use bevy::utils::{HashMap, HashSet};
 use bevy_ecs_ldtk::app::LdtkIntCellAppExt;
@@ -12,6 +12,7 @@ pub struct Wall;
 #[derive(Default, Bundle, LdtkIntCell)]
 pub struct WallBundle {
     ground: Wall,
+    rigid_body: RigidBody,
 }
 
 pub struct WallPlugin;
@@ -149,24 +150,22 @@ fn spawn_wall_collision(
                     // 1. Adjusts the transforms to be relative to the level for free
                     // 2. the colliders will be despawned automatically when levels unload
                     for wall_rect in wall_rects {
-                        level
-                            .spawn_empty()
-                            .insert(Collider::capsule(
+                        level.spawn((
+                            Collider::rectangle(
                                 (wall_rect.right as f32 - wall_rect.left as f32 + 1.)
-                                    * grid_size as f32
-                                    / 2.,
+                                    * grid_size as f32,
                                 (wall_rect.top as f32 - wall_rect.bottom as f32 + 1.)
                                     * grid_size as f32
-                                    / 2.,
-                            ))
-                            .insert(Transform::from_xyz(
+                            ),
+                            RigidBody::Static,
+                            TransformBundle::from_transform(Transform::from_xyz(
                                 (wall_rect.left + wall_rect.right + 1) as f32 * grid_size as f32
                                     / 2.,
                                 (wall_rect.bottom + wall_rect.top + 1) as f32 * grid_size as f32
                                     / 2.,
                                 0.,
-                            ))
-                            .insert(GlobalTransform::default());
+                            )),
+                        ));
                     }
                 });
             }

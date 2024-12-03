@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use crate::{
-    common_components::{Damage, DespawnTimer, Enemy, EntityState, Friendly, Health},
+    common_components::{CollisionLayer, Damage, DespawnTimer, Enemy, EntityState, Friendly, Health},
     plugins::{
         asset_loader::{AnimationEvent, AnimationKey, AnimationMap},
         default_plugins::CursorPosition,
@@ -10,7 +10,7 @@ use crate::{
     utils::animate,
 };
 
-use avian2d::prelude::{AngularVelocity, Collider, Collision, LinearVelocity, Restitution, RigidBody};
+use avian2d::prelude::{AngularVelocity, Collider, Collision, CollisionLayers, LinearVelocity, Restitution, RigidBody};
 use bevy::prelude::*;
 
 const HAMMER_SPEED: f32 = 600.0;
@@ -94,7 +94,7 @@ fn mouse_button_input(
             Collider::capsule(14.0, 14.0),
             Restitution::new(100.0),
             RigidBody::Dynamic,
-            //CollisionGroups::new(Group::GROUP_1, Group::GROUP_3 | Group::GROUP_2),
+            CollisionLayers::new(CollisionLayer::Friendly, [CollisionLayer::Enemy, CollisionLayer::Wall]),
             l_velocity,
             a_velocity,
             atlas,

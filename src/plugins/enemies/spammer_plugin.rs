@@ -1,6 +1,6 @@
 use crate::{
     bundles::actors::Actor,
-    common_components::{Damage, DespawnTimer, Enemy, Health},
+    common_components::{CollisionLayer, Damage, DespawnTimer, Enemy, Health},
     plugins::{
         asset_loader::AnimationEvent,
         player::{Player, ScoreUpdateEvent},
@@ -11,7 +11,7 @@ use crate::{
     common_components::EntityState,
     plugins::asset_loader::{AnimationKey, AnimationMap},
 };
-use avian2d::prelude::LinearVelocity;
+use avian2d::prelude::{CollisionLayers, LinearVelocity, LockedAxes};
 use bevy::prelude::*;
 use rand::Rng;
 
@@ -97,8 +97,8 @@ fn spawn_spammer(
             Damage(SPAMMER_DAMAGE),
             Enemy,
             EntityState::default(),
-            //CollisionGroups::new(Group::GROUP_2, Group::GROUP_1),
-            //LockedAxes::ROTATION_LOCKED,
+            CollisionLayers::new(CollisionLayer::Enemy, [CollisionLayer::Friendly, CollisionLayer::Wall]),
+            LockedAxes::ROTATION_LOCKED,
             //ActiveEvents::COLLISION_EVENTS,
         ));
     }

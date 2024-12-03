@@ -6,10 +6,15 @@ use super::asset_loader::AnimationEvent;
 use super::asset_loader::AnimationKey;
 use super::asset_loader::AnimationMap;
 use super::walls::Wall;
+use crate::common_components::CollisionLayer;
 use crate::common_components::EntityState;
 use crate::common_components::Friendly;
 use crate::utils::animate;
 use crate::{bundles::actors::Actor, common_components::Damage};
+use avian2d::prelude::CollidingEntities;
+use avian2d::prelude::CollisionLayers;
+use avian2d::prelude::LinearVelocity;
+use avian2d::prelude::LockedAxes;
 use bevy::color::palettes::css::GREEN;
 use bevy::color::palettes::css::RED;
 use bevy::prelude::*;
@@ -78,10 +83,11 @@ fn setup(
         Damage(5),
         Friendly,
         EntityState::Idle,
-        //LockedAxes::ROTATION_LOCKED,
+        LockedAxes::ROTATION_LOCKED,
+        CollisionLayers::new(CollisionLayer::Friendly, [CollisionLayer::Enemy, CollisionLayer::Wall])
     );
 
-    let player_id = commands.spawn((char, actor, Name::new("Player"))).id();
+    let player_id = commands.spawn((char, actor, LinearVelocity::default())).id();
     let id = camera_q.single();
     commands.get_entity(id).unwrap().set_parent(player_id);
     commands.spawn((
@@ -103,8 +109,9 @@ fn setup(
 }
 
 fn wall_collision(
-    mut player: Query<(Entity, &Transform, &mut EntityState), With<Player>>,
-    platforms: Query<(Entity, &Transform), With<Wall>>,
+    //mut player: Query<(Entity, &Transform, &mut EntityState), With<Player>>,
+    //platforms: Query<(Entity, &Transform), With<Wall>>,
+    query: Query<(Entity, &CollidingEntities)>
 ) {
     //let (p_id, p_transform, mut state) = player.single_mut();
     //for (platform_id, platform_transform) in platforms.iter() {
@@ -114,6 +121,13 @@ fn wall_collision(
     //        *state = EntityState::Idle;
     //    }
     //}
+    for (entity, colliding_entities) in &query {
+        println!(
+            "{:?} is colliding with the following entities: {:?}",
+            entity,
+            colliding_entities
+        );
+    }
 }
 
 fn player_score_update(

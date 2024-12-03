@@ -3,7 +3,7 @@ mod common_components;
 mod plugins;
 mod utils;
 
-use avian2d::PhysicsPlugins;
+use avian2d::{prelude::{Gravity, PhysicsDebugPlugin}, PhysicsPlugins};
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use plugins::{asset_loader, camera_plugin, default_plugins, enemies, player, walls};
@@ -20,6 +20,7 @@ fn main() {
     app.configure_sets(Update, (InGameSet::Input, InGameSet::Play))
         .add_plugins(default_plugins::CustomDefaultPlugin)
         .add_plugins(PhysicsPlugins::default())
+        .insert_resource(Gravity(Vec2::NEG_Y * 400.0))
         .add_plugins(LdtkPlugin)
         .add_plugins(camera_plugin::CameraPlugin)
         .add_plugins(asset_loader::AssetLoaderPlugin)
@@ -28,5 +29,6 @@ fn main() {
         .add_plugins(enemies::EnemiesPlugin);
 
     //#[cfg(dev)]
+    app.add_plugins(PhysicsDebugPlugin::default());
     app.run();
 }
