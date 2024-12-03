@@ -22,8 +22,8 @@ const PLAYER_SPEED: f32 = 150.0;
 const PLAYER_JUMP_HEIGHT: f32 = 300.0;
 const PLAYER_STARING_HP: i32 = 100;
 const PLAYER_MAX_JUMPS: u8 = 2;
-pub const PLAYER_HEIGHT: f32 = 17.0;
-const PLAYER_WIDTH: f32 = 7.0;
+pub const PLAYER_HEIGHT: f32 = 14.0;
+const PLAYER_WIDTH: f32 = 6.0;
 const SCORE_TEXT_SIZE: f32 = 40.0;
 const PLAYER_STARTING_TRANSFORM: Transform = Transform::from_xyz(1312., 150., 10.0);
 

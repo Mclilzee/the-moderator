@@ -17,7 +17,7 @@ pub fn setup(
         None,
     ));
     let idle_animation = AnimationIndices::new(0, 10);
-    let run_animation = AnimationIndices::new(11, 22);
+    let run_animation = AnimationIndices::new(12, 23);
     let jump_animation = AnimationIndices::new(22, 23);
     let fall_animation = AnimationIndices::new(23, 24);
     let double_jump = AnimationIndices::new(24, 30);

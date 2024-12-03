@@ -28,6 +28,6 @@ fn main() {
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0));
 
     //#[cfg(dev)]
-    //app.add_plugins(RapierDebugRenderPlugin::default());
+    app.add_plugins(RapierDebugRenderPlugin::default());
     app.run();
 }
