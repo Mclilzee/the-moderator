@@ -5,8 +5,8 @@ use crate::{
     plugins::player::{Player, PLAYER_HEIGHT},
 };
 
+use avian2d::prelude::{Collider, Sensor};
 use bevy::prelude::*;
-use bevy_rapier2d::prelude::*;
 
 const SMASH_WIDTH: f32 = 60.0;
 const SMASH_HEIGHT: f32 = 1.0;
@@ -50,7 +50,7 @@ fn spawn(
                 TransformBundle::from_transform(Transform::from_xyz(0.0, 0.0 - PLAYER_HEIGHT, 0.0)),
                 GroundSmash,
                 Damage(DAMAGE),
-                Collider::cuboid(SMASH_WIDTH, SMASH_HEIGHT),
+                Collider::capsule(SMASH_WIDTH, SMASH_HEIGHT),
                 Friendly,
                 Sensor,
             ))
@@ -74,18 +74,17 @@ fn despawn(
     }
 }
 
-// TODO: add animation aand despawn after animation finish
+// TODO: add animation and despawn after animation finish
 
 fn collision(
     mut hammers: Query<(Entity, &Damage), (With<GroundSmash>, With<Collider>)>,
     mut enemies: Query<(Entity, &mut Health), (Without<GroundSmash>, With<Enemy>, With<Collider>)>,
-    rapier_context: Res<RapierContext>,
 ) {
-    for (h_id, h_dmg) in hammers.iter_mut() {
-        for (e_id, mut e_hp) in enemies.iter_mut() {
-            if rapier_context.intersection_pair(h_id, e_id).is_some() {
-                e_hp.0 -= h_dmg.0;
-            }
-        }
-    }
+    //for (h_id, h_dmg) in hammers.iter_mut() {
+    //    for (e_id, mut e_hp) in enemies.iter_mut() {
+    //        if rapier_context.intersection_pair(h_id, e_id).is_some() {
+    //            e_hp.0 -= h_dmg.0;
+    //        }
+    //    }
+    //}
 }

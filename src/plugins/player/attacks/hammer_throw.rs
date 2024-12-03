@@ -10,8 +10,8 @@ use crate::{
     utils::animate,
 };
 
+use avian2d::prelude::{AngularVelocity, Collider, Collision, LinearVelocity, Restitution, RigidBody};
 use bevy::prelude::*;
-use bevy_rapier2d::prelude::*;
 
 const HAMMER_SPEED: f32 = 600.0;
 const ROATION_ANGLE: f32 = 10.0;
@@ -36,7 +36,7 @@ impl Plugin for HammerThrowPlugin {
         app.insert_resource(Cooldown(cooldown))
             .add_systems(Update, animate_hammer.run_if(on_event::<AnimationEvent>()))
             .add_systems(Update, (cooldown_tick, mouse_button_input).chain())
-            .add_systems(Update, collision)
+            .add_systems(Update, collision.run_if(on_event::<Collision>()))
             .add_systems(Update, despawn)
             .add_systems(Update, despawn_timer);
     }
@@ -77,12 +77,12 @@ fn mouse_button_input(
         let p1 = p_transform.translation.truncate();
         let p2 = cursor_position.0;
 
-        let mut velocity = Velocity::linear((p2 - p1).normalize() * HAMMER_SPEED);
-        velocity.angvel = if velocity.linvel.x >= 0.0 {
+        let l_velocity = LinearVelocity::from((p2 - p1).normalize() * HAMMER_SPEED);
+        let a_velocity = AngularVelocity::from(if l_velocity.x >= 0.0 {
             -ROATION_ANGLE
         } else {
             ROATION_ANGLE
-        };
+        });
 
         command.spawn((
             HammerThrow,
@@ -91,11 +91,12 @@ fn mouse_button_input(
             Friendly,
             DespawnTimer(Timer::from_seconds(DESPAWN_TIMER, TimerMode::Once)),
             EntityState::Idle,
-            Collider::cuboid(14.0, 14.0),
-            Restitution::coefficient(0.0),
+            Collider::capsule(14.0, 14.0),
+            Restitution::new(100.0),
             RigidBody::Dynamic,
-            CollisionGroups::new(Group::GROUP_1, Group::GROUP_3 | Group::GROUP_2),
-            velocity,
+            //CollisionGroups::new(Group::GROUP_1, Group::GROUP_3 | Group::GROUP_2),
+            l_velocity,
+            a_velocity,
             atlas,
             sprite_bundle,
         ));
@@ -105,24 +106,24 @@ fn mouse_button_input(
 fn collision(
     mut hammers: Query<(Entity, &mut Health, &Damage), (With<HammerThrow>, With<Collider>)>,
     mut enemies: Query<(Entity, &mut Health, &Damage), (Without<HammerThrow>, With<Collider>, With<Enemy>)>,
-    rapier_context: Res<RapierContext>,
+    mut collision_reader: EventReader<Collision>
 ) {
-    for (h_id, mut h_hp, h_dmg) in hammers.iter_mut() {
-        for (e_id, mut e_hp, e_dmg) in enemies.iter_mut() {
-            if rapier_context.contact_pair(h_id, e_id).is_some() {
-                e_hp.0 -= h_dmg.0;
-                h_hp.0 -= e_dmg.0;
-            }
-        }
-    }
+    //for (h_id, mut h_hp, h_dmg) in hammers.iter_mut() {
+    //    for (e_id, mut e_hp, e_dmg) in enemies.iter_mut() {
+    //        if rapier_context.contact_pair(h_id, e_id).is_some() {
+    //            e_hp.0 -= h_dmg.0;
+    //            h_hp.0 -= e_dmg.0;
+    //        }
+    //    }
+    //}
 }
 
 fn despawn(
     mut commands: Commands,
-    hammers: Query<(Entity, &Health, &Velocity), With<HammerThrow>>,
+    hammers: Query<(Entity, &Health, &LinearVelocity), With<HammerThrow>>,
 ) {
     for (id, health, velocity) in hammers.iter() {
-        if health.0 <= 0 || velocity.linvel == Vec2::ZERO {
+        if health.0 <= 0 || velocity.0 == Vec2::ZERO {
             commands.entity(id).despawn();
         }
     }

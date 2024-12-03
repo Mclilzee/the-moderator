@@ -1,6 +1,6 @@
 use crate::common_components::Health;
+use avian2d::prelude::{Collider, RigidBody};
 use bevy::prelude::*;
-use bevy_rapier2d::prelude::*;
 
 #[derive(Bundle, Default)]
 pub struct Actor {
@@ -9,16 +9,14 @@ pub struct Actor {
     body: RigidBody,
     pub sprite_bundle: SpriteBundle,
     pub atlas: TextureAtlas,
-    pub vel: Velocity,
 }
 
 impl Actor {
     pub fn new(hp: i32, width: f32, height: f32) -> Self {
         Self {
-            collider: Collider::cuboid(width, height),
+            collider: Collider::capsule(width, height),
             hp: Health(hp),
             body: RigidBody::Dynamic,
-            vel: Velocity::zero(),
             ..default()
         }
     }

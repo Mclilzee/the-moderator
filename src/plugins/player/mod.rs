@@ -13,9 +13,6 @@ use crate::{bundles::actors::Actor, common_components::Damage};
 use bevy::color::palettes::css::GREEN;
 use bevy::color::palettes::css::RED;
 use bevy::prelude::*;
-use bevy_rapier2d::dynamics::LockedAxes;
-use bevy_rapier2d::geometry::{CollisionGroups, Group};
-use bevy_rapier2d::plugin::RapierContext;
 use player_input::flip_on_input;
 
 const PLAYER_SPEED: f32 = 150.0;
@@ -76,12 +73,12 @@ fn setup(
     };
 
     let char = (
-        CollisionGroups::new(Group::GROUP_1, Group::GROUP_2),
+        //CollisionGroups::new(Group::GROUP_1, Group::GROUP_2),
         Player,
         Damage(5),
         Friendly,
         EntityState::Idle,
-        LockedAxes::ROTATION_LOCKED,
+        //LockedAxes::ROTATION_LOCKED,
     );
 
     let player_id = commands.spawn((char, actor, Name::new("Player"))).id();
@@ -108,16 +105,15 @@ fn setup(
 fn wall_collision(
     mut player: Query<(Entity, &Transform, &mut EntityState), With<Player>>,
     platforms: Query<(Entity, &Transform), With<Wall>>,
-    rapier_context: Res<RapierContext>,
 ) {
-    let (p_id, p_transform, mut state) = player.single_mut();
-    for (platform_id, platform_transform) in platforms.iter() {
-        if rapier_context.contact_pair(p_id, platform_id).is_some()
-            && p_transform.translation.y > platform_transform.translation.y
-        {
-            *state = EntityState::Idle;
-        }
-    }
+    //let (p_id, p_transform, mut state) = player.single_mut();
+    //for (platform_id, platform_transform) in platforms.iter() {
+    //    if rapier_context.contact_pair(p_id, platform_id).is_some()
+    //        && p_transform.translation.y > platform_transform.translation.y
+    //    {
+    //        *state = EntityState::Idle;
+    //    }
+    //}
 }
 
 fn player_score_update(

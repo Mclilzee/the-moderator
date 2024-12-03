@@ -11,11 +11,8 @@ use crate::{
     common_components::EntityState,
     plugins::asset_loader::{AnimationKey, AnimationMap},
 };
+use avian2d::prelude::LinearVelocity;
 use bevy::prelude::*;
-use bevy_rapier2d::{
-    dynamics::{LockedAxes, Velocity},
-    geometry::{ActiveEvents, CollisionGroups, Group},
-};
 use rand::Rng;
 
 const SPAMMER_SPAWN_TIMER: f32 = 0.2;
@@ -100,9 +97,9 @@ fn spawn_spammer(
             Damage(SPAMMER_DAMAGE),
             Enemy,
             EntityState::default(),
-            CollisionGroups::new(Group::GROUP_2, Group::GROUP_1),
-            LockedAxes::ROTATION_LOCKED,
-            ActiveEvents::COLLISION_EVENTS,
+            //CollisionGroups::new(Group::GROUP_2, Group::GROUP_1),
+            //LockedAxes::ROTATION_LOCKED,
+            //ActiveEvents::COLLISION_EVENTS,
         ));
     }
 }
@@ -111,13 +108,13 @@ type WithSpammer = (With<Spammer>, Without<Player>);
 type WithPlayer = (With<Player>, Without<Spammer>);
 
 fn track_player(
-    mut spammer_query: Query<(&Transform, &mut Velocity), WithSpammer>,
+    mut spammer_query: Query<(&Transform, &mut LinearVelocity), WithSpammer>,
     player_query: Query<&Transform, WithPlayer>,
 ) {
     let player_transform = player_query.single();
 
     for (transform, mut velocity) in spammer_query.iter_mut() {
-        velocity.linvel.x = if player_transform.translation.x > transform.translation.x {
+        velocity.x = if player_transform.translation.x > transform.translation.x {
             SPAMMER_SPEED
         } else {
             -SPAMMER_SPEED
@@ -125,11 +122,11 @@ fn track_player(
     }
 }
 
-fn flip_on_movement(mut spammers: Query<(&mut Sprite, &Velocity), With<Spammer>>) {
+fn flip_on_movement(mut spammers: Query<(&mut Sprite, &LinearVelocity), With<Spammer>>) {
     for (mut sprite, velocity) in spammers.iter_mut() {
-        if velocity.linvel.x < 0.0 {
+        if velocity.x < 0.0 {
             sprite.flip_x = true;
-        } else if velocity.linvel.x > 0.0 {
+        } else if velocity.x > 0.0 {
             sprite.flip_x = false;
         }
     }

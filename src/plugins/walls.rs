@@ -1,11 +1,10 @@
+use avian2d::prelude::Collider;
 use bevy::prelude::*;
 use bevy::utils::{HashMap, HashSet};
 use bevy_ecs_ldtk::app::LdtkIntCellAppExt;
 use bevy_ecs_ldtk::assets::LdtkProject;
 use bevy_ecs_ldtk::ldtk::LayerInstance;
 use bevy_ecs_ldtk::{GridCoords, LdtkIntCell, LevelIid};
-use bevy_rapier2d::geometry::Collider;
-use bevy_rapier2d::prelude::{CollisionGroups, Friction, Group, RigidBody};
 
 #[derive(Default, Component)]
 pub struct Wall;
@@ -152,7 +151,7 @@ fn spawn_wall_collision(
                     for wall_rect in wall_rects {
                         level
                             .spawn_empty()
-                            .insert(Collider::cuboid(
+                            .insert(Collider::capsule(
                                 (wall_rect.right as f32 - wall_rect.left as f32 + 1.)
                                     * grid_size as f32
                                     / 2.,
