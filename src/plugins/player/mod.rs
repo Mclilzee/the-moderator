@@ -15,10 +15,12 @@ use avian2d::prelude::CollisionLayers;
 use avian2d::prelude::LinearVelocity;
 use avian2d::prelude::LockedAxes;
 use avian2d::prelude::Restitution;
+use avian2d::prelude::SpatialQuery;
+use avian2d::prelude::SpatialQueryFilter;
 use bevy::color::palettes::css::GREEN;
 use bevy::color::palettes::css::RED;
 use bevy::prelude::*;
-use player_input::{flip_on_input, ground_contact};
+use player_input::flip_on_input;
 
 const PLAYER_SPEED: f32 = 150.0;
 const PLAYER_JUMP_HEIGHT: f32 = 300.0;
@@ -52,7 +54,7 @@ impl Plugin for PlayerPlugin {
             .add_systems(PostStartup, setup)
             .add_systems(Update, input)
             .add_systems(Update, flip_on_input)
-            .add_systems(Update, ground_contact)
+            .add_systems(Update, grounded_detection)
             .add_systems(Update, player_score_update)
             .add_systems(Update, animate_player.run_if(on_event::<AnimationEvent>()))
             .add_plugins(attacks::AttacksPlugin);
@@ -82,12 +84,17 @@ fn setup(
         Damage(5),
         Friendly,
         EntityState::Idle,
-        Restitution::ZERO,
+        Restitution::PERFECTLY_INELASTIC,
         LockedAxes::ROTATION_LOCKED,
-        CollisionLayers::new(CollisionLayer::Friendly, [CollisionLayer::Enemy, CollisionLayer::Wall])
+        CollisionLayers::new(
+            CollisionLayer::Friendly,
+            [CollisionLayer::Enemy, CollisionLayer::Wall],
+        ),
     );
 
-    let player_id = commands.spawn((char, actor, LinearVelocity::default())).id();
+    let player_id = commands
+        .spawn((char, actor, LinearVelocity::default()))
+        .id();
     let id = camera_q.single();
     commands.get_entity(id).unwrap().set_parent(player_id);
     commands.spawn((
@@ -132,6 +139,25 @@ fn player_score_update(
             score_section.style.color = Color::Srgba(RED);
         }
     };
+}
+
+fn grounded_detection(
+    spatial_query: SpatialQuery,
+    mut player: Query<(&Transform, &mut EntityState), With<Player>>,
+) {
+    let (transform, mut state) = player.single_mut();
+    if spatial_query
+        .cast_ray(
+            transform.translation.truncate(),
+            Dir2::NEG_Y,
+            PLAYER_HEIGHT,
+            true,
+            SpatialQueryFilter::from_mask(CollisionLayer::Wall),
+        )
+        .is_some()
+    {
+        *state = EntityState::Idle;
+    }
 }
 
 fn animate_player(

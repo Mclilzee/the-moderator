@@ -19,8 +19,8 @@ fn main() {
 
     app.configure_sets(Update, (InGameSet::Input, InGameSet::Play))
         .add_plugins(default_plugins::CustomDefaultPlugin)
-        .add_plugins(PhysicsPlugins::default())
-        .insert_resource(Gravity(Vec2::NEG_Y * 400.0))
+        .add_plugins(PhysicsPlugins::default().with_length_unit(20.0))
+        .insert_resource(Gravity(Vec2::NEG_Y * 1000.0))
         .add_plugins(LdtkPlugin)
         .add_plugins(camera_plugin::CameraPlugin)
         .add_plugins(asset_loader::AssetLoaderPlugin)
