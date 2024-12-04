@@ -1,8 +1,10 @@
-use crate::common_components::EntityState;
-use avian2d::prelude::LinearVelocity;
+use crate::common_components::{CollisionLayer, EntityState};
+use avian2d::prelude::{
+    Collider, LinearVelocity, RayCaster, RayHits, SpatialQuery, SpatialQueryFilter,
+};
 use bevy::prelude::*;
 
-use super::{Player, PLAYER_JUMP_HEIGHT, PLAYER_SPEED};
+use super::{Player, PLAYER_HEIGHT, PLAYER_JUMP_HEIGHT, PLAYER_SPEED};
 
 pub fn input(
     keys: Res<ButtonInput<KeyCode>>,
@@ -49,5 +51,24 @@ pub fn flip_on_input(
         sprite.flip_x = true;
     } else if keys.any_pressed([KeyCode::ArrowRight, KeyCode::KeyD]) {
         sprite.flip_x = false;
+    }
+}
+
+pub fn ground_contact(
+    spatial_query: SpatialQuery,
+    mut player: Query<(&Transform, &mut EntityState), With<Player>>,
+) {
+    let (transform, mut state) = player.single_mut();
+    if spatial_query
+        .cast_ray(
+            transform.translation.truncate(),
+            Dir2::NEG_Y,
+            PLAYER_HEIGHT,
+            true,
+            SpatialQueryFilter::from_mask(CollisionLayer::Wall),
+        )
+        .is_some()
+    {
+        *state = EntityState::Idle;
     }
 }

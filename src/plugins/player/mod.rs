@@ -5,7 +5,6 @@ use self::player_input::input;
 use super::asset_loader::AnimationEvent;
 use super::asset_loader::AnimationKey;
 use super::asset_loader::AnimationMap;
-use super::walls::Wall;
 use crate::common_components::CollisionLayer;
 use crate::common_components::EntityState;
 use crate::common_components::Friendly;
@@ -19,7 +18,7 @@ use avian2d::prelude::Restitution;
 use bevy::color::palettes::css::GREEN;
 use bevy::color::palettes::css::RED;
 use bevy::prelude::*;
-use player_input::flip_on_input;
+use player_input::{flip_on_input, ground_contact};
 
 const PLAYER_SPEED: f32 = 150.0;
 const PLAYER_JUMP_HEIGHT: f32 = 300.0;
@@ -53,7 +52,7 @@ impl Plugin for PlayerPlugin {
             .add_systems(PostStartup, setup)
             .add_systems(Update, input)
             .add_systems(Update, flip_on_input)
-            .add_systems(Update, wall_collision)
+            .add_systems(Update, ground_contact)
             .add_systems(Update, player_score_update)
             .add_systems(Update, animate_player.run_if(on_event::<AnimationEvent>()))
             .add_plugins(attacks::AttacksPlugin);
@@ -107,21 +106,6 @@ fn setup(
         }),
         ScoreTextUi,
     ));
-}
-
-fn wall_collision(
-    //mut player: Query<(Entity, &Transform, &mut EntityState), With<Player>>,
-    //platforms: Query<(Entity, &Transform), With<Wall>>,
-    query: Query<(Entity, &CollidingEntities)>
-) {
-    //let (p_id, p_transform, mut state) = player.single_mut();
-    //for (platform_id, platform_transform) in platforms.iter() {
-    //    if rapier_context.contact_pair(p_id, platform_id).is_some()
-    //        && p_transform.translation.y > platform_transform.translation.y
-    //    {
-    //        *state = EntityState::Idle;
-    //    }
-    //}
 }
 
 fn player_score_update(
