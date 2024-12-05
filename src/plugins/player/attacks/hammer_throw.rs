@@ -19,6 +19,11 @@ const HEALTH: i32 = 10;
 const DAMAGE: i32 = 4;
 const DESPAWN_TIMER: f32 = 30.0;
 const COOLDOWN_SECS: u64 = 1;
+const HAMMER_SHAPE: (Vec2, Vec2, Vec2) = (
+    Vec2::new(-15.0, -15.0),
+    Vec2::new(18.0, 0.0),
+    Vec2::new(0.0, 18.0),
+);
 
 #[derive(Component)]
 struct HammerThrow;
@@ -91,7 +96,7 @@ fn mouse_button_input(
             Friendly,
             DespawnTimer(Timer::from_seconds(DESPAWN_TIMER, TimerMode::Once)),
             EntityState::Idle,
-            Collider::triangle(Vec2::new(-15.0, -15.0), Vec2::new(18.0, 0.0) ,Vec2::new(0.0, 18.0)),
+            Collider::triangle(HAMMER_SHAPE.0, HAMMER_SHAPE.1, HAMMER_SHAPE.2),
             Restitution::coefficient(0.0),
             RigidBody::Dynamic,
             CollisionGroups::new(Group::GROUP_1, Group::GROUP_3 | Group::GROUP_2),
@@ -104,7 +109,10 @@ fn mouse_button_input(
 
 fn collision(
     mut hammers: Query<(Entity, &mut Health, &Damage), (With<HammerThrow>, With<Collider>)>,
-    mut enemies: Query<(Entity, &mut Health, &Damage), (Without<HammerThrow>, With<Collider>, With<Enemy>)>,
+    mut enemies: Query<
+        (Entity, &mut Health, &Damage),
+        (Without<HammerThrow>, With<Collider>, With<Enemy>),
+    >,
     rapier_context: Res<RapierContext>,
 ) {
     for (h_id, mut h_hp, h_dmg) in hammers.iter_mut() {
