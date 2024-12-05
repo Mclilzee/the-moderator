@@ -19,7 +19,7 @@ fn main() {
 
     app.configure_sets(Update, (InGameSet::Input, InGameSet::Play))
         .add_plugins(default_plugins::CustomDefaultPlugin)
-        .add_plugins(PhysicsPlugins::default().with_length_unit(20.0))
+        .add_plugins(PhysicsPlugins::default().with_length_unit(100.0))
         .insert_resource(Gravity(Vec2::NEG_Y * 1000.0))
         .add_plugins(LdtkPlugin)
         .add_plugins(camera_plugin::CameraPlugin)
@@ -29,6 +29,6 @@ fn main() {
         .add_plugins(enemies::EnemiesPlugin);
 
     //#[cfg(dev)]
-    app.add_plugins(PhysicsDebugPlugin::default());
+    //app.add_plugins(PhysicsDebugPlugin::default());
     app.run();
 }
