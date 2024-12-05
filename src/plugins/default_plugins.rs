@@ -33,7 +33,7 @@ impl Plugin for CustomDefaultPlugin {
 fn create_window() -> Window {
     Window {
         title: "The Moderator: Fred's Revenge".to_string(),
-        resolution: (800.0, 600.0).into(),
+        resolution: (1920.0, 1080.0).into(),
         resizable: true,
         cursor: Cursor {
             visible: false,
