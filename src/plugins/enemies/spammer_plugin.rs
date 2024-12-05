@@ -22,8 +22,8 @@ const SPAMMER_SPAWN_TIMER: f32 = 0.2;
 const SPAMMER_STARTING_HP: i32 = 20;
 const SPAMMER_DAMAGE: i32 = 1;
 const SPAMMER_SPEED: f32 = 40.0;
-const SPAMMER_WIDTH: f32 = 10.0;
-const SPAMMER_HEIGHT: f32 = 15.0;
+const SPAMMER_RADIUS: f32 = 10.0;
+const SPAMMER_HEIGHT: f32 = 5.0;
 const SPAMMER_LIMIT: usize = 5;
 const POINTS_INCREMENT_DURATION: f32 = 1.0;
 const POINTS_INCREMENT_ASCENDING_SPEED: f32 = 200.0;
@@ -80,7 +80,7 @@ fn spawn_spammer(
         let offset = random.gen_range(-50.0..50.0);
         let offset = ((camera.area.width() / 2.0) + 20.0).copysign(offset);
         let spammer_translation = player_translation + Vec3::new(offset, 0.0, 0.0);
-        let mut actor = Actor::new(SPAMMER_STARTING_HP, SPAMMER_WIDTH, SPAMMER_HEIGHT);
+        let mut actor = Actor::new(SPAMMER_STARTING_HP, SPAMMER_HEIGHT, SPAMMER_RADIUS);
 
         let animation = asset_loader
             .0

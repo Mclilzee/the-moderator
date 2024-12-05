@@ -22,8 +22,8 @@ const PLAYER_SPEED: f32 = 150.0;
 const PLAYER_JUMP_HEIGHT: f32 = 300.0;
 const PLAYER_STARING_HP: i32 = 100;
 const PLAYER_MAX_JUMPS: u8 = 2;
-pub const PLAYER_HEIGHT: f32 = 14.0;
-const PLAYER_WIDTH: f32 = 6.0;
+pub const PLAYER_HEIGHT: f32 = 6.0;
+const PLAYER_RADIUS: f32 = 7.0;
 const SCORE_TEXT_SIZE: f32 = 40.0;
 const PLAYER_STARTING_TRANSFORM: Transform = Transform::from_xyz(1312., 150., 10.0);
 
@@ -62,7 +62,7 @@ fn setup(
     asset_loader: Res<AnimationMap>,
     camera_q: Query<Entity, With<Camera>>,
 ) {
-    let mut actor = Actor::new(PLAYER_STARING_HP, PLAYER_WIDTH, PLAYER_HEIGHT);
+    let mut actor = Actor::new(PLAYER_STARING_HP, PLAYER_HEIGHT, PLAYER_RADIUS);
     let animation = asset_loader
         .0
         .get(&AnimationKey::Player)

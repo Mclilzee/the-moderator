@@ -13,9 +13,9 @@ pub struct Actor {
 }
 
 impl Actor {
-    pub fn new(hp: i32, width: f32, height: f32) -> Self {
+    pub fn new(hp: i32, height: f32, radius: f32) -> Self {
         Self {
-            collider: Collider::cuboid(width, height),
+            collider: Collider::capsule_y(height, radius),
             hp: Health(hp),
             body: RigidBody::Dynamic,
             vel: Velocity::zero(),
