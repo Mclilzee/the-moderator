@@ -91,7 +91,7 @@ fn mouse_button_input(
             Friendly,
             DespawnTimer(Timer::from_seconds(DESPAWN_TIMER, TimerMode::Once)),
             EntityState::Idle,
-            Collider::cuboid(14.0, 14.0),
+            Collider::triangle(Vec2::new(-15.0, -15.0), Vec2::new(18.0, 0.0) ,Vec2::new(0.0, 18.0)),
             Restitution::coefficient(0.0),
             RigidBody::Dynamic,
             CollisionGroups::new(Group::GROUP_1, Group::GROUP_3 | Group::GROUP_2),
