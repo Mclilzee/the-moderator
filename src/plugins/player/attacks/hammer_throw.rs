@@ -34,9 +34,9 @@ impl Plugin for HammerThrowPlugin {
         cooldown.tick(Duration::from_secs(COOLDOWN_SECS));
 
         app.insert_resource(Cooldown(cooldown))
-            .add_systems(Update, animate_hammer.run_if(on_event::<AnimationEvent>()))
+            .add_systems(Update, animate_hammer.run_if(on_event::<AnimationEvent>))
             .add_systems(Update, (cooldown_tick, mouse_button_input).chain())
-            .add_systems(Update, collision.run_if(on_event::<Collision>()))
+            .add_systems(Update, collision.run_if(on_event::<Collision>))
             .add_systems(Update, despawn)
             .add_systems(Update, despawn_timer);
     }
@@ -61,19 +61,16 @@ fn mouse_button_input(
             .get(&AnimationKey::HammerThrow)
             .expect("Player animation were not found");
 
-        let p_transform = player.single();
 
-        let mut sprite_bundle = SpriteBundle {
-            transform: *p_transform,
+        let sprite = Sprite {
+            texture_atlas: Some(TextureAtlas {
+            layout: animation.atlas.clone(),
+            index: 1
+            }),
             ..default()
         };
 
-        sprite_bundle.texture = animation.texture.clone();
-        let atlas = TextureAtlas {
-            layout: animation.atlas.clone(),
-            index: 1,
-        };
-
+        let p_transform = player.single();
         let p1 = p_transform.translation.truncate();
         let p2 = cursor_position.0;
 
@@ -98,8 +95,7 @@ fn mouse_button_input(
             CollisionLayers::new(CollisionLayer::Friendly, [CollisionLayer::Enemy, CollisionLayer::Wall]),
             l_velocity,
             a_velocity,
-            atlas,
-            sprite_bundle,
+            sprite,
         ));
     }
 }
@@ -144,10 +140,10 @@ fn despawn_timer(
 }
 
 fn animate_hammer(
-    mut query: Query<(&mut TextureAtlas, &EntityState), With<HammerThrow>>,
+    mut query: Query<(&mut Sprite, &EntityState), With<HammerThrow>>,
     map: Res<AnimationMap>,
 ) {
-    query.iter_mut().for_each(|(mut atlas, state)| {
-        animate(&mut atlas, state, &AnimationKey::HammerThrow, &map);
+    query.iter_mut().for_each(|(mut sprite, state)| {
+        animate(&mut sprite, state, &AnimationKey::HammerThrow, &map);
     });
 }

@@ -65,7 +65,7 @@ pub fn ground_contact(
             Dir2::NEG_Y,
             PLAYER_HEIGHT,
             true,
-            SpatialQueryFilter::from_mask(CollisionLayer::Wall),
+            &SpatialQueryFilter::from_mask(CollisionLayer::Wall),
         )
         .is_some()
     {

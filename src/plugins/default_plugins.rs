@@ -1,6 +1,6 @@
 use bevy::{
     prelude::*,
-    window::{Cursor, PrimaryWindow},
+    window::{CursorOptions, PrimaryWindow},
 };
 
 const CURSOR_Z_INDEX: f32 = 100.0;
@@ -35,7 +35,7 @@ fn create_window() -> Window {
         title: "The Moderator: Fred's Revenge".to_string(),
         resolution: (800.0, 600.0).into(),
         resizable: true,
-        cursor: Cursor {
+        cursor_options: CursorOptions {
             visible: false,
             ..default()
         },
@@ -47,10 +47,7 @@ fn spawn_cursor(mut commands: Commands, asset_server: Res<AssetServer>) {
     let texture: Handle<Image> = asset_server.load("cursor.png");
     commands.spawn((
         CustomCursor,
-        SpriteBundle {
-            texture,
-            ..default()
-        },
+        Sprite::from_image(texture),
     ));
     commands.insert_resource(CursorPosition(Vec2::ZERO));
 }
@@ -65,8 +62,8 @@ fn move_cursor(
     let window = window_q.single();
     if let Some(vec) = window
         .cursor_position()
-        .and_then(|cursor| camera.viewport_to_world(camera_transform, cursor))
-        .map(|ray| ray.origin.truncate())
+        .and_then(|cursor| Some(camera.viewport_to_world(camera_transform, cursor)))
+        .map(|ray| ray.unwrap().origin.truncate())
     {
         transform_q.single_mut().translation = vec.extend(CURSOR_Z_INDEX);
         cursor_position.0 = vec;

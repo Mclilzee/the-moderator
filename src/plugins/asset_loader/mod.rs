@@ -66,7 +66,7 @@ impl Plugin for AssetLoaderPlugin {
 
 fn load_ldtk(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(LdtkWorldBundle {
-        ldtk_handle: asset_server.load("world.ldtk"),
+        ldtk_handle: bevy_ecs_ldtk::LdtkProjectHandle { handle: asset_server.load("world.ldtk") },
         ..default()
     });
 }

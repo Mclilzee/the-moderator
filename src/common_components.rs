@@ -26,8 +26,9 @@ pub enum EntityState {
     DoubleJumping
 }
 
-#[derive(PhysicsLayer)]
+#[derive(PhysicsLayer, Default)]
 pub enum CollisionLayer {
+    #[default]
     Friendly,
     Enemy,
     Wall
