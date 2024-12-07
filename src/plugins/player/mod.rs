@@ -69,7 +69,7 @@ fn setup(
         .get(&AnimationKey::Player)
         .expect("Player animation were not found");
 
-    let player_id = commands
+    commands
         .spawn((
             Player,
             Sprite {
@@ -92,10 +92,8 @@ fn setup(
                 [CollisionLayer::Enemy, CollisionLayer::Wall],
             ),
         ))
-        .id();
+        .add_child(camera_q.single());
 
-    let id = camera_q.single();
-    commands.get_entity(id).unwrap().set_parent(player_id);
     commands.spawn((
         Text::new("0"),
         TextFont::from_font_size(SCORE_TEXT_SIZE),

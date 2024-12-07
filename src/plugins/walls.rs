@@ -1,10 +1,12 @@
-use avian2d::prelude::{Collider, ColliderDensity, RigidBody};
+use avian2d::prelude::{Collider, ColliderDensity, CollisionLayers, RigidBody};
 use bevy::prelude::*;
 use bevy::utils::{HashMap, HashSet};
 use bevy_ecs_ldtk::app::LdtkIntCellAppExt;
 use bevy_ecs_ldtk::assets::LdtkProject;
 use bevy_ecs_ldtk::ldtk::LayerInstance;
 use bevy_ecs_ldtk::{GridCoords, LdtkIntCell, LdtkProjectHandle, LevelIid};
+
+use crate::common_components::CollisionLayer;
 
 #[derive(Default, Component)]
 pub struct Wall;
@@ -158,13 +160,16 @@ fn spawn_wall_collision(
                                 (wall_rect.top as f32 - wall_rect.bottom as f32 + 1.)
                                     * grid_size as f32,
                             ),
-                            ColliderDensity(f32::MAX),
                             Transform::from_xyz(
                                 (wall_rect.left + wall_rect.right + 1) as f32 * grid_size as f32
                                     / 2.,
                                 (wall_rect.bottom + wall_rect.top + 1) as f32 * grid_size as f32
                                     / 2.,
                                 0.,
+                            ),
+                            CollisionLayers::new(
+                                CollisionLayer::Wall,
+                                [CollisionLayer::Enemy, CollisionLayer::Friendly],
                             ),
                         ));
                     }
