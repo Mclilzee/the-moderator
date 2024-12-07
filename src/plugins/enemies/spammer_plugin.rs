@@ -84,13 +84,13 @@ fn spawn_spammer(
 
         commands.spawn((
             Spammer,
-            Sprite {
-                texture_atlas: Some(TextureAtlas {
+            Sprite::from_atlas_image(
+                animation.texture.clone(),
+                TextureAtlas {
                     layout: animation.atlas.clone(),
                     index: 1,
-                }),
-                ..default()
-            },
+                },
+            ),
             Transform::from_translation(player_translation + Vec3::new(offset, 0.0, 0.0)),
             Actor::new(SPAMMER_STARTING_HP, SPAMMER_WIDTH, SPAMMER_HEIGHT),
             Damage(SPAMMER_DAMAGE),

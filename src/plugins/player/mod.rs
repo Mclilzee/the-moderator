@@ -72,13 +72,13 @@ fn setup(
     commands
         .spawn((
             Player,
-            Sprite {
-                texture_atlas: Some(TextureAtlas {
+            Sprite::from_atlas_image(
+                animation.texture.clone(),
+                TextureAtlas {
                     layout: animation.atlas.clone(),
                     index: 1,
-                }),
-                ..default()
-            },
+                },
+            ),
             Transform::from_translation(PLAYER_STARTING_POSITION),
             LinearVelocity::default(),
             Damage(5),

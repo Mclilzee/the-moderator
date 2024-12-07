@@ -1,7 +1,9 @@
 use std::time::Duration;
 
 use crate::{
-    common_components::{CollisionLayer, Damage, DespawnTimer, Enemy, EntityState, Friendly, Health},
+    common_components::{
+        CollisionLayer, Damage, DespawnTimer, Enemy, EntityState, Friendly, Health,
+    },
     plugins::{
         asset_loader::{AnimationEvent, AnimationKey, AnimationMap},
         default_plugins::CursorPosition,
@@ -10,7 +12,11 @@ use crate::{
     utils::animate,
 };
 
-use avian2d::prelude::{AngularVelocity, Collider, ColliderDensity, Collision, CollisionLayers, LinearDamping, LinearVelocity, Restitution, RigidBody};
+use avian2d::prelude::AngularVelocity;
+use avian2d::prelude::Collider;
+use avian2d::prelude::{
+    ColliderDensity, Collision, CollisionLayers, LinearVelocity, Restitution, RigidBody,
+};
 use bevy::prelude::*;
 
 const HAMMER_SPEED: f32 = 700.0;
@@ -61,15 +67,6 @@ fn mouse_button_input(
             .get(&AnimationKey::HammerThrow)
             .expect("Player animation were not found");
 
-
-        let sprite = Sprite {
-            texture_atlas: Some(TextureAtlas {
-            layout: animation.atlas.clone(),
-            index: 1
-            }),
-            ..default()
-        };
-
         let p_transform = player.single();
         let p1 = p_transform.translation.truncate();
         let p2 = cursor_position.0;
@@ -83,6 +80,13 @@ fn mouse_button_input(
 
         command.spawn((
             HammerThrow,
+            Sprite::from_atlas_image(
+                animation.texture.clone(),
+                TextureAtlas {
+                    layout: animation.atlas.clone(),
+                    index: 1,
+                },
+            ),
             Damage(DAMAGE),
             Health(HEALTH),
             Friendly,
@@ -92,18 +96,23 @@ fn mouse_button_input(
             Collider::regular_polygon(13.0, 5),
             Restitution::PERFECTLY_INELASTIC,
             ColliderDensity(20.0),
-            CollisionLayers::new(CollisionLayer::Friendly, [CollisionLayer::Enemy, CollisionLayer::Wall]),
+            CollisionLayers::new(
+                CollisionLayer::Friendly,
+                [CollisionLayer::Enemy, CollisionLayer::Wall],
+            ),
             l_velocity,
             a_velocity,
-            sprite,
         ));
     }
 }
 
 fn collision(
     mut hammers: Query<(Entity, &mut Health, &Damage), (With<HammerThrow>, With<Collider>)>,
-    mut enemies: Query<(Entity, &mut Health, &Damage), (Without<HammerThrow>, With<Collider>, With<Enemy>)>,
-    mut collision_reader: EventReader<Collision>
+    mut enemies: Query<
+        (Entity, &mut Health, &Damage),
+        (Without<HammerThrow>, With<Collider>, With<Enemy>),
+    >,
+    mut collision_reader: EventReader<Collision>,
 ) {
     //for (h_id, mut h_hp, h_dmg) in hammers.iter_mut() {
     //    for (e_id, mut e_hp, e_dmg) in enemies.iter_mut() {
