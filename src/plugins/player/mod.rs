@@ -10,7 +10,6 @@ use crate::common_components::EntityState;
 use crate::common_components::Friendly;
 use crate::utils::animate;
 use crate::{bundles::actors::Actor, common_components::Damage};
-use avian2d::prelude::CollidingEntities;
 use avian2d::prelude::CollisionLayers;
 use avian2d::prelude::LinearVelocity;
 use avian2d::prelude::LockedAxes;
@@ -25,11 +24,10 @@ use player_input::flip_on_input;
 const PLAYER_SPEED: f32 = 150.0;
 const PLAYER_JUMP_HEIGHT: f32 = 300.0;
 const PLAYER_STARING_HP: i32 = 100;
-const PLAYER_MAX_JUMPS: u8 = 2;
 pub const PLAYER_HEIGHT: f32 = 14.0;
 const PLAYER_WIDTH: f32 = 6.0;
 const SCORE_TEXT_SIZE: f32 = 40.0;
-const PLAYER_STARTING_POSITION: Vec3 = Vec3::new(1312., 150., 10.0);
+const PLAYER_STARTING_POSITION: Vec3 = Vec3::new(1312., 160., 10.0);
 
 #[derive(Component)]
 pub struct Player;

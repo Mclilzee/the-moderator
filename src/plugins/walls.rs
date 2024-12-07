@@ -1,4 +1,4 @@
-use avian2d::prelude::{Collider, RigidBody};
+use avian2d::prelude::{Collider, ColliderDensity, RigidBody};
 use bevy::prelude::*;
 use bevy::utils::{HashMap, HashSet};
 use bevy_ecs_ldtk::app::LdtkIntCellAppExt;
@@ -151,20 +151,21 @@ fn spawn_wall_collision(
                     // 2. the colliders will be despawned automatically when levels unload
                     for wall_rect in wall_rects {
                         level.spawn((
+                            RigidBody::Static,
                             Collider::rectangle(
                                 (wall_rect.right as f32 - wall_rect.left as f32 + 1.)
                                     * grid_size as f32,
                                 (wall_rect.top as f32 - wall_rect.bottom as f32 + 1.)
-                                    * grid_size as f32
+                                    * grid_size as f32,
                             ),
-                            RigidBody::Static,
-                            TransformBundle::from_transform(Transform::from_xyz(
+                            ColliderDensity(f32::MAX),
+                            Transform::from_xyz(
                                 (wall_rect.left + wall_rect.right + 1) as f32 * grid_size as f32
                                     / 2.,
                                 (wall_rect.bottom + wall_rect.top + 1) as f32 * grid_size as f32
                                     / 2.,
                                 0.,
-                            )),
+                            ),
                         ));
                     }
                 });
