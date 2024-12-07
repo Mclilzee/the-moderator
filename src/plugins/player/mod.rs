@@ -22,7 +22,7 @@ use bevy::prelude::*;
 use player_input::flip_on_input;
 
 const PLAYER_SPEED: f32 = 150.0;
-const PLAYER_JUMP_HEIGHT: f32 = 300.0;
+const PLAYER_JUMP_HEIGHT: f32 = 500.0;
 const PLAYER_STARING_HP: i32 = 100;
 pub const PLAYER_HEIGHT: f32 = 14.0;
 const PLAYER_WIDTH: f32 = 6.0;

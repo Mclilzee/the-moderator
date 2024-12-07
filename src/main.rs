@@ -31,6 +31,6 @@ fn main() {
         .add_plugins(enemies::EnemiesPlugin);
 
     //#[cfg(dev)]
-    app.add_plugins(PhysicsDebugPlugin::default());
+    //app.add_plugins(PhysicsDebugPlugin::default());
     app.run();
 }
