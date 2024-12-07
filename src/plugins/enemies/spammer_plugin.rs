@@ -178,6 +178,8 @@ fn animate_spammer(
     map: Res<AnimationMap>,
 ) {
     query.iter_mut().for_each(|(mut sprite, state)| {
-        animate(&mut sprite, state, &AnimationKey::Spammer, &map);
+        if let Some(atlas) = sprite.texture_atlas.as_mut() {
+            animate(atlas, state, &AnimationKey::Spammer, &map);
+        }
     });
 }

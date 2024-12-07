@@ -1,8 +1,8 @@
-use bevy::sprite::Sprite;
+use bevy::sprite::TextureAtlas;
 use crate::{common_components::EntityState, plugins::asset_loader::{AnimationKey, AnimationMap}};
 
 pub fn animate(
-    sprite: &mut Sprite,
+    atlas: &mut TextureAtlas,
     state: &EntityState,
     key: &AnimationKey,
     map: &AnimationMap,
@@ -13,7 +13,7 @@ pub fn animate(
         .get(state)
         .unwrap_or(&player_animations.default);
 
-    let atlas = sprite.texture_atlas.as_mut().unwrap();
+    atlas.index += 1;
     if atlas.index >= frames.last_frame || atlas.index < frames.first_frame {
         atlas.index = frames.first_frame;
     }

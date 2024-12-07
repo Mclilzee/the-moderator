@@ -153,5 +153,7 @@ fn animate_player(
     map: Res<AnimationMap>,
 ) {
     let (mut sprite, state) = query.single_mut();
-    animate(&mut sprite, state, &AnimationKey::Player, &map);
+    if let Some(atlas) = sprite.texture_atlas.as_mut() {
+        animate(atlas, state, &AnimationKey::Player, &map);
+    }
 }
