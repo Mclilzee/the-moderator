@@ -11,7 +11,6 @@ log = { version = "*", features = ["max_level_debug", "release_max_level_warn"] 
 rand = "0.8.5"
 bevy_ecs_ldtk = { git = "https://github.com/Trouv/bevy_ecs_ldtk", rev = "0ff1749bde6a6073273859b1839c8b8ddf61f1d6"}
 avian2d = { git = "https://github.com/Jondolf/avian", branch = "main"}
-bevy_transform_interpolation = "0.1.0"
 
 [profile.dev]
 opt-level = 1
