@@ -25,6 +25,11 @@ const HEALTH: i32 = 10;
 const DAMAGE: i32 = 4;
 const DESPAWN_TIMER: f32 = 30.0;
 const COOLDOWN_SECS: u64 = 1;
+const HAMMER_SHAPE: (Vec2, Vec2, Vec2) = (
+    Vec2::new(-15.0, -15.0),
+    Vec2::new(18.0, 0.0),
+    Vec2::new(0.0, 18.0),
+);
 
 #[derive(Component)]
 struct HammerThrow;
@@ -42,7 +47,10 @@ impl Plugin for HammerThrowPlugin {
         app.insert_resource(Cooldown(cooldown))
             .add_systems(Update, animate_hammer.run_if(on_event::<AnimationEvent>))
             .add_systems(Update, cooldown_tick)
-            .add_systems(Update, mouse_button_input.run_if(resource_changed::<ButtonInput<MouseButton>>))
+            .add_systems(
+                Update,
+                mouse_button_input.run_if(resource_changed::<ButtonInput<MouseButton>>),
+            )
             .add_systems(Update, collision.run_if(on_event::<Collision>))
             .add_systems(Update, despawn)
             .add_systems(Update, despawn_timer);
@@ -94,7 +102,7 @@ fn mouse_button_input(
             DespawnTimer(Timer::from_seconds(DESPAWN_TIMER, TimerMode::Once)),
             EntityState::Idle,
             RigidBody::Dynamic,
-            Collider::regular_polygon(13.0, 5),
+            Collider::triangle(HAMMER_SHAPE.0, HAMMER_SHAPE.1, HAMMER_SHAPE.2),
             Restitution::PERFECTLY_INELASTIC,
             ColliderDensity(20.0),
             CollisionLayers::new(
