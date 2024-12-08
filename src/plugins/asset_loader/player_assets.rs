@@ -16,11 +16,11 @@ pub fn setup(
         None,
         None,
     ));
-    let idle_animation = AnimationIndices::new(0, 10);
-    let run_animation = AnimationIndices::new(12, 23);
-    let jump_animation = AnimationIndices::new(22, 23);
-    let fall_animation = AnimationIndices::new(23, 24);
-    let double_jump = AnimationIndices::new(24, 30);
+    let idle_animation = AnimationIndices::new(0, 11);
+    let run_animation = AnimationIndices::new(12, 24);
+    let fall_animation = AnimationIndices::new(24, 25);
+    let jump_animation = AnimationIndices::new(25, 26);
+    let double_jump = AnimationIndices::new(26, 32);
 
     let mut range: HashMap<EntityState, AnimationIndices> = HashMap::new();
     range.insert(EntityState::Idle, idle_animation);

@@ -1,11 +1,12 @@
+use avian2d::prelude::{Collider, ColliderDensity, CollisionLayers, RigidBody};
 use bevy::prelude::*;
 use bevy::utils::{HashMap, HashSet};
 use bevy_ecs_ldtk::app::LdtkIntCellAppExt;
 use bevy_ecs_ldtk::assets::LdtkProject;
 use bevy_ecs_ldtk::ldtk::LayerInstance;
-use bevy_ecs_ldtk::{GridCoords, LdtkIntCell, LevelIid};
-use bevy_rapier2d::geometry::Collider;
-use bevy_rapier2d::prelude::{CollisionGroups, Friction, Group, RigidBody};
+use bevy_ecs_ldtk::{GridCoords, LdtkIntCell, LdtkProjectHandle, LevelIid};
+
+use crate::common_components::CollisionLayer;
 
 #[derive(Default, Component)]
 pub struct Wall;
@@ -13,6 +14,7 @@ pub struct Wall;
 #[derive(Default, Bundle, LdtkIntCell)]
 pub struct WallBundle {
     ground: Wall,
+    rigid_body: RigidBody,
 }
 
 pub struct WallPlugin;
@@ -29,7 +31,7 @@ fn spawn_wall_collision(
     wall_query: Query<(&GridCoords, &Parent), Added<Wall>>,
     parent_query: Query<&Parent, Without<Wall>>,
     level_query: Query<(Entity, &LevelIid)>,
-    ldtk_projects: Query<&Handle<LdtkProject>>,
+    ldtk_projects: Query<&LdtkProjectHandle>,
     ldtk_project_assets: Res<Assets<LdtkProject>>,
 ) {
     /// Represents a wide wall that is 1 tile tall
@@ -73,7 +75,7 @@ fn spawn_wall_collision(
         level_query.iter().for_each(|(level_entity, level_iid)| {
             if let Some(level_walls) = level_to_wall_locations.get(&level_entity) {
                 let ldtk_project = ldtk_project_assets
-                    .get(ldtk_projects.single())
+                    .get(&ldtk_projects.single().handle)
                     .expect("Project should be loaded if level has spawned");
 
                 let level = ldtk_project
@@ -150,24 +152,26 @@ fn spawn_wall_collision(
                     // 1. Adjusts the transforms to be relative to the level for free
                     // 2. the colliders will be despawned automatically when levels unload
                     for wall_rect in wall_rects {
-                        level
-                            .spawn_empty()
-                            .insert(Collider::cuboid(
+                        level.spawn((
+                            RigidBody::Static,
+                            Collider::rectangle(
                                 (wall_rect.right as f32 - wall_rect.left as f32 + 1.)
-                                    * grid_size as f32
-                                    / 2.,
+                                    * grid_size as f32,
                                 (wall_rect.top as f32 - wall_rect.bottom as f32 + 1.)
-                                    * grid_size as f32
-                                    / 2.,
-                            ))
-                            .insert(Transform::from_xyz(
+                                    * grid_size as f32,
+                            ),
+                            Transform::from_xyz(
                                 (wall_rect.left + wall_rect.right + 1) as f32 * grid_size as f32
                                     / 2.,
                                 (wall_rect.bottom + wall_rect.top + 1) as f32 * grid_size as f32
                                     / 2.,
                                 0.,
-                            ))
-                            .insert(GlobalTransform::default());
+                            ),
+                            CollisionLayers::new(
+                                CollisionLayer::Wall,
+                                [CollisionLayer::Enemy, CollisionLayer::Friendly],
+                            ),
+                        ));
                     }
                 });
             }

@@ -1,21 +1,23 @@
 use bevy::{
     prelude::*,
-    window::{Cursor, PrimaryWindow},
+    window::PrimaryWindow,
+    winit::cursor::{CursorIcon, CustomCursor},
 };
-
-const CURSOR_Z_INDEX: f32 = 100.0;
 
 pub struct CustomDefaultPlugin;
 
-#[derive(Component)]
-struct CustomCursor;
-
-#[derive(Resource)]
+#[derive(Resource, Default)]
 pub struct CursorPosition(pub Vec2);
 
 impl Plugin for CustomDefaultPlugin {
     fn build(&self, app: &mut App) {
-        let window = create_window();
+        let window = Window {
+            title: "The Moderator: Fred's Revenge".to_string(),
+            resolution: (1920.0, 1080.0).into(),
+            resizable: true,
+            ..default()
+        };
+
         let default_plugins = DefaultPlugins
             .set(ImagePlugin::default_nearest())
             .set(WindowPlugin {
@@ -24,51 +26,39 @@ impl Plugin for CustomDefaultPlugin {
             })
             .build();
 
-        app.add_plugins(default_plugins)
-            .add_systems(Startup, spawn_cursor)
-            .add_systems(Update, move_cursor);
+        app.insert_resource(CursorPosition::default())
+            .add_plugins(default_plugins)
+            .add_systems(PostStartup, insert_cursor)
+            .add_systems(Update, update_cursor_posiion);
     }
 }
 
-fn create_window() -> Window {
-    Window {
-        title: "The Moderator: Fred's Revenge".to_string(),
-        resolution: (1920.0, 1080.0).into(),
-        resizable: true,
-        cursor: Cursor {
-            visible: false,
-            ..default()
-        },
-        ..default()
-    }
-}
-
-fn spawn_cursor(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let texture: Handle<Image> = asset_server.load("cursor.png");
-    commands.spawn((
-        CustomCursor,
-        SpriteBundle {
-            texture,
-            ..default()
-        },
+fn insert_cursor(
+    mut commands: Commands,
+    window: Single<Entity, With<Window>>,
+    asset_server: Res<AssetServer>,
+) {
+    commands.entity(*window).insert((
+        CursorIcon::Custom(CustomCursor::Image {
+            handle: asset_server.load("cursor.png"),
+            hotspot: (5, 5),
+        }),
+        Transform::default(),
     ));
-    commands.insert_resource(CursorPosition(Vec2::ZERO));
 }
 
-fn move_cursor(
+fn update_cursor_posiion(
     window_q: Query<&Window, With<PrimaryWindow>>,
     camera_q: Query<(&Camera, &GlobalTransform)>,
-    mut transform_q: Query<&mut Transform, With<CustomCursor>>,
     mut cursor_position: ResMut<CursorPosition>,
 ) {
     let (camera, camera_transform) = camera_q.single();
     let window = window_q.single();
     if let Some(vec) = window
         .cursor_position()
-        .and_then(|cursor| camera.viewport_to_world(camera_transform, cursor))
-        .map(|ray| ray.origin.truncate())
+        .and_then(|cursor| Some(camera.viewport_to_world(camera_transform, cursor)))
+        .map(|ray| ray.unwrap().origin.truncate())
     {
-        transform_q.single_mut().translation = vec.extend(CURSOR_Z_INDEX);
         cursor_position.0 = vec;
     }
 }

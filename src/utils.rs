@@ -13,11 +13,8 @@ pub fn animate(
         .get(state)
         .unwrap_or(&player_animations.default);
 
-    let mut index = atlas.index + 1;
-
+    atlas.index += 1;
     if atlas.index >= frames.last_frame || atlas.index < frames.first_frame {
-        index = frames.first_frame;
+        atlas.index = frames.first_frame;
     }
-
-    atlas.index = index;
 }

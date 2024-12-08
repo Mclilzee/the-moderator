@@ -1,3 +1,4 @@
+use avian2d::prelude::PhysicsLayer;
 use bevy::prelude::*;
 #[derive(Component)]
 pub struct Enemy;
@@ -23,4 +24,12 @@ pub enum EntityState {
     Jumping,
     Falling,
     DoubleJumping
+}
+
+#[derive(PhysicsLayer, Default)]
+pub enum CollisionLayer {
+    #[default]
+    Friendly,
+    Enemy,
+    Wall
 }

@@ -1,35 +1,37 @@
-use crate::common_components::EntityState;
+use crate::common_components::{CollisionLayer, EntityState};
+use avian2d::prelude::{
+    Collider, LinearVelocity, RayCaster, RayHits, SpatialQuery, SpatialQueryFilter,
+};
 use bevy::prelude::*;
-use bevy_rapier2d::dynamics::Velocity;
 
-use super::{Player, PLAYER_JUMP_HEIGHT, PLAYER_SPEED};
+use super::{Player, PLAYER_HEIGHT, PLAYER_JUMP_HEIGHT, PLAYER_SPEED};
 
 pub fn input(
     keys: Res<ButtonInput<KeyCode>>,
-    mut query: Query<(&mut Velocity, &mut EntityState), With<Player>>,
+    mut query: Query<(&mut LinearVelocity, &mut EntityState), With<Player>>,
 ) {
     let (mut velocity, mut state) = query.get_single_mut().expect("Player should exist");
-    velocity.linvel.x = 0.0;
+    velocity.x = 0.0;
 
     if keys.any_pressed([KeyCode::ArrowRight, KeyCode::KeyD]) {
-        velocity.linvel.x = PLAYER_SPEED;
+        velocity.x = PLAYER_SPEED;
     }
 
     if keys.any_pressed([KeyCode::ArrowLeft, KeyCode::KeyA]) {
-        velocity.linvel.x = -PLAYER_SPEED;
+        velocity.x = -PLAYER_SPEED;
     }
 
     if keys.any_just_pressed([KeyCode::ArrowUp, KeyCode::Space])
         && *state != EntityState::DoubleJumping
     {
-        velocity.linvel.y = PLAYER_JUMP_HEIGHT;
+        velocity.y = PLAYER_JUMP_HEIGHT;
         match *state {
             EntityState::Jumping | EntityState::Falling => *state = EntityState::DoubleJumping,
             _ => *state = EntityState::Jumping,
         }
     }
 
-    if velocity.linvel.x != 0.0
+    if velocity.x != 0.0
         && !matches!(
             *state,
             EntityState::Jumping | EntityState::Falling | EntityState::DoubleJumping
@@ -49,5 +51,24 @@ pub fn flip_on_input(
         sprite.flip_x = true;
     } else if keys.any_pressed([KeyCode::ArrowRight, KeyCode::KeyD]) {
         sprite.flip_x = false;
+    }
+}
+
+pub fn ground_contact(
+    spatial_query: SpatialQuery,
+    mut player: Query<(&Transform, &mut EntityState), With<Player>>,
+) {
+    let (transform, mut state) = player.single_mut();
+    if spatial_query
+        .cast_ray(
+            transform.translation.truncate(),
+            Dir2::NEG_Y,
+            PLAYER_HEIGHT,
+            true,
+            &SpatialQueryFilter::from_mask(CollisionLayer::Wall),
+        )
+        .is_some()
+    {
+        *state = EntityState::Idle;
     }
 }

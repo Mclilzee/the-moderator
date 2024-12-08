@@ -1,7 +1,9 @@
 use std::time::Duration;
 
 use crate::{
-    common_components::{Damage, DespawnTimer, Enemy, EntityState, Friendly, Health},
+    common_components::{
+        CollisionLayer, Damage, DespawnTimer, Enemy, EntityState, Friendly, Health,
+    },
     plugins::{
         asset_loader::{AnimationEvent, AnimationKey, AnimationMap},
         default_plugins::CursorPosition,
@@ -10,8 +12,12 @@ use crate::{
     utils::animate,
 };
 
+use avian2d::prelude::AngularVelocity;
+use avian2d::prelude::Collider;
+use avian2d::prelude::{
+    ColliderDensity, Collision, CollisionLayers, LinearVelocity, Restitution, RigidBody,
+};
 use bevy::prelude::*;
-use bevy_rapier2d::prelude::*;
 
 const HAMMER_SPEED: f32 = 600.0;
 const ROATION_ANGLE: f32 = 10.0;
@@ -39,9 +45,13 @@ impl Plugin for HammerThrowPlugin {
         cooldown.tick(Duration::from_secs(COOLDOWN_SECS));
 
         app.insert_resource(Cooldown(cooldown))
-            .add_systems(Update, animate_hammer.run_if(on_event::<AnimationEvent>()))
-            .add_systems(Update, (cooldown_tick, mouse_button_input).chain())
-            .add_systems(Update, collision)
+            .add_systems(Update, animate_hammer.run_if(on_event::<AnimationEvent>))
+            .add_systems(Update, cooldown_tick)
+            .add_systems(
+                Update,
+                mouse_button_input.run_if(resource_changed::<ButtonInput<MouseButton>>),
+            )
+            .add_systems(Update, collision.run_if(on_event::<Collision>))
             .add_systems(Update, despawn)
             .add_systems(Update, despawn_timer);
     }
@@ -53,56 +63,55 @@ fn cooldown_tick(time: Res<Time>, mut cooldown_timer: ResMut<Cooldown>) {
 
 fn mouse_button_input(
     mut command: Commands,
-    player: Query<&Transform, With<Player>>,
+    player_query: Query<&Transform, With<Player>>,
     cursor_position: Res<CursorPosition>,
     buttons: Res<ButtonInput<MouseButton>>,
     animation_map: Res<AnimationMap>,
     mut cooldown: ResMut<Cooldown>,
 ) {
-    if buttons.just_pressed(MouseButton::Left) && cooldown.0.finished() {
+    if buttons.pressed(MouseButton::Left) && cooldown.0.finished() {
         cooldown.0.reset();
         let animation = animation_map
             .0
             .get(&AnimationKey::HammerThrow)
-            .expect("Player animation were not found");
+            .expect("Hammer Image animation were not found");
 
-        let p_transform = player.single();
-
-        let mut sprite_bundle = SpriteBundle {
-            transform: *p_transform,
-            ..default()
-        };
-
-        sprite_bundle.texture = animation.texture.clone();
-        let atlas = TextureAtlas {
-            layout: animation.atlas.clone(),
-            index: 1,
-        };
-
+        let p_transform = player_query.single();
         let p1 = p_transform.translation.truncate();
         let p2 = cursor_position.0;
 
-        let mut velocity = Velocity::linear((p2 - p1).normalize() * HAMMER_SPEED);
-        velocity.angvel = if velocity.linvel.x >= 0.0 {
+        let l_velocity = LinearVelocity::from((p2 - p1).normalize() * HAMMER_SPEED);
+        let a_velocity = AngularVelocity::from(if l_velocity.x >= 0.0 {
             -ROATION_ANGLE
         } else {
             ROATION_ANGLE
-        };
+        });
 
         command.spawn((
             HammerThrow,
+            Sprite::from_atlas_image(
+                animation.texture.clone(),
+                TextureAtlas {
+                    layout: animation.atlas.clone(),
+                    index: 1,
+                },
+            ),
             Damage(DAMAGE),
             Health(HEALTH),
             Friendly,
             DespawnTimer(Timer::from_seconds(DESPAWN_TIMER, TimerMode::Once)),
             EntityState::Idle,
-            Collider::triangle(HAMMER_SHAPE.0, HAMMER_SHAPE.1, HAMMER_SHAPE.2),
-            Restitution::coefficient(0.0),
             RigidBody::Dynamic,
-            CollisionGroups::new(Group::GROUP_1, Group::GROUP_3 | Group::GROUP_2),
-            velocity,
-            atlas,
-            sprite_bundle,
+            Collider::triangle(HAMMER_SHAPE.0, HAMMER_SHAPE.1, HAMMER_SHAPE.2),
+            Restitution::PERFECTLY_INELASTIC,
+            ColliderDensity(20.0),
+            CollisionLayers::new(
+                CollisionLayer::Friendly,
+                [CollisionLayer::Enemy, CollisionLayer::Wall],
+            ),
+            *p_transform,
+            l_velocity,
+            a_velocity,
         ));
     }
 }
@@ -113,24 +122,24 @@ fn collision(
         (Entity, &mut Health, &Damage),
         (Without<HammerThrow>, With<Collider>, With<Enemy>),
     >,
-    rapier_context: Res<RapierContext>,
+    mut collision_reader: EventReader<Collision>,
 ) {
-    for (h_id, mut h_hp, h_dmg) in hammers.iter_mut() {
-        for (e_id, mut e_hp, e_dmg) in enemies.iter_mut() {
-            if rapier_context.contact_pair(h_id, e_id).is_some() {
-                e_hp.0 -= h_dmg.0;
-                h_hp.0 -= e_dmg.0;
-            }
-        }
-    }
+    //for (h_id, mut h_hp, h_dmg) in hammers.iter_mut() {
+    //    for (e_id, mut e_hp, e_dmg) in enemies.iter_mut() {
+    //        if rapier_context.contact_pair(h_id, e_id).is_some() {
+    //            e_hp.0 -= h_dmg.0;
+    //            h_hp.0 -= e_dmg.0;
+    //        }
+    //    }
+    //}
 }
 
 fn despawn(
     mut commands: Commands,
-    hammers: Query<(Entity, &Health, &Velocity), With<HammerThrow>>,
+    hammers: Query<(Entity, &Health, &LinearVelocity), With<HammerThrow>>,
 ) {
     for (id, health, velocity) in hammers.iter() {
-        if health.0 <= 0 || velocity.linvel == Vec2::ZERO {
+        if health.0 <= 0 || velocity.0 == Vec2::ZERO {
             commands.entity(id).despawn();
         }
     }
@@ -150,10 +159,12 @@ fn despawn_timer(
 }
 
 fn animate_hammer(
-    mut query: Query<(&mut TextureAtlas, &EntityState), With<HammerThrow>>,
+    mut query: Query<(&mut Sprite, &EntityState), With<HammerThrow>>,
     map: Res<AnimationMap>,
 ) {
-    query.iter_mut().for_each(|(mut atlas, state)| {
-        animate(&mut atlas, state, &AnimationKey::HammerThrow, &map);
+    query.iter_mut().for_each(|(mut sprite, state)| {
+        if let Some(atlas) = sprite.texture_atlas.as_mut() {
+            animate(atlas, state, &AnimationKey::HammerThrow, &map);
+        }
     });
 }
