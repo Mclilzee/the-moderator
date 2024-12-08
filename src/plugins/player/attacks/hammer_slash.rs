@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use crate::{
     common_components::{Damage, Enemy, Friendly, Health},
-    plugins::player::{Player, PLAYER_HEIGHT},
+    plugins::player::{Player, PLAYER_LENGTH},
 };
 
 use avian2d::prelude::{Collider, Sensor};
@@ -47,7 +47,7 @@ fn spawn(
         cooldown.0.reset();
         commands
             .spawn((
-                TransformBundle::from_transform(Transform::from_xyz(0.0, 0.0 - PLAYER_HEIGHT, 0.0)),
+                TransformBundle::from_transform(Transform::from_xyz(0.0, 0.0 - PLAYER_LENGTH, 0.0)),
                 GroundSmash,
                 Damage(DAMAGE),
                 Collider::rectangle(SMASH_WIDTH, SMASH_HEIGHT),

@@ -20,7 +20,7 @@ const SPAMMER_STARTING_HP: i32 = 20;
 const SPAMMER_DAMAGE: i32 = 1;
 const SPAMMER_SPEED: f32 = 40.0;
 const SPAMMER_RADIUS: f32 = 10.0;
-const SPAMMER_HEIGHT: f32 = 5.0;
+const SPAMMER_LENGTH: f32 = 5.0;
 const SPAMMER_LIMIT: usize = 5;
 const POINTS_INCREMENT_DURATION: f32 = 1.0;
 const POINTS_INCREMENT_ASCENDING_SPEED: f32 = 200.0;
@@ -92,7 +92,7 @@ fn spawn_spammer(
                 },
             ),
             Transform::from_translation(player_translation + Vec3::new(offset, 0.0, 0.0)),
-            Actor::new(SPAMMER_STARTING_HP, SPAMMER_WIDTH, SPAMMER_HEIGHT),
+            Actor::new(SPAMMER_STARTING_HP, SPAMMER_RADIUS, SPAMMER_LENGTH),
             Damage(SPAMMER_DAMAGE),
             Enemy,
             EntityState::default(),

@@ -4,7 +4,7 @@ use avian2d::prelude::{
 };
 use bevy::prelude::*;
 
-use super::{Player, PLAYER_HEIGHT, PLAYER_JUMP_HEIGHT, PLAYER_SPEED};
+use super::{Player, PLAYER_LENGTH, PLAYER_JUMP_HEIGHT, PLAYER_SPEED};
 
 pub fn input(
     keys: Res<ButtonInput<KeyCode>>,
@@ -63,7 +63,7 @@ pub fn ground_contact(
         .cast_ray(
             transform.translation.truncate(),
             Dir2::NEG_Y,
-            PLAYER_HEIGHT,
+            PLAYER_LENGTH,
             true,
             &SpatialQueryFilter::from_mask(CollisionLayer::Wall),
         )

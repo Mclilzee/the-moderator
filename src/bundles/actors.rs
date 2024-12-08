@@ -7,11 +7,11 @@ use bevy::prelude::*;
 pub struct Actor;
 
 impl Actor {
-    pub fn new(hp: i32, width: f32, height: f32) -> (Actor, RigidBody, Collider, Health) {
+    pub fn new(hp: i32, radius: f32, length: f32) -> (Actor, RigidBody, Collider, Health) {
         (
             Self,
             RigidBody::Dynamic,
-            Collider::capsule(width, height),
+            Collider::capsule(radius, length),
             Health(hp),
         )
     }

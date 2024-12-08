@@ -24,8 +24,8 @@ use player_input::flip_on_input;
 const PLAYER_SPEED: f32 = 150.0;
 const PLAYER_JUMP_HEIGHT: f32 = 500.0;
 const PLAYER_STARING_HP: i32 = 100;
-pub const PLAYER_HEIGHT: f32 = 14.0;
-const PLAYER_WIDTH: f32 = 6.0;
+pub const PLAYER_LENGTH: f32 = 14.0;
+const PLAYER_RADIUS: f32 = 6.0;
 const SCORE_TEXT_SIZE: f32 = 40.0;
 const PLAYER_STARTING_POSITION: Vec3 = Vec3::new(1312., 160., 10.0);
 
@@ -83,7 +83,7 @@ fn setup(
             LinearVelocity::default(),
             Damage(5),
             Friendly,
-            Actor::new(PLAYER_STARING_HP, PLAYER_WIDTH, PLAYER_HEIGHT),
+            Actor::new(PLAYER_STARING_HP, PLAYER_RADIUS, PLAYER_LENGTH),
             EntityState::Idle,
             Restitution::PERFECTLY_INELASTIC,
             LockedAxes::ROTATION_LOCKED,
@@ -138,7 +138,7 @@ fn grounded_detection(
         .cast_ray(
             transform.translation.truncate(),
             Dir2::NEG_Y,
-            PLAYER_HEIGHT,
+            PLAYER_LENGTH,
             true,
             &SpatialQueryFilter::from_mask(CollisionLayer::Wall),
         )
