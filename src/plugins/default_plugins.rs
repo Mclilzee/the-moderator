@@ -1,8 +1,12 @@
-use bevy::{prelude::*, winit::cursor::{CursorIcon, CustomCursor}};
+use bevy::{
+    prelude::*,
+    window::PrimaryWindow,
+    winit::cursor::{CursorIcon, CustomCursor},
+};
 
 pub struct CustomDefaultPlugin;
 
-#[derive(Resource)]
+#[derive(Resource, Default)]
 pub struct CursorPosition(pub Vec2);
 
 impl Plugin for CustomDefaultPlugin {
@@ -22,15 +26,39 @@ impl Plugin for CustomDefaultPlugin {
             })
             .build();
 
-        app.add_plugins(default_plugins).add_systems(PostStartup, insert_cursor);
+        app.insert_resource(CursorPosition::default())
+            .add_plugins(default_plugins)
+            .add_systems(PostStartup, insert_cursor)
+            .add_systems(Update, update_cursor_posiion);
     }
 }
 
-fn insert_cursor(mut commands: Commands, window: Single<Entity, With<Window>>, asset_server: Res<AssetServer>) {
-    commands
-        .entity(*window)
-        .insert(CursorIcon::Custom(CustomCursor::Image {
+fn insert_cursor(
+    mut commands: Commands,
+    window: Single<Entity, With<Window>>,
+    asset_server: Res<AssetServer>,
+) {
+    commands.entity(*window).insert((
+        CursorIcon::Custom(CustomCursor::Image {
             handle: asset_server.load("cursor.png"),
             hotspot: (5, 5),
-        }));
+        }),
+        Transform::default(),
+    ));
+}
+
+fn update_cursor_posiion(
+    window_q: Query<&Window, With<PrimaryWindow>>,
+    camera_q: Query<(&Camera, &GlobalTransform)>,
+    mut cursor_position: ResMut<CursorPosition>,
+) {
+    let (camera, camera_transform) = camera_q.single();
+    let window = window_q.single();
+    if let Some(vec) = window
+        .cursor_position()
+        .and_then(|cursor| Some(camera.viewport_to_world(camera_transform, cursor)))
+        .map(|ray| ray.unwrap().origin.truncate())
+    {
+        cursor_position.0 = vec;
+    }
 }

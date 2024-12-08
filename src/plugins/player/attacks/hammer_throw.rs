@@ -41,7 +41,8 @@ impl Plugin for HammerThrowPlugin {
 
         app.insert_resource(Cooldown(cooldown))
             .add_systems(Update, animate_hammer.run_if(on_event::<AnimationEvent>))
-            .add_systems(Update, (cooldown_tick, mouse_button_input).chain())
+            .add_systems(Update, cooldown_tick)
+            .add_systems(Update, mouse_button_input.run_if(resource_changed::<ButtonInput<MouseButton>>))
             .add_systems(Update, collision.run_if(on_event::<Collision>))
             .add_systems(Update, despawn)
             .add_systems(Update, despawn_timer);
@@ -54,20 +55,20 @@ fn cooldown_tick(time: Res<Time>, mut cooldown_timer: ResMut<Cooldown>) {
 
 fn mouse_button_input(
     mut command: Commands,
-    player: Query<&Transform, With<Player>>,
+    player_query: Query<&Transform, With<Player>>,
     cursor_position: Res<CursorPosition>,
     buttons: Res<ButtonInput<MouseButton>>,
     animation_map: Res<AnimationMap>,
     mut cooldown: ResMut<Cooldown>,
 ) {
-    if buttons.just_pressed(MouseButton::Left) && cooldown.0.finished() {
+    if buttons.pressed(MouseButton::Left) && cooldown.0.finished() {
         cooldown.0.reset();
         let animation = animation_map
             .0
             .get(&AnimationKey::HammerThrow)
-            .expect("Player animation were not found");
+            .expect("Hammer Image animation were not found");
 
-        let p_transform = player.single();
+        let p_transform = player_query.single();
         let p1 = p_transform.translation.truncate();
         let p2 = cursor_position.0;
 
@@ -100,6 +101,7 @@ fn mouse_button_input(
                 CollisionLayer::Friendly,
                 [CollisionLayer::Enemy, CollisionLayer::Wall],
             ),
+            *p_transform,
             l_velocity,
             a_velocity,
         ));
