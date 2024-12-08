@@ -19,7 +19,7 @@ use avian2d::prelude::{
 };
 use bevy::prelude::*;
 
-const HAMMER_SPEED: f32 = 700.0;
+const HAMMER_SPEED: f32 = 600.0;
 const ROATION_ANGLE: f32 = 10.0;
 const HEALTH: i32 = 10;
 const DAMAGE: i32 = 4;
