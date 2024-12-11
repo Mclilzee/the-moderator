@@ -18,22 +18,19 @@ const DAMAGE: i32 = 10;
 #[derive(Component)]
 struct FireSlash;
 
-#[derive(Resource, Deref, DerefMut)]
-struct Cooldown(Timer);
-
-#[derive(Resource, Deref, DerefMut)]
-struct DespawnTimer(Timer);
-
 pub struct FireSlashPlugin;
 
 impl Plugin for FireSlashPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, (spawn, collision).chain())
-            .add_systems(
-                Update,
-                animate_then_despawn.run_if(on_event::<AnimationEvent>),
-            )
-            .add_systems(Update, despawn);
+        app.add_systems(
+            Update,
+            spawn.run_if(resource_changed::<ButtonInput<KeyCode>>),
+        )
+        .add_systems(Update, collision)
+        .add_systems(
+            Update,
+            animate_then_despawn.run_if(on_event::<AnimationEvent>),
+        );
     }
 }
 
@@ -44,7 +41,9 @@ fn spawn(
     keys: Res<ButtonInput<KeyCode>>,
 ) {
     let (p_transform, p_state) = player.single();
-    if keys.any_just_pressed([KeyCode::ArrowUp, KeyCode::Space]) && *p_state != EntityState::DoubleJumping {
+    if keys.any_just_pressed([KeyCode::ArrowUp, KeyCode::Space])
+        && *p_state != EntityState::DoubleJumping
+    {
         let animation = animation_map
             .0
             .get(&AnimationKey::FireSlash)
@@ -70,22 +69,6 @@ fn spawn(
             Friendly,
             Sensor,
         ));
-    }
-}
-
-fn despawn(
-    mut commands: Commands,
-    hammers: Query<Entity, With<FireSlash>>,
-    mut despawn_timer: ResMut<DespawnTimer>,
-    time: Res<Time>,
-) {
-    despawn_timer.tick(time.delta());
-    if despawn_timer.finished() {
-        hammers.iter().for_each(|id| {
-            if let Some(mut entity) = commands.get_entity(id) {
-                entity.despawn();
-            }
-        });
     }
 }
 
