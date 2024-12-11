@@ -4,17 +4,16 @@ use crate::{
     common_components::{Damage, Enemy, EntityState, Friendly, Health},
     plugins::{
         asset_loader::{AnimationEvent, AnimationKey, AnimationMap},
-        player::Player,
+        player::{Player, PLAYER_LENGTH},
     },
 };
 
 use avian2d::prelude::{Collider, Sensor};
 use bevy::prelude::*;
 
-const SMASH_WIDTH: f32 = 120.0;
-const SMASH_HEIGHT: f32 = 2.0;
+const FIRE_SLASH_WIDTH: f32 = 80.0;
+const FIRE_SLASH_HEIGHT: f32 = 10.0;
 const DAMAGE: i32 = 10;
-const COOLDOWN_SECS: f32 = 0.5;
 
 #[derive(Component)]
 struct FireSlash;
@@ -29,28 +28,23 @@ pub struct FireSlashPlugin;
 
 impl Plugin for FireSlashPlugin {
     fn build(&self, app: &mut App) {
-        let mut cooldown = Timer::from_seconds(COOLDOWN_SECS, TimerMode::Once);
-        cooldown.tick(Duration::from_secs_f32(COOLDOWN_SECS));
-
-        app.insert_resource(Cooldown(cooldown))
-            .add_systems(Update, (spawn, collision).chain())
-            .add_systems(Update, animate_then_despawn.run_if(on_event::<AnimationEvent>))
+        app.add_systems(Update, (spawn, collision).chain())
+            .add_systems(
+                Update,
+                animate_then_despawn.run_if(on_event::<AnimationEvent>),
+            )
             .add_systems(Update, despawn);
     }
 }
 
 fn spawn(
     mut commands: Commands,
-    player: Single<&Transform, With<Player>>,
+    player: Query<(&Transform, &EntityState), With<Player>>,
     animation_map: Res<AnimationMap>,
-    buttons: Res<ButtonInput<MouseButton>>,
-    mut cooldown: ResMut<Cooldown>,
-    time: Res<Time>,
+    keys: Res<ButtonInput<KeyCode>>,
 ) {
-    cooldown.0.tick(time.delta());
-    if buttons.just_pressed(MouseButton::Right) && cooldown.0.finished() {
-        cooldown.0.reset();
-
+    let (p_transform, p_state) = player.single();
+    if keys.any_just_pressed([KeyCode::ArrowUp, KeyCode::Space]) && *p_state != EntityState::DoubleJumping {
         let animation = animation_map
             .0
             .get(&AnimationKey::FireSlash)
@@ -66,13 +60,13 @@ fn spawn(
             ),
             EntityState::Idle,
             Transform::from_xyz(
-                player.translation.x,
-                player.translation.y,
-                player.translation.z + 1.,
+                p_transform.translation.x,
+                p_transform.translation.y - PLAYER_LENGTH + 2.0,
+                p_transform.translation.z + 1.,
             ),
             FireSlash,
             Damage(DAMAGE),
-            Collider::rectangle(SMASH_WIDTH, SMASH_HEIGHT),
+            Collider::rectangle(FIRE_SLASH_WIDTH, FIRE_SLASH_HEIGHT),
             Friendly,
             Sensor,
         ));
