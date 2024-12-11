@@ -1,5 +1,8 @@
+use crate::{
+    common_components::EntityState,
+    plugins::asset_loader::{AnimationKey, AnimationMap},
+};
 use bevy::sprite::TextureAtlas;
-use crate::{common_components::EntityState, plugins::asset_loader::{AnimationKey, AnimationMap}};
 
 pub fn animate(
     atlas: &mut TextureAtlas,

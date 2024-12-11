@@ -1,6 +1,7 @@
 mod player_assets;
 mod spammer_assets;
-mod weapon_assets;
+mod hammer_throw_assets;
+mod fire_slash_assets;
 
 use crate::common_components::EntityState;
 use bevy::{prelude::*, utils::HashMap};
@@ -16,6 +17,7 @@ pub enum AnimationKey {
     Player,
     Spammer,
     HammerThrow,
+    FireSlash
 }
 
 pub struct Animation {
@@ -57,7 +59,8 @@ impl Plugin for AssetLoaderPlugin {
             .add_event::<AnimationEvent>()
             .add_systems(PreStartup, player_assets::setup)
             .add_systems(PreStartup, spammer_assets::setup)
-            .add_systems(PreStartup, weapon_assets::setup)
+            .add_systems(PreStartup, hammer_throw_assets::setup)
+            .add_systems(PreStartup, fire_slash_assets::setup)
             .add_systems(PreStartup, load_ldtk)
             .insert_resource(LevelSelection::index(0))
             .add_systems(Update, timer_tick);
