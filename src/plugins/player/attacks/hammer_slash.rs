@@ -47,7 +47,7 @@ fn spawn(
         cooldown.0.reset();
         commands
             .spawn((
-                TransformBundle::from_transform(Transform::from_xyz(0.0, 0.0 - PLAYER_LENGTH, 0.0)),
+                TransformBundle::from_transform(Transform::from_xyz(0.0, 0.0 - PLAYER_LENGTH / 2., 0.0)),
                 GroundSmash,
                 Damage(DAMAGE),
                 Collider::rectangle(SMASH_WIDTH, SMASH_HEIGHT),
