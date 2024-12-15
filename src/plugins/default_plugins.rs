@@ -60,5 +60,6 @@ fn update_cursor_posiion(
         .map(|ray| ray.unwrap().origin.truncate())
     {
         cursor_position.0 = v;
+        println!("{v}");
     }
 }

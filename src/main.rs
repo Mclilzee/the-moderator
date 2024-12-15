@@ -1,12 +1,23 @@
 mod bundles;
 mod common_components;
 mod plugins;
-mod utils;
 
-use avian2d::{
-    prelude::Gravity,
-    PhysicsPlugins,
+mod utils;
+pub struct WorldBoundry {
+    left: f32,
+    right: f32,
+    top: f32,
+    bottom: f32,
+}
+
+pub const WORLD_BOUNDRY: WorldBoundry = WorldBoundry {
+    left: 645.,
+    right: 4561.,
+    top: 0.,
+    bottom: 0.,
 };
+
+use avian2d::{prelude::Gravity, PhysicsPlugins};
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use plugins::{asset_loader, camera_plugin, collisions, default_plugins, enemies, player, walls};
