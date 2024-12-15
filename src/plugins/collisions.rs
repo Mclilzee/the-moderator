@@ -1,6 +1,6 @@
 use super::{
     asset_loader::{AnimationEvent, AnimationKey, AnimationMap},
-    player::ScoreUpdateEvent,
+    player::{Player, ScoreUpdateEvent},
 };
 use crate::common_components::{Damage, DespawnTimer, Enemy, EntityState, Friendly, Health};
 use avian2d::prelude::CollisionStarted;
@@ -71,11 +71,12 @@ fn apply_dmg(friendly: (Option<Mut<Health>>, Option<&Damage>), enemy: (Option<Mu
 
 fn despawn_enemy_on_death(
     mut commands: Commands,
-    query: Query<(Entity, &Health, &Transform), With<Enemy>>,
+    enemy: Query<(Entity, &Health, &Transform), With<Enemy>>,
+    player_transform: Query<&Transform, With<Player>>,
     mut event: EventWriter<ScoreUpdateEvent>,
     asset_loader: Res<AnimationMap>,
 ) {
-    query.iter().for_each(|(id, hp, transform)| {
+    enemy.iter().for_each(|(id, hp, enemy_transform)| {
         if hp.0 <= 0 {
             commands.entity(id).despawn();
             commands.spawn((
@@ -86,7 +87,7 @@ fn despawn_enemy_on_death(
                 )),
                 Text2d::new("++"),
                 TextFont::from_font_size(POINTS_SIZE),
-                *transform,
+                *player_transform.single(),
             ));
 
             let animation = asset_loader
@@ -104,7 +105,7 @@ fn despawn_enemy_on_death(
                         index: 1,
                     },
                 ),
-                *transform
+                *enemy_transform
             ));
 
             event.send(ScoreUpdateEvent {
