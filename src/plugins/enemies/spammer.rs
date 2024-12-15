@@ -35,9 +35,6 @@ struct SpammerSpawnTimer {
     timer: Timer,
 }
 
-#[derive(Component)]
-struct PointsIncrementEffect;
-
 pub struct SpammerPlugin;
 
 impl Plugin for SpammerPlugin {
@@ -50,9 +47,7 @@ impl Plugin for SpammerPlugin {
             .add_systems(Update, animate_spammer.run_if(on_event::<AnimationEvent>))
             .add_systems(Update, spawn_spammer)
             .add_systems(Update, track_player)
-            .add_systems(Update, flip_on_movement)
-            .add_systems(Update, despawn)
-            .add_systems(Update, despawn_points_increment_effect);
+            .add_systems(Update, flip_on_movement);
     }
 }
 
@@ -129,46 +124,6 @@ fn flip_on_movement(mut spammers: Query<(&mut Sprite, &LinearVelocity), With<Spa
             sprite.flip_x = true;
         } else if velocity.x > 0.0 {
             sprite.flip_x = false;
-        }
-    }
-}
-
-fn despawn(
-    mut commands: Commands,
-    query: Query<(Entity, &Health, &Transform), With<Spammer>>,
-    mut event: EventWriter<ScoreUpdateEvent>,
-) {
-    query.iter().for_each(|(id, hp, transform)| {
-        if hp.0 <= 0 {
-            commands.entity(id).despawn();
-            commands.spawn((
-                PointsIncrementEffect,
-                DespawnTimer(Timer::from_seconds(
-                    POINTS_INCREMENT_DURATION,
-                    TimerMode::Once,
-                )),
-                Text2d::new("++"),
-                TextFont::from_font_size(POINTS_SIZE),
-                *transform,
-            ));
-
-            event.send(ScoreUpdateEvent {
-                gained_points: POINTS_REWARDED,
-            });
-        }
-    });
-}
-
-fn despawn_points_increment_effect(
-    mut commands: Commands,
-    mut query: Query<(Entity, &mut DespawnTimer, &mut Transform), With<PointsIncrementEffect>>,
-    time: Res<Time>,
-) {
-    for (id, mut timer, mut transform) in query.iter_mut() {
-        timer.0.tick(time.delta());
-        transform.translation.y += POINTS_INCREMENT_ASCENDING_SPEED * time.delta_secs();
-        if timer.0.finished() {
-            commands.entity(id).despawn();
         }
     }
 }
