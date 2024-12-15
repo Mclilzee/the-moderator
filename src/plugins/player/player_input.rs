@@ -2,7 +2,7 @@ use crate::common_components::EntityState;
 use avian2d::prelude::LinearVelocity;
 use bevy::prelude::*;
 
-use super::{DoubleJumpEvent, JumpEvent, Player, PLAYER_JUMP_HEIGHT, PLAYER_SPEED};
+use super::{JumpEvent, Player, PLAYER_JUMP_HEIGHT, PLAYER_SPEED};
 
 pub fn input(
     keys: Res<ButtonInput<KeyCode>>,

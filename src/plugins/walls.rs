@@ -1,4 +1,4 @@
-use avian2d::prelude::{Collider, ColliderDensity, CollisionLayers, RigidBody};
+use avian2d::prelude::{Collider, CollisionLayers, RigidBody};
 use bevy::prelude::*;
 use bevy::utils::{HashMap, HashSet};
 use bevy_ecs_ldtk::app::LdtkIntCellAppExt;

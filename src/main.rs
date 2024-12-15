@@ -4,7 +4,7 @@ mod plugins;
 mod utils;
 
 use avian2d::{
-    prelude::{Gravity, PhysicsDebugPlugin},
+    prelude::Gravity,
     PhysicsPlugins,
 };
 use bevy::prelude::*;
@@ -32,7 +32,6 @@ fn main() {
         .add_plugins(enemies::EnemiesPlugin)
         .add_plugins(collisions::CollisionsHandlerPlugin);
 
-    //#[cfg(dev)]
     //app.add_plugins(PhysicsDebugPlugin::default());
     app.run();
 }

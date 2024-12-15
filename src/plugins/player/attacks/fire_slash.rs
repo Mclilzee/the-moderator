@@ -1,7 +1,5 @@
-use std::time::Duration;
-
 use crate::{
-    common_components::{Damage, Enemy, EntityState, Friendly, Health},
+    common_components::{Damage, EntityState, Friendly},
     plugins::{
         asset_loader::{AnimationEvent, AnimationKey, AnimationMap},
         player::{JumpEvent, Player, PLAYER_LENGTH},

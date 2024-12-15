@@ -54,11 +54,11 @@ fn update_cursor_posiion(
 ) {
     let (camera, camera_transform) = camera_q.single();
     let window = window_q.single();
-    if let Some(vec) = window
+    if let Some(v) = window
         .cursor_position()
-        .and_then(|cursor| Some(camera.viewport_to_world(camera_transform, cursor)))
+        .map(|cursor| camera.viewport_to_world(camera_transform, cursor))
         .map(|ray| ray.unwrap().origin.truncate())
     {
-        cursor_position.0 = vec;
+        cursor_position.0 = v;
     }
 }

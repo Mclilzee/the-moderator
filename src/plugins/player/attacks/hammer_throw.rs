@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use crate::{
     common_components::{
-        CollisionLayer, Damage, DespawnTimer, Enemy, EntityState, Friendly, Health,
+        CollisionLayer, Damage, DespawnTimer, EntityState, Friendly, Health,
     },
     plugins::{
         asset_loader::{AnimationEvent, AnimationKey, AnimationMap},
@@ -12,10 +12,10 @@ use crate::{
     utils::animate,
 };
 
-use avian2d::prelude::{AngularVelocity, Collisions};
+use avian2d::prelude::AngularVelocity;
 use avian2d::prelude::Collider;
 use avian2d::prelude::{
-    ColliderDensity, Collision, CollisionLayers, LinearVelocity, Restitution, RigidBody,
+    ColliderDensity, CollisionLayers, LinearVelocity, Restitution, RigidBody,
 };
 use bevy::prelude::*;
 

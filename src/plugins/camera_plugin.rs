@@ -9,11 +9,14 @@ impl Plugin for CameraPlugin {
 }
 
 fn spawn_camera(mut commands: Commands) {
-    let mut camera = Camera2dBundle::default();
-    camera.projection.scaling_mode = ScalingMode::AutoMin {
-        min_width: 500.0,
-        min_height: 400.0,
-    };
-
-    commands.spawn(camera);
+    commands.spawn((
+        Camera2d,
+        Projection::Orthographic(OrthographicProjection {
+            scaling_mode: ScalingMode::AutoMin {
+                min_width: 500.0,
+                min_height: 400.0,
+            },
+            ..OrthographicProjection::default_2d()
+        }),
+    ));
 }
