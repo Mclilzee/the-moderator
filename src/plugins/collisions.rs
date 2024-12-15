@@ -110,6 +110,7 @@ fn despawn_enemy_on_death(
                         index: 1,
                     },
                 ),
+                *transform
             ));
 
             event.send(ScoreUpdateEvent {
