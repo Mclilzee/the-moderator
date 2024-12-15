@@ -4,3 +4,4 @@ pub mod default_plugins;
 pub mod walls;
 pub mod player;
 pub mod enemies;
+pub mod collisions;

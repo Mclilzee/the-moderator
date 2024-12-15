@@ -3,10 +3,13 @@ mod common_components;
 mod plugins;
 mod utils;
 
-use avian2d::{prelude::{Gravity, PhysicsDebugPlugin}, PhysicsPlugins};
+use avian2d::{
+    prelude::{Gravity, PhysicsDebugPlugin},
+    PhysicsPlugins,
+};
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
-use plugins::{asset_loader, camera_plugin, default_plugins, enemies, player, walls};
+use plugins::{asset_loader, camera_plugin, collisions, default_plugins, enemies, player, walls};
 
 #[derive(Clone, PartialEq, Eq, Debug, Hash, SystemSet)]
 pub enum InGameSet {
@@ -26,7 +29,8 @@ fn main() {
         .add_plugins(asset_loader::AssetLoaderPlugin)
         .add_plugins(walls::WallPlugin)
         .add_plugins(player::PlayerPlugin)
-        .add_plugins(enemies::EnemiesPlugin);
+        .add_plugins(enemies::EnemiesPlugin)
+        .add_plugins(collisions::CollisionsHandlerPlugin);
 
     //#[cfg(dev)]
     app.add_plugins(PhysicsDebugPlugin::default());

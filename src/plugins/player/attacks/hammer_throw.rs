@@ -12,7 +12,7 @@ use crate::{
     utils::animate,
 };
 
-use avian2d::prelude::AngularVelocity;
+use avian2d::prelude::{AngularVelocity, Collisions};
 use avian2d::prelude::Collider;
 use avian2d::prelude::{
     ColliderDensity, Collision, CollisionLayers, LinearVelocity, Restitution, RigidBody,
@@ -51,7 +51,6 @@ impl Plugin for HammerThrowPlugin {
                 Update,
                 mouse_button_input.run_if(resource_changed::<ButtonInput<MouseButton>>),
             )
-            .add_systems(Update, collision.run_if(on_event::<Collision>))
             .add_systems(Update, despawn)
             .add_systems(Update, despawn_timer);
     }
@@ -114,24 +113,6 @@ fn mouse_button_input(
             a_velocity,
         ));
     }
-}
-
-fn collision(
-    mut hammers: Query<(Entity, &mut Health, &Damage), (With<HammerThrow>, With<Collider>)>,
-    mut enemies: Query<
-        (Entity, &mut Health, &Damage),
-        (Without<HammerThrow>, With<Collider>, With<Enemy>),
-    >,
-    mut collision_reader: EventReader<Collision>,
-) {
-    //for (h_id, mut h_hp, h_dmg) in hammers.iter_mut() {
-    //    for (e_id, mut e_hp, e_dmg) in enemies.iter_mut() {
-    //        if rapier_context.contact_pair(h_id, e_id).is_some() {
-    //            e_hp.0 -= h_dmg.0;
-    //            h_hp.0 -= e_dmg.0;
-    //        }
-    //    }
-    //}
 }
 
 fn despawn(
