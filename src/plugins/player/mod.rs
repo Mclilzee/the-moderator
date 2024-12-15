@@ -9,7 +9,7 @@ use crate::common_components::CollisionLayer;
 use crate::common_components::EntityState;
 use crate::common_components::Friendly;
 use crate::utils::animate;
-use crate::{bundles::actors::Actor, common_components::Damage};
+use crate::bundles::actors::Actor;
 use avian2d::prelude::CollisionLayers;
 use avian2d::prelude::LinearVelocity;
 use avian2d::prelude::LockedAxes;
@@ -28,6 +28,12 @@ pub const PLAYER_LENGTH: f32 = 14.0;
 const PLAYER_RADIUS: f32 = 6.0;
 const SCORE_TEXT_SIZE: f32 = 40.0;
 const PLAYER_STARTING_POSITION: Vec3 = Vec3::new(1312., 160., 10.0);
+
+#[derive(Event, Default)]
+pub struct JumpEvent;
+
+#[derive(Event, Default)]
+pub struct DoubleJumpEvent;
 
 #[derive(Component)]
 pub struct Player;
@@ -49,6 +55,8 @@ impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(Score(0))
             .add_event::<ScoreUpdateEvent>()
+            .add_event::<JumpEvent>()
+            .add_event::<DoubleJumpEvent>()
             .add_systems(PostStartup, setup)
             .add_systems(Update, input)
             .add_systems(Update, flip_on_input)

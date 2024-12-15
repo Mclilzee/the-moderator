@@ -2,11 +2,12 @@ use crate::common_components::EntityState;
 use avian2d::prelude::LinearVelocity;
 use bevy::prelude::*;
 
-use super::{Player, PLAYER_JUMP_HEIGHT, PLAYER_SPEED};
+use super::{DoubleJumpEvent, JumpEvent, Player, PLAYER_JUMP_HEIGHT, PLAYER_SPEED};
 
 pub fn input(
     keys: Res<ButtonInput<KeyCode>>,
     mut query: Query<(&mut LinearVelocity, &mut EntityState), With<Player>>,
+    mut jump_event_writer: EventWriter<JumpEvent>,
 ) {
     let (mut velocity, mut state) = query.get_single_mut().expect("Player should exist");
     velocity.x = 0.0;
@@ -24,8 +25,14 @@ pub fn input(
     {
         velocity.y = PLAYER_JUMP_HEIGHT;
         match *state {
-            EntityState::Jumping | EntityState::Falling => *state = EntityState::DoubleJumping,
-            _ => *state = EntityState::Jumping,
+            EntityState::Jumping | EntityState::Falling => {
+                jump_event_writer.send_default();
+                *state = EntityState::DoubleJumping;
+            }
+            _ => {
+                jump_event_writer.send_default();
+                *state = EntityState::Jumping;
+            }
         }
     }
 

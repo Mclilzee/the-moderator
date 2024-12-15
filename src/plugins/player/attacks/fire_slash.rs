@@ -4,7 +4,7 @@ use crate::{
     common_components::{Damage, Enemy, EntityState, Friendly, Health},
     plugins::{
         asset_loader::{AnimationEvent, AnimationKey, AnimationMap},
-        player::{Player, PLAYER_LENGTH},
+        player::{JumpEvent, Player, PLAYER_LENGTH},
     },
 };
 
@@ -22,53 +22,44 @@ pub struct FireSlashPlugin;
 
 impl Plugin for FireSlashPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(
-            Update,
-            spawn.run_if(resource_changed::<ButtonInput<KeyCode>>),
-        )
-        .add_systems(
-            Update,
-            animate_then_despawn.run_if(on_event::<AnimationEvent>),
-        );
+        app.add_systems(Update, spawn.run_if(on_event::<JumpEvent>))
+            .add_systems(
+                Update,
+                animate_then_despawn.run_if(on_event::<AnimationEvent>),
+            );
     }
 }
 
 fn spawn(
     mut commands: Commands,
-    player: Query<(&Transform, &EntityState), With<Player>>,
+    player_transform: Single<&Transform, With<Player>>,
     animation_map: Res<AnimationMap>,
-    keys: Res<ButtonInput<KeyCode>>,
 ) {
-    let (p_transform, p_state) = player.single();
-    if keys.any_just_pressed([KeyCode::ArrowUp, KeyCode::Space])
-        && *p_state != EntityState::DoubleJumping
-    {
-        let animation = animation_map
-            .0
-            .get(&AnimationKey::FireSlash)
-            .expect("Fire Slash animation animation were not found");
+    let animation = animation_map
+        .0
+        .get(&AnimationKey::FireSlash)
+        .expect("Fire Slash animation animation were not found");
 
-        commands.spawn((
-            Sprite::from_atlas_image(
-                animation.texture.clone(),
-                TextureAtlas {
-                    layout: animation.atlas.clone(),
-                    index: 1,
-                },
-            ),
-            EntityState::Idle,
-            Transform::from_xyz(
-                p_transform.translation.x,
-                p_transform.translation.y - PLAYER_LENGTH + 2.0,
-                p_transform.translation.z + 1.,
-            ),
-            FireSlash,
-            Damage(DAMAGE),
-            Collider::rectangle(FIRE_SLASH_WIDTH, FIRE_SLASH_HEIGHT),
-            Friendly,
-            Sensor,
-        ));
-    }
+    commands.spawn((
+        Sprite::from_atlas_image(
+            animation.texture.clone(),
+            TextureAtlas {
+                layout: animation.atlas.clone(),
+                index: 1,
+            },
+        ),
+        EntityState::Idle,
+        Transform::from_xyz(
+            player_transform.translation.x,
+            player_transform.translation.y - PLAYER_LENGTH + 2.0,
+            player_transform.translation.z + 1.,
+        ),
+        FireSlash,
+        Damage(DAMAGE),
+        Collider::rectangle(FIRE_SLASH_WIDTH, FIRE_SLASH_HEIGHT),
+        Friendly,
+        Sensor,
+    ));
 }
 
 fn animate_then_despawn(

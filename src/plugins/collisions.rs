@@ -46,31 +46,25 @@ fn hit(
     for CollisionStarted(entity1, entity2) in collisions.read() {
         if let (Ok(friendly), Ok(enemy)) = (friendlies.get_mut(*entity1), enemies.get_mut(*entity2))
         {
-            if let Some(mut hp) = friendly.0 {
-                if let Some(dmg) = enemy.1 {
-                    hp.0 -= dmg.0;
-                }
-            }
-
-            if let Some(mut hp) = enemy.0 {
-                if let Some(dmg) = friendly.1 {
-                    hp.0 -= dmg.0;
-                }
-            }
+            apply_dmg(friendly, enemy);
         } else if let (Ok(friendly), Ok(enemy)) =
             (friendlies.get_mut(*entity2), enemies.get_mut(*entity1))
         {
-            if let Some(mut hp) = friendly.0 {
-                if let Some(dmg) = enemy.1 {
-                    hp.0 -= dmg.0;
-                }
-            }
+            apply_dmg(friendly, enemy);
+        }
+    }
+}
 
-            if let Some(mut hp) = enemy.0 {
-                if let Some(dmg) = friendly.1 {
-                    hp.0 -= dmg.0;
-                }
-            }
+fn apply_dmg(friendly: (Option<Mut<Health>>, Option<&Damage>), enemy: (Option<Mut<Health>>, Option<&Damage>)) {
+    if let Some(mut hp) = friendly.0 {
+        if let Some(dmg) = enemy.1 {
+            hp.0 -= dmg.0;
+        }
+    }
+
+    if let Some(mut hp) = enemy.0 {
+        if let Some(dmg) = friendly.1 {
+            hp.0 -= dmg.0;
         }
     }
 }
