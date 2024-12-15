@@ -5,11 +5,11 @@ use self::player_input::input;
 use super::asset_loader::AnimationEvent;
 use super::asset_loader::AnimationKey;
 use super::asset_loader::AnimationMap;
+use crate::bundles::actors::Actor;
 use crate::common_components::CollisionLayer;
 use crate::common_components::EntityState;
 use crate::common_components::Friendly;
 use crate::utils::animate;
-use crate::bundles::actors::Actor;
 use avian2d::prelude::CollisionLayers;
 use avian2d::prelude::LinearVelocity;
 use avian2d::prelude::LockedAxes;
@@ -70,13 +70,14 @@ impl Plugin for PlayerPlugin {
 fn setup(
     mut commands: Commands,
     asset_loader: Res<AnimationMap>,
-    camera_q: Query<Entity, With<Camera>>,
+    mut camera_q: Query<(Entity, &mut Transform), With<Camera>>,
 ) {
     let animation = asset_loader
         .0
         .get(&AnimationKey::Player)
         .expect("Player animation were not found");
-
+    let (camera_id, mut camera_transform) = camera_q.single_mut();
+    camera_transform.translation.y = 100.0;
     commands
         .spawn((
             Player,
@@ -99,7 +100,7 @@ fn setup(
                 [CollisionLayer::Enemy, CollisionLayer::Wall],
             ),
         ))
-        .add_child(camera_q.single());
+        .add_child(camera_id);
 
     commands.spawn((
         Text::new("0"),
