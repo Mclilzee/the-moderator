@@ -71,6 +71,7 @@ fn setup(
     mut commands: Commands,
     asset_loader: Res<AnimationMap>,
     mut camera_q: Query<(Entity, &mut Transform), With<Camera>>,
+    asset_server: Res<AssetServer>
 ) {
     let animation = asset_loader
         .0
@@ -104,12 +105,14 @@ fn setup(
 
     commands.spawn((
         Text::new("0"),
-        TextFont::from_font_size(SCORE_TEXT_SIZE),
-        //TextLay::new_with_justify(Val::Px(5.0))
-        //    JustifyText::Left: PositionType::Absolute,
-        //    top: Val::Px(5.0),
-        //    left: Val::Px(5.0),
-        //    ..default(),
+        TextFont::from_font_size(SCORE_TEXT_SIZE).with_font(asset_server.load("score-font.ttf")),
+        TextLayout::new_with_justify(JustifyText::Center),
+        Node {
+            position_type: PositionType::Absolute,
+            top: Val::Px(10.0),
+            left: Val::Px(10.0),
+            ..default()
+        },
         ScoreTextUi,
     ));
 }

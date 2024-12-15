@@ -25,7 +25,7 @@ const ROATION_ANGLE: f32 = 10.0;
 const HEALTH: i32 = 5;
 const DAMAGE: i32 = 5;
 const DESPAWN_TIMER: f32 = 5.0;
-const COOLDOWN_SECS: u64 = 1;
+const COOLDOWN_SECS: f32 = 0.5;
 const HAMMER_SHAPE: (Vec2, Vec2, Vec2) = (
     Vec2::new(-15.0, -15.0),
     Vec2::new(18.0, 0.0),
@@ -42,8 +42,8 @@ pub struct HammerThrowPlugin;
 
 impl Plugin for HammerThrowPlugin {
     fn build(&self, app: &mut App) {
-        let mut cooldown = Timer::from_seconds(1.0, TimerMode::Once);
-        cooldown.tick(Duration::from_secs(COOLDOWN_SECS));
+        let mut cooldown = Timer::from_seconds(COOLDOWN_SECS, TimerMode::Once);
+        cooldown.tick(Duration::from_secs_f32(COOLDOWN_SECS));
 
         app.insert_resource(Cooldown(cooldown))
             .add_systems(Update, animate_hammer.run_if(on_event::<AnimationEvent>))
