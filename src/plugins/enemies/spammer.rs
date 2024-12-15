@@ -1,9 +1,11 @@
 use crate::{
     bundles::actors::Actor,
     common_components::{CollisionLayer, Damage, Enemy},
-    plugins::{asset_loader::AnimationEvent, player::Player},
-    utils::animate,
-    WORLD_BOUNDRY,
+    plugins::{
+        asset_loader::AnimationEvent,
+        player::Player,
+    },
+    utils::animate, WORLD_BOUNDRY,
 };
 use crate::{
     common_components::EntityState,
@@ -19,7 +21,7 @@ const SPAMMER_DAMAGE: i32 = 1;
 const SPAMMER_SPEED: f32 = 40.0;
 const SPAMMER_RADIUS: f32 = 10.0;
 const SPAMMER_LENGTH: f32 = 5.0;
-const SPAMMER_LIMIT: usize = 5;
+const SPAMMER_LIMIT: usize = 10;
 
 #[derive(Component)]
 struct Spammer;
@@ -64,12 +66,10 @@ fn spawn_spammer(
         let player_translation = player_query.single().translation;
         let mut random = rand::thread_rng();
         let offset = random.gen_range(-50.0..50.0);
-        let offset = ((camera.area.width() / 2.0) + 20.0).copysign(offset);
-        let mut spammer_transform =
-            Transform::from_translation(player_translation + Vec3::new(offset, 0.0, 0.0));
+        let mut offset = ((camera.area.width() / 2.0) + 20.0).copysign(offset);
 
-        if !(WORLD_BOUNDRY.left..=WORLD_BOUNDRY.right).contains(&spammer_transform.translation.x) {
-            spammer_transform.translation.x *= -1.0;
+        if !(WORLD_BOUNDRY.left..=WORLD_BOUNDRY.right).contains(&(player_translation.x + offset)) {
+            offset *= -1.0;
         }
 
         let animation = asset_loader
@@ -79,7 +79,6 @@ fn spawn_spammer(
 
         commands.spawn((
             Spammer,
-            spammer_transform,
             Sprite::from_atlas_image(
                 animation.texture.clone(),
                 TextureAtlas {
@@ -87,6 +86,7 @@ fn spawn_spammer(
                     index: 1,
                 },
             ),
+            Transform::from_translation(player_translation + Vec3::new(offset, 0.0, 0.0)),
             Actor::new(SPAMMER_HP, SPAMMER_RADIUS, SPAMMER_LENGTH),
             Damage(SPAMMER_DAMAGE),
             Enemy,
