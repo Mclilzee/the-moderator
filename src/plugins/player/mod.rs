@@ -81,7 +81,6 @@ fn setup(
             ),
             Transform::from_translation(PLAYER_STARTING_POSITION),
             LinearVelocity::default(),
-            Damage(5),
             Friendly,
             Actor::new(PLAYER_STARING_HP, PLAYER_RADIUS, PLAYER_LENGTH),
             EntityState::Idle,

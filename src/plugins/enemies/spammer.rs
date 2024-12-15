@@ -1,9 +1,9 @@
 use crate::{
     bundles::actors::Actor,
-    common_components::{CollisionLayer, Damage, DespawnTimer, Enemy, Health},
+    common_components::{CollisionLayer, Damage, Enemy},
     plugins::{
         asset_loader::AnimationEvent,
-        player::{Player, ScoreUpdateEvent},
+        player::Player,
     },
     utils::animate,
 };
@@ -16,16 +16,12 @@ use bevy::prelude::*;
 use rand::Rng;
 
 const SPAMMER_SPAWN_TIMER: f32 = 0.2;
-const SPAMMER_STARTING_HP: i32 = 20;
+const SPAMMER_HP: i32 = 10;
 const SPAMMER_DAMAGE: i32 = 1;
 const SPAMMER_SPEED: f32 = 40.0;
 const SPAMMER_RADIUS: f32 = 10.0;
 const SPAMMER_LENGTH: f32 = 5.0;
 const SPAMMER_LIMIT: usize = 5;
-const POINTS_INCREMENT_DURATION: f32 = 1.0;
-const POINTS_INCREMENT_ASCENDING_SPEED: f32 = 200.0;
-const POINTS_SIZE: f32 = 20.0;
-const POINTS_REWARDED: u32 = 1;
 
 #[derive(Component)]
 struct Spammer;
@@ -87,7 +83,7 @@ fn spawn_spammer(
                 },
             ),
             Transform::from_translation(player_translation + Vec3::new(offset, 0.0, 0.0)),
-            Actor::new(SPAMMER_STARTING_HP, SPAMMER_RADIUS, SPAMMER_LENGTH),
+            Actor::new(SPAMMER_HP, SPAMMER_RADIUS, SPAMMER_LENGTH),
             Damage(SPAMMER_DAMAGE),
             Enemy,
             EntityState::default(),

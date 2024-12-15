@@ -22,8 +22,8 @@ use bevy::prelude::*;
 const HAMMER_DENSITY: f32 = 20.0;
 const HAMMER_SPEED: f32 = 600.0;
 const ROATION_ANGLE: f32 = 10.0;
-const HEALTH: i32 = 10;
-const DAMAGE: i32 = 4;
+const HEALTH: i32 = 5;
+const DAMAGE: i32 = 5;
 const DESPAWN_TIMER: f32 = 5.0;
 const COOLDOWN_SECS: u64 = 1;
 const HAMMER_SHAPE: (Vec2, Vec2, Vec2) = (
@@ -103,7 +103,7 @@ fn mouse_button_input(
             EntityState::Idle,
             RigidBody::Dynamic,
             Collider::triangle(HAMMER_SHAPE.0, HAMMER_SHAPE.1, HAMMER_SHAPE.2),
-            Restitution::PERFECTLY_ELASTIC,
+            Restitution::PERFECTLY_INELASTIC,
             ColliderDensity(HAMMER_DENSITY),
             CollisionLayers::new(
                 CollisionLayer::Friendly,

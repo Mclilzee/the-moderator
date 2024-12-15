@@ -26,7 +26,6 @@ impl Plugin for FireSlashPlugin {
             Update,
             spawn.run_if(resource_changed::<ButtonInput<KeyCode>>),
         )
-        .add_systems(Update, collision)
         .add_systems(
             Update,
             animate_then_despawn.run_if(on_event::<AnimationEvent>),
@@ -70,19 +69,6 @@ fn spawn(
             Sensor,
         ));
     }
-}
-
-fn collision(
-    mut hammers: Query<(Entity, &Damage), (With<FireSlash>, With<Collider>)>,
-    mut enemies: Query<(Entity, &mut Health), (Without<FireSlash>, With<Enemy>, With<Collider>)>,
-) {
-    //for (h_id, h_dmg) in hammers.iter_mut() {
-    //    for (e_id, mut e_hp) in enemies.iter_mut() {
-    //        if rapier_context.intersection_pair(h_id, e_id).is_some() {
-    //            e_hp.0 -= h_dmg.0;
-    //        }
-    //    }
-    //}
 }
 
 fn animate_then_despawn(
