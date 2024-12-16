@@ -55,7 +55,7 @@ fn spawn_spammer(
     asset_loader: Res<AnimationMap>,
     player_score: Res<Score>,
 ) {
-    if spammers_query.iter().count() > 10 { //player_score.0 as usize / 20 {
+    if spammers_query.iter().count() > player_score.0 as usize / 20 {
         return;
     }
 
