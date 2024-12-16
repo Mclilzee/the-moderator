@@ -21,13 +21,14 @@ use bevy::color::palettes::css::RED;
 use bevy::prelude::*;
 use player_input::flip_on_input;
 
+pub const PLAYER_LENGTH: f32 = 14.0;
 const PLAYER_SPEED: f32 = 150.0;
 const PLAYER_JUMP_HEIGHT: f32 = 500.0;
 const PLAYER_STARING_HP: i32 = 100;
-pub const PLAYER_LENGTH: f32 = 14.0;
 const PLAYER_RADIUS: f32 = 6.0;
 const SCORE_TEXT_SIZE: f32 = 40.0;
-const PLAYER_STARTING_POSITION: Vec3 = Vec3::new(1312., 160., 10.0);
+const PLAYER_Z_INDEX: f32 = 10.0;
+const PLAYER_STARTING_POSITION: Vec3 = Vec3::new(1312., 300., PLAYER_Z_INDEX);
 
 #[derive(Event, Default)]
 pub struct JumpEvent;

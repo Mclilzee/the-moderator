@@ -1,11 +1,9 @@
 use crate::{
     bundles::actors::Actor,
     common_components::{CollisionLayer, Damage, Enemy},
-    plugins::{
-        asset_loader::AnimationEvent,
-        player::Player,
-    },
-    utils::animate, WORLD_BOUNDRY,
+    plugins::{asset_loader::AnimationEvent, player::Player},
+    utils::animate,
+    WORLD_BOUNDRY,
 };
 use crate::{
     common_components::EntityState,
@@ -22,6 +20,8 @@ const SPAMMER_SPEED: f32 = 40.0;
 const SPAMMER_RADIUS: f32 = 10.0;
 const SPAMMER_LENGTH: f32 = 5.0;
 const SPAMMER_LIMIT: usize = 10;
+const SPAMMER_TEXT_SIZE: f32 = 8.0;
+const SPAMMER_TEXTS: [&str; 2] = ["get 50$ on fakesteam.com", "check my melons on onlyfarms"];
 
 #[derive(Component)]
 struct Spammer;
@@ -77,26 +77,32 @@ fn spawn_spammer(
             .get(&AnimationKey::Spammer)
             .expect("Spammer animation were not found");
 
-        commands.spawn((
-            Spammer,
-            Sprite::from_atlas_image(
-                animation.texture.clone(),
-                TextureAtlas {
-                    layout: animation.atlas.clone(),
-                    index: 1,
-                },
-            ),
-            Transform::from_translation(player_translation + Vec3::new(offset, 0.0, 0.0)),
-            Actor::new(SPAMMER_HP, SPAMMER_RADIUS, SPAMMER_LENGTH),
-            Damage(SPAMMER_DAMAGE),
-            Enemy,
-            EntityState::default(),
-            CollisionLayers::new(
-                CollisionLayer::Enemy,
-                [CollisionLayer::Friendly, CollisionLayer::Wall],
-            ),
-            LockedAxes::ROTATION_LOCKED,
-        ));
+        commands
+            .spawn((
+                Spammer,
+                Sprite::from_atlas_image(
+                    animation.texture.clone(),
+                    TextureAtlas {
+                        layout: animation.atlas.clone(),
+                        index: 1,
+                    },
+                ),
+                Transform::from_translation(player_translation + Vec3::new(offset, 0.0, 0.0)),
+                Actor::new(SPAMMER_HP, SPAMMER_RADIUS, SPAMMER_LENGTH),
+                Damage(SPAMMER_DAMAGE),
+                Enemy,
+                EntityState::default(),
+                CollisionLayers::new(
+                    CollisionLayer::Enemy,
+                    [CollisionLayer::Friendly, CollisionLayer::Wall],
+                ),
+                LockedAxes::ROTATION_LOCKED,
+            ))
+            .with_child((
+                Text2d::new(get_spammer_text()),
+                TextFont::from_font_size(SPAMMER_TEXT_SIZE),
+                Transform::from_xyz(0., -SPAMMER_RADIUS - 10.0, player_translation.z),
+            ));
     }
 }
 
@@ -137,4 +143,9 @@ fn animate_spammer(
             animate(atlas, state, &AnimationKey::Spammer, &map);
         }
     });
+}
+
+fn get_spammer_text() -> &'static str {
+    let mut random = rand::thread_rng();
+    SPAMMER_TEXTS[random.gen_range(0..SPAMMER_TEXTS.len())]
 }

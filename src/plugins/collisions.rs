@@ -78,7 +78,7 @@ fn despawn_enemy_on_death(
 ) {
     enemy.iter().for_each(|(id, hp, enemy_transform)| {
         if hp.0 <= 0 {
-            commands.entity(id).despawn();
+            commands.entity(id).despawn_recursive();
             commands.spawn((
                 PointsIncrementEffect,
                 DespawnTimer(Timer::from_seconds(
