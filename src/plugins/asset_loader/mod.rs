@@ -1,5 +1,6 @@
 mod player_assets;
 mod spammer_assets;
+mod flying_spammer_assets;
 mod hammer_throw_assets;
 mod fire_slash_assets;
 mod death_effect;
@@ -62,6 +63,7 @@ impl Plugin for AssetLoaderPlugin {
             .add_event::<AnimationEvent>()
             .add_systems(PreStartup, player_assets::setup)
             .add_systems(PreStartup, spammer_assets::setup)
+            .add_systems(PreStartup, flying_spammer_assets::setup)
             .add_systems(PreStartup, hammer_throw_assets::setup)
             .add_systems(PreStartup, fire_slash_assets::setup)
             .add_systems(PreStartup, death_effect::setup)

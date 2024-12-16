@@ -17,10 +17,9 @@ use rand::Rng;
 const FLYING_SPAMMER_SPAWN_TIMER: f32 = 0.2;
 const FLYING_SPAMMER_HP: i32 = 10;
 const FLYING_SPAMMER_DAMAGE: i32 = 5;
-const FLYING_SPAMMER_SPEED: f32 = 100.0;
+const FLYING_SPAMMER_SPEED: f32 = 50.0;
 const FLYING_SPAMMER_RADIUS: f32 = 10.0;
 const FLYING_SPAMMER_LENGTH: f32 = 5.0;
-const FLYING_OFFSET_FROM_PLAYER: f32 = 20.0;
 
 #[derive(Component)]
 struct FlyingSpammer;
@@ -51,18 +50,18 @@ fn spawn_spammer(
     mut spawn_timer: ResMut<FlyingSpammerSpawnTimer>,
     spammers_query: Query<&FlyingSpammer>,
     time: Res<Time>,
-    camera_query: Query<&OrthographicProjection, With<Camera>>,
+    projection_query: Query<&OrthographicProjection, With<Camera>>,
     player_query: Query<&Transform, With<Player>>,
     asset_loader: Res<AnimationMap>,
     player_score: Res<Score>,
 ) {
-    if spammers_query.iter().count() > player_score.0 as usize / 20 {
+    if spammers_query.iter().count() > 1 { //player_score.0 as usize / 20 {
         return;
     }
 
     spawn_timer.timer.tick(time.delta());
     if spawn_timer.timer.just_finished() {
-        let camera = camera_query.single();
+        let projection = projection_query.single();
         let player_translation = player_query.single().translation;
 
         let animation = asset_loader
@@ -80,7 +79,7 @@ fn spawn_spammer(
                 },
             ),
             Transform::from_translation(
-                player_translation + Vec3::new(0.0, camera.area.height() + 10.0, 0.0),
+                player_translation + Vec3::new(0.0, projection.area.height() / 2.0, 0.0),
             ),
             RigidBody::Kinematic,
             Collider::capsule(FLYING_SPAMMER_RADIUS, FLYING_SPAMMER_LENGTH),
@@ -92,7 +91,6 @@ fn spawn_spammer(
                 CollisionLayer::Enemy,
                 [CollisionLayer::Friendly, CollisionLayer::Wall],
             ),
-            LockedAxes::ROTATION_LOCKED,
         ));
     }
 }
@@ -103,27 +101,34 @@ type WithPlayer = (With<Player>, Without<FlyingSpammer>);
 fn track_player(
     mut spammer_query: Query<(&Transform, &mut LinearVelocity), WithFlyingSpammer>,
     player_query: Query<&Transform, WithPlayer>,
-    camera_query: Query<&OrthographicProjection, With<Camera>>,
+    projection_query: Query<&OrthographicProjection, With<Camera>>,
 ) {
     let player_transform = player_query.single();
-    let camera = camera_query.single();
+    let projection = projection_query.single();
+    let width_offset = projection.area.width() * projection.scale / 2.0 - 100.;
+    let height_offset = projection.area.height() * projection.scale / 2.0 - 100.;
+    println!("Width: {}, Height: {}, Scale: {}", projection.area.width(), projection.area.height(), projection.scale);
 
-    for (transform, mut velocity) in spammer_query.iter_mut() {
-        velocity.x = if player_transform.translation.x
-            > transform.translation.x + FLYING_OFFSET_FROM_PLAYER
+    for (spammer_transform, mut spammer_velocity) in spammer_query.iter_mut() {
+        spammer_velocity.x = if player_transform.translation.x
+            > spammer_transform.translation.x + width_offset
         {
             FLYING_SPAMMER_SPEED
         } else if player_transform.translation.x
-            < transform.translation.x - FLYING_OFFSET_FROM_PLAYER
+            < spammer_transform.translation.x - width_offset
         {
             -FLYING_SPAMMER_SPEED
         } else {
             0.
         };
 
-        if player_transform.translation.y > transform.translation.x + camera.area.height() / 2.0 {
-            velocity.y = -FLYING_SPAMMER_SPEED
-        }
+        spammer_velocity.y = if spammer_transform.translation.y
+            > player_transform.translation.y + height_offset
+        {
+            -FLYING_SPAMMER_SPEED
+        } else {
+            0.
+        };
     }
 }
 
