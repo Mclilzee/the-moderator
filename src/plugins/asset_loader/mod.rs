@@ -17,6 +17,7 @@ pub struct AnimationMap(pub HashMap<AnimationKey, Animation>);
 pub enum AnimationKey {
     Player,
     Spammer,
+    FlyingSpammer,
     HammerThrow,
     FireSlash,
     DeathEffect
