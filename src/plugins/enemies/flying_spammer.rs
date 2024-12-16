@@ -10,9 +10,8 @@ use crate::{
     },
     utils::animate,
 };
-use avian2d::prelude::{Collider, CollisionLayers, LinearVelocity, LockedAxes, RigidBody};
+use avian2d::prelude::{Collider, CollisionLayers, LinearVelocity, RigidBody};
 use bevy::prelude::*;
-use rand::Rng;
 
 const FLYING_SPAMMER_SPAWN_TIMER: f32 = 0.2;
 const FLYING_SPAMMER_HP: i32 = 10;
@@ -20,6 +19,8 @@ const FLYING_SPAMMER_DAMAGE: i32 = 5;
 const FLYING_SPAMMER_SPEED: f32 = 50.0;
 const FLYING_SPAMMER_RADIUS: f32 = 10.0;
 const FLYING_SPAMMER_LENGTH: f32 = 5.0;
+const FLYING_Y_DISTANCE_FROM_PLAYER: f32 = 200.0;
+const FLYING_X_DISTANCE_FROM_PLAYER: f32 = 200.0;
 
 #[derive(Component)]
 struct FlyingSpammer;
@@ -50,18 +51,16 @@ fn spawn_spammer(
     mut spawn_timer: ResMut<FlyingSpammerSpawnTimer>,
     spammers_query: Query<&FlyingSpammer>,
     time: Res<Time>,
-    projection_query: Query<&OrthographicProjection, With<Camera>>,
     player_query: Query<&Transform, With<Player>>,
     asset_loader: Res<AnimationMap>,
     player_score: Res<Score>,
 ) {
-    if spammers_query.iter().count() > 1 { //player_score.0 as usize / 20 {
+    if spammers_query.iter().count() > 10 { //player_score.0 as usize / 20 {
         return;
     }
 
     spawn_timer.timer.tick(time.delta());
     if spawn_timer.timer.just_finished() {
-        let projection = projection_query.single();
         let player_translation = player_query.single().translation;
 
         let animation = asset_loader
@@ -79,7 +78,7 @@ fn spawn_spammer(
                 },
             ),
             Transform::from_translation(
-                player_translation + Vec3::new(0.0, projection.area.height() / 2.0, 0.0),
+                player_translation + Vec3::new(0.0, FLYING_Y_DISTANCE_FROM_PLAYER + 300., 0.0),
             ),
             RigidBody::Kinematic,
             Collider::capsule(FLYING_SPAMMER_RADIUS, FLYING_SPAMMER_LENGTH),
@@ -101,21 +100,16 @@ type WithPlayer = (With<Player>, Without<FlyingSpammer>);
 fn track_player(
     mut spammer_query: Query<(&Transform, &mut LinearVelocity), WithFlyingSpammer>,
     player_query: Query<&Transform, WithPlayer>,
-    projection_query: Query<&OrthographicProjection, With<Camera>>,
 ) {
     let player_transform = player_query.single();
-    let projection = projection_query.single();
-    let width_offset = projection.area.width() * projection.scale / 2.0 - 100.;
-    let height_offset = projection.area.height() * projection.scale / 2.0 - 100.;
-    println!("Width: {}, Height: {}, Scale: {}", projection.area.width(), projection.area.height(), projection.scale);
 
     for (spammer_transform, mut spammer_velocity) in spammer_query.iter_mut() {
         spammer_velocity.x = if player_transform.translation.x
-            > spammer_transform.translation.x + width_offset
+            > spammer_transform.translation.x + FLYING_Y_DISTANCE_FROM_PLAYER
         {
             FLYING_SPAMMER_SPEED
         } else if player_transform.translation.x
-            < spammer_transform.translation.x - width_offset
+            < spammer_transform.translation.x - FLYING_Y_DISTANCE_FROM_PLAYER
         {
             -FLYING_SPAMMER_SPEED
         } else {
@@ -123,7 +117,7 @@ fn track_player(
         };
 
         spammer_velocity.y = if spammer_transform.translation.y
-            > player_transform.translation.y + height_offset
+            > player_transform.translation.y + FLYING_X_DISTANCE_FROM_PLAYER
         {
             -FLYING_SPAMMER_SPEED
         } else {
