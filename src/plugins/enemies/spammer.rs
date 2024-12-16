@@ -1,7 +1,7 @@
 use crate::{
     bundles::actors::Actor,
     common_components::{CollisionLayer, Damage, Enemy},
-    plugins::{asset_loader::AnimationEvent, player::Player},
+    plugins::{asset_loader::AnimationEvent, player::{Player, Score}},
     utils::animate,
     WORLD_BOUNDRY,
 };
@@ -16,10 +16,9 @@ use rand::Rng;
 const SPAMMER_SPAWN_TIMER: f32 = 0.2;
 const SPAMMER_HP: i32 = 10;
 const SPAMMER_DAMAGE: i32 = 1;
-const SPAMMER_SPEED: f32 = 40.0;
+const SPAMMER_SPEED: f32 = 70.0;
 const SPAMMER_RADIUS: f32 = 10.0;
 const SPAMMER_LENGTH: f32 = 5.0;
-const SPAMMER_LIMIT: usize = 10;
 const SPAMMER_TEXT_SIZE: f32 = 8.0;
 const SPAMMER_TEXTS: [&str; 2] = ["get 50$ on fakesteam.com", "check my melons on onlyfarms"];
 
@@ -55,8 +54,9 @@ fn spawn_spammer(
     camera_query: Query<&OrthographicProjection, With<Camera>>,
     player_query: Query<&Transform, With<Player>>,
     asset_loader: Res<AnimationMap>,
+    player_score: Res<Score>
 ) {
-    if spammers_query.iter().count() > SPAMMER_LIMIT {
+    if spammers_query.iter().count() > player_score.0 as usize / 3 {
         return;
     }
 
