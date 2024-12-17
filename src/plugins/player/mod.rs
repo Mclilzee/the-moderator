@@ -79,7 +79,7 @@ fn setup(
         .get(&AnimationKey::Player)
         .expect("Player animation were not found");
     let (camera_id, mut camera_transform) = camera_q.single_mut();
-    camera_transform.translation.y = 100.0;
+    camera_transform.translation.y = 50.0;
     commands
         .spawn((
             Player,
