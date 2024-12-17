@@ -166,8 +166,8 @@ fn shoot_peach(
         WithFlyingSpammer,
     >,
     time: Res<Time>,
-    asset_server: Res<AssetServer>,
     player: Single<&Transform, WithPlayer>,
+    animation_map: Res<AnimationMap>
 ) {
     for (mut cooldown, velocity, transform) in flying_spammer_q.iter_mut() {
         cooldown.0.tick(time.delta());
@@ -186,8 +186,13 @@ fn shoot_peach(
                 PEACH_ROATION_ANGLE
             });
 
+            let animation = animation_map
+                .0
+                .get(&AnimationKey::Peach)
+                .expect("Peach Image were not found");
+
             commands.spawn((
-                Sprite::from_image(asset_server.load("./peach.png")),
+                Sprite::from_image(animation.texture.clone()),
                 Projectile::default(),
                 Collider::circle(PEACH_SIZE),
                 Enemy,

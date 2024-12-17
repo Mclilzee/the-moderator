@@ -82,13 +82,7 @@ fn mouse_button_input(
 
         command.spawn((
             HammerThrow,
-            Sprite::from_atlas_image(
-                animation.texture.clone(),
-                TextureAtlas {
-                    layout: animation.atlas.clone(),
-                    index: 1,
-                },
-            ),
+            Sprite::from_image(animation.texture.clone()),
             Damage(DAMAGE),
             Health(HEALTH),
             Friendly,

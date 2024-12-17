@@ -4,6 +4,7 @@ mod flying_spammer_assets;
 mod hammer_throw_assets;
 mod fire_slash_assets;
 mod death_effect;
+mod peach_asset;
 
 use crate::common_components::EntityState;
 use bevy::{prelude::*, utils::HashMap};
@@ -21,7 +22,8 @@ pub enum AnimationKey {
     FlyingSpammer,
     HammerThrow,
     FireSlash,
-    DeathEffect
+    DeathEffect,
+    Peach
 }
 
 pub struct Animation {
@@ -67,6 +69,7 @@ impl Plugin for AssetLoaderPlugin {
             .add_systems(PreStartup, hammer_throw_assets::setup)
             .add_systems(PreStartup, fire_slash_assets::setup)
             .add_systems(PreStartup, death_effect::setup)
+            .add_systems(PreStartup, peach_asset::setup)
             .add_systems(PreStartup, load_ldtk)
             .insert_resource(LevelSelection::index(0))
             .add_systems(Update, timer_tick);
