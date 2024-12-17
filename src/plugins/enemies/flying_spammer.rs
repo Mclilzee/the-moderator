@@ -1,8 +1,4 @@
 use crate::{
-    common_components::EntityState,
-    plugins::asset_loader::{AnimationKey, AnimationMap},
-};
-use crate::{
     common_components::{CollisionLayer, Damage, Enemy, Health},
     plugins::{
         asset_loader::AnimationEvent,
@@ -10,7 +6,11 @@ use crate::{
     },
     utils::animate,
 };
-use avian2d::prelude::{Collider, CollisionLayers, LinearVelocity, RigidBody};
+use crate::{
+    common_components::{EntityState, Projectile},
+    plugins::asset_loader::{AnimationKey, AnimationMap},
+};
+use avian2d::prelude::{AngularVelocity, Collider, CollisionLayers, LinearVelocity, RigidBody};
 use bevy::prelude::*;
 
 const FLYING_SPAMMER_SPAWN_TIMER: f32 = 0.2;
@@ -21,9 +21,16 @@ const FLYING_SPAMMER_RADIUS: f32 = 10.0;
 const FLYING_SPAMMER_LENGTH: f32 = 5.0;
 const FLYING_Y_DISTANCE_FROM_PLAYER: f32 = 200.0;
 const FLYING_X_DISTANCE_FROM_PLAYER: f32 = 200.0;
+const PEACH_SHOOTING_COOLDOWN: f32 = 4.0;
+const PEACH_SIZE: f32 = 16.0;
+const PEACH_SPEED: f32 = 200.0;
+const PEACH_ROATION_ANGLE: f32 = 10.0;
 
 #[derive(Component)]
 struct FlyingSpammer;
+
+#[derive(Component)]
+struct PeachCooldown(Timer);
 
 #[derive(Resource)]
 struct FlyingSpammerSpawnTimer {
@@ -42,6 +49,7 @@ impl Plugin for FlyingSpammerPlugin {
             .add_systems(Update, animate_spammer.run_if(on_event::<AnimationEvent>))
             .add_systems(Update, spawn_spammer)
             .add_systems(Update, track_player)
+            .add_systems(Update, shoot_peach)
             .add_systems(Update, flip_on_movement);
     }
 }
@@ -55,7 +63,8 @@ fn spawn_spammer(
     asset_loader: Res<AnimationMap>,
     player_score: Res<Score>,
 ) {
-    if spammers_query.iter().count() > player_score.0 as usize / 20 {
+    if spammers_query.iter().count() > 0 {
+        //player_score.0 as usize / 20 {
         return;
     }
 
@@ -70,6 +79,10 @@ fn spawn_spammer(
 
         commands.spawn((
             FlyingSpammer,
+            PeachCooldown(Timer::from_seconds(
+                PEACH_SHOOTING_COOLDOWN,
+                TimerMode::Repeating,
+            )),
             Sprite::from_atlas_image(
                 animation.texture.clone(),
                 TextureAtlas {
@@ -145,4 +158,49 @@ fn animate_spammer(
             animate(atlas, state, &AnimationKey::FlyingSpammer, &map);
         }
     });
+}
+
+fn shoot_peach(
+    mut commands: Commands,
+    mut flying_spammer_q: Query<
+        (&mut PeachCooldown, &LinearVelocity, &Transform),
+        WithFlyingSpammer,
+    >,
+    time: Res<Time>,
+    asset_server: Res<AssetServer>,
+    player: Single<&Transform, WithPlayer>,
+) {
+    for (mut cooldown, velocity, transform) in flying_spammer_q.iter_mut() {
+        cooldown.0.tick(time.delta());
+        if velocity.0 != Vec2::ZERO {
+            continue;
+        }
+
+        if cooldown.0.finished() {
+            let p1 = transform.translation.truncate();
+            let p2 = player.translation.truncate();
+
+            let l_velocity = LinearVelocity::from((p2 - p1).normalize() * PEACH_SPEED);
+            let a_velocity = AngularVelocity::from(if l_velocity.x >= 0.0 {
+                -PEACH_ROATION_ANGLE
+            } else {
+                PEACH_ROATION_ANGLE
+            });
+
+            commands.spawn((
+                Sprite::from_image(asset_server.load("peach.png")),
+                Projectile::default(),
+                Collider::circle(PEACH_SIZE),
+                Enemy,
+                RigidBody::Kinematic,
+                CollisionLayers::new(
+                    CollisionLayer::Enemy,
+                    [CollisionLayer::Friendly, CollisionLayer::Wall],
+                ),
+                l_velocity,
+                a_velocity,
+                *transform,
+            ));
+        }
+    }
 }

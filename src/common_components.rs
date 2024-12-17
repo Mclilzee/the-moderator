@@ -15,6 +15,12 @@ pub struct Damage(pub i32);
 #[derive(Component)]
 pub struct DespawnTimer(pub Timer);
 
+#[derive(Component, Default)]
+pub enum Projectile {
+    #[default]
+    Reflectable,
+}
+
 #[allow(dead_code)]
 #[derive(Eq, Hash, PartialEq, Component, Default)]
 pub enum EntityState {
