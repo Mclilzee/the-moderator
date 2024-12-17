@@ -10,7 +10,7 @@ use crate::{
     common_components::{EntityState, Projectile},
     plugins::asset_loader::{AnimationKey, AnimationMap},
 };
-use avian2d::prelude::{AngularVelocity, Collider, CollisionLayers, LinearVelocity, RigidBody};
+use avian2d::prelude::{AngularVelocity, Collider, CollisionLayers, LinearVelocity, RigidBody, Sensor};
 use bevy::prelude::*;
 
 const FLYING_SPAMMER_SPAWN_TIMER: f32 = 0.2;
@@ -192,6 +192,7 @@ fn shoot_peach(
                 Collider::circle(PEACH_SIZE),
                 Enemy,
                 RigidBody::Kinematic,
+                Sensor,
                 CollisionLayers::new(
                     CollisionLayer::Enemy,
                     [CollisionLayer::Friendly, CollisionLayer::Wall],
