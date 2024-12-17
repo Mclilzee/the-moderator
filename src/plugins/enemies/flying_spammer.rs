@@ -187,7 +187,7 @@ fn shoot_peach(
             });
 
             commands.spawn((
-                Sprite::from_image(asset_server.load("peach.png")),
+                Sprite::from_image(asset_server.load("./peach.png")),
                 Projectile::default(),
                 Collider::circle(PEACH_SIZE),
                 Enemy,

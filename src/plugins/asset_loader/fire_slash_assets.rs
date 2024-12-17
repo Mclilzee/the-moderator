@@ -8,7 +8,7 @@ pub fn setup(
     mut atlas_server: ResMut<Assets<TextureAtlasLayout>>,
     mut animations: ResMut<AnimationMap>,
 ) {
-    let texture: Handle<Image> = asset_server.load("effects/fire-slash.png");
+    let texture: Handle<Image> = asset_server.load("./effects/fire-slash.png");
     let atlas = atlas_server.add(TextureAtlasLayout::from_grid(
         UVec2::new(64, 32),
         11,

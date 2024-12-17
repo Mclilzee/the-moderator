@@ -40,7 +40,7 @@ fn insert_cursor(
 ) {
     commands.entity(*window).insert((
         CursorIcon::Custom(CustomCursor::Image {
-            handle: asset_server.load("cursor.png"),
+            handle: asset_server.load("./cursor.png"),
             hotspot: (5, 5),
         }),
         Transform::default(),

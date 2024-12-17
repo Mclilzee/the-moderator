@@ -8,7 +8,7 @@ pub fn setup(
     mut atlas_server: ResMut<Assets<TextureAtlasLayout>>,
     mut animations: ResMut<AnimationMap>,
 ) {
-    let texture: Handle<Image> = asset_server.load("fred.png");
+    let texture: Handle<Image> = asset_server.load("./fred.png");
     let atlas = atlas_server.add(TextureAtlasLayout::from_grid(
         UVec2::new(32, 32),
         12,
