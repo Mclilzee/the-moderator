@@ -1,9 +1,7 @@
 use std::time::Duration;
 
 use crate::{
-    common_components::{
-        CollisionLayer, Damage, DespawnTimer, EntityState, Friendly, Health,
-    },
+    common_components::{CollisionLayer, Damage, DespawnTimer, EntityState, Friendly, Health},
     plugins::{
         asset_loader::{AnimationEvent, AnimationKey, AnimationMap},
         default_plugins::CursorPosition,
@@ -14,9 +12,7 @@ use crate::{
 
 use avian2d::prelude::AngularVelocity;
 use avian2d::prelude::Collider;
-use avian2d::prelude::{
-    ColliderDensity, CollisionLayers, LinearVelocity, Restitution, RigidBody,
-};
+use avian2d::prelude::{ColliderDensity, CollisionLayers, LinearVelocity, Restitution, RigidBody};
 use bevy::prelude::*;
 
 const HAMMER_DENSITY: f32 = 20.0;
@@ -25,7 +21,7 @@ const ROATION_ANGLE: f32 = 10.0;
 const HEALTH: i32 = 5;
 const DAMAGE: i32 = 5;
 const DESPAWN_TIMER: f32 = 5.0;
-const COOLDOWN_SECS: f32 = 0.5;
+const COOLDOWN_SECS: f32 = 0.4;
 const HAMMER_SHAPE: (Vec2, Vec2, Vec2) = (
     Vec2::new(-15.0, -15.0),
     Vec2::new(18.0, 0.0),
@@ -48,10 +44,7 @@ impl Plugin for HammerThrowPlugin {
         app.insert_resource(Cooldown(cooldown))
             .add_systems(Update, animate_hammer.run_if(on_event::<AnimationEvent>))
             .add_systems(Update, cooldown_tick)
-            .add_systems(
-                Update,
-                mouse_button_input.run_if(resource_changed::<ButtonInput<MouseButton>>),
-            )
+            .add_systems(Update, mouse_button_input)
             .add_systems(Update, despawn)
             .add_systems(Update, despawn_timer);
     }
