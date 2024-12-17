@@ -16,7 +16,7 @@ use avian2d::prelude::LockedAxes;
 use avian2d::prelude::Restitution;
 use avian2d::prelude::SpatialQuery;
 use avian2d::prelude::SpatialQueryFilter;
-use bevy::color::palettes::css::GREEN;
+use bevy::color::palettes::css::LIGHT_GREEN;
 use bevy::color::palettes::css::RED;
 use bevy::prelude::*;
 use player_input::flip_on_input;
@@ -110,8 +110,8 @@ fn setup(
         TextLayout::new_with_justify(JustifyText::Center),
         Node {
             position_type: PositionType::Absolute,
-            top: Val::Px(10.0),
-            left: Val::Px(10.0),
+            top: Val::Px(100.0),
+            left: Val::Px(100.0),
             ..default()
         },
         ScoreTextUi,
@@ -132,7 +132,7 @@ fn player_score_update(
         0..40 => text.0 = score.0.to_string(),
         40..100 => {
             text.0 = format!("Club-40: {}", score.0);
-            color.0 = Color::Srgba(GREEN);
+            color.0 = Color::Srgba(LIGHT_GREEN);
         }
         _ => {
             text.0 = format!("Moderator: {}", score.0);
