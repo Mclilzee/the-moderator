@@ -4,7 +4,7 @@ use crate::{
         asset_loader::AnimationEvent,
         player::{Player, Score},
     },
-    utils::animate,
+    utils::animate, WORLD_BOUNDRY,
 };
 use crate::{
     common_components::{EntityState, Projectile},
@@ -12,6 +12,7 @@ use crate::{
 };
 use avian2d::prelude::{AngularVelocity, Collider, CollisionLayers, LinearVelocity, RigidBody, Sensor};
 use bevy::prelude::*;
+use rand::Rng;
 
 const FLYING_SPAMMER_SPAWN_TIMER: f32 = 0.2;
 const FLYING_SPAMMER_HP: i32 = 10;
@@ -62,6 +63,7 @@ fn spawn_spammer(
     player_query: Query<&Transform, With<Player>>,
     asset_loader: Res<AnimationMap>,
     player_score: Res<Score>,
+    camera_query: Query<&OrthographicProjection, With<Camera>>,
 ) {
     if spammers_query.iter().count() > player_score.0 as usize / 20 {
         return;
@@ -69,7 +71,15 @@ fn spawn_spammer(
 
     spawn_timer.timer.tick(time.delta());
     if spawn_timer.timer.just_finished() {
+        let camera = camera_query.single();
         let player_translation = player_query.single().translation;
+        let mut random = rand::thread_rng();
+        let offset = random.gen_range(-50.0..50.0);
+        let mut offset = ((camera.area.width() / 2.0) + 20.0).copysign(offset);
+
+        if !(WORLD_BOUNDRY.left..=WORLD_BOUNDRY.right).contains(&(player_translation.x + offset)) {
+            offset *= -1.0;
+        }
 
         let animation = asset_loader
             .0
@@ -90,7 +100,7 @@ fn spawn_spammer(
                 },
             ),
             Transform::from_translation(
-                player_translation + Vec3::new(0.0, FLYING_Y_DISTANCE_FROM_PLAYER + 300., 0.0),
+                player_translation + Vec3::new(offset, FLYING_Y_DISTANCE_FROM_PLAYER + 300., 0.0),
             ),
             RigidBody::Kinematic,
             Collider::capsule(FLYING_SPAMMER_RADIUS, FLYING_SPAMMER_LENGTH),

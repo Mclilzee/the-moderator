@@ -1,7 +1,5 @@
 use bevy::{
-    prelude::*,
-    window::PrimaryWindow,
-    winit::cursor::{CursorIcon, CustomCursor},
+    asset::AssetMetaCheck, prelude::*, window::PrimaryWindow, winit::cursor::{CursorIcon, CustomCursor}
 };
 
 pub struct CustomDefaultPlugin;
@@ -22,6 +20,10 @@ impl Plugin for CustomDefaultPlugin {
             .set(ImagePlugin::default_nearest())
             .set(WindowPlugin {
                 primary_window: Some(window),
+                ..default()
+            }).set(AssetPlugin {
+                
+                meta_check: AssetMetaCheck::Never,
                 ..default()
             })
             .build();
