@@ -24,14 +24,14 @@ use plugins::{asset_loader, camera_plugin, collisions, default_plugins, enemies,
 
 #[derive(Clone, PartialEq, Eq, Debug, Hash, SystemSet)]
 pub enum InGameSet {
-    Input,
+    Pause,
     Play,
 }
 
 fn main() {
     let mut app = App::new();
 
-    app.configure_sets(Update, (InGameSet::Input, InGameSet::Play))
+    app.configure_sets(Update, (InGameSet::Pause, InGameSet::Play))
         .add_plugins(default_plugins::CustomDefaultPlugin)
         .add_plugins(PhysicsPlugins::default().with_length_unit(100.0))
         .insert_resource(Gravity(Vec2::NEG_Y * 1000.0))

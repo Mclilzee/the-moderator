@@ -5,17 +5,11 @@ use self::player_input::input;
 use super::asset_loader::AnimationEvent;
 use super::asset_loader::AnimationKey;
 use super::asset_loader::AnimationMap;
-use crate::bundles::actors::Actor;
 use crate::common_components::CollisionLayer;
 use crate::common_components::EntityState;
 use crate::common_components::Friendly;
 use crate::utils::animate;
-use avian2d::prelude::CollisionLayers;
-use avian2d::prelude::LinearVelocity;
-use avian2d::prelude::LockedAxes;
-use avian2d::prelude::Restitution;
-use avian2d::prelude::SpatialQuery;
-use avian2d::prelude::SpatialQueryFilter;
+use avian2d::prelude::*;
 use bevy::color::palettes::css::LIGHT_GREEN;
 use bevy::color::palettes::css::RED;
 use bevy::prelude::*;
@@ -24,11 +18,10 @@ use player_input::flip_on_input;
 pub const PLAYER_LENGTH: f32 = 14.0;
 const PLAYER_SPEED: f32 = 150.0;
 const PLAYER_JUMP_HEIGHT: f32 = 500.0;
-const PLAYER_STARING_HP: i32 = 100;
 const PLAYER_RADIUS: f32 = 6.0;
 const SCORE_TEXT_SIZE: f32 = 40.0;
 const PLAYER_Z_INDEX: f32 = 10.0;
-const PLAYER_STARTING_POSITION: Vec3 = Vec3::new(1312., 300., PLAYER_Z_INDEX);
+const PLAYER_STARTING_POSITION: Vec3 = Vec3::new(1312., 240., PLAYER_Z_INDEX);
 
 #[derive(Event, Default)]
 pub struct JumpEvent;
@@ -42,6 +35,9 @@ pub struct Player;
 #[derive(Component)]
 struct ScoreTextUi;
 
+#[derive(Resource)]
+struct KinematicTimer(Timer);
+
 #[derive(Event)]
 pub struct ScoreUpdateEvent {
     pub gained_points: u32,
@@ -54,7 +50,8 @@ pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.insert_resource(Score(0))
+        app.insert_resource(KinematicTimer(Timer::from_seconds(1.0, TimerMode::Once)))
+            .insert_resource(Score(0))
             .add_event::<ScoreUpdateEvent>()
             .add_event::<JumpEvent>()
             .add_event::<DoubleJumpEvent>()
@@ -64,6 +61,7 @@ impl Plugin for PlayerPlugin {
             .add_systems(Update, grounded_detection)
             .add_systems(Update, player_score_update)
             .add_systems(Update, animate_player.run_if(on_event::<AnimationEvent>))
+            .add_systems(Update, player_kinematic_removal)
             .add_plugins(attacks::AttacksPlugin);
     }
 }
@@ -72,7 +70,7 @@ fn setup(
     mut commands: Commands,
     asset_loader: Res<AnimationMap>,
     mut camera_q: Query<(Entity, &mut Transform), With<Camera>>,
-    asset_server: Res<AssetServer>
+    asset_server: Res<AssetServer>,
 ) {
     let animation = asset_loader
         .0
@@ -93,7 +91,8 @@ fn setup(
             Transform::from_translation(PLAYER_STARTING_POSITION),
             LinearVelocity::default(),
             Friendly,
-            Actor::new(PLAYER_STARING_HP, PLAYER_RADIUS, PLAYER_LENGTH),
+            RigidBody::Kinematic,
+            Collider::capsule(PLAYER_RADIUS, PLAYER_LENGTH),
             EntityState::Idle,
             Restitution::PERFECTLY_INELASTIC,
             LockedAxes::ROTATION_LOCKED,
@@ -167,5 +166,16 @@ fn animate_player(
     let (mut sprite, state) = query.single_mut();
     if let Some(atlas) = sprite.texture_atlas.as_mut() {
         animate(atlas, state, &AnimationKey::Player, &map);
+    }
+}
+
+fn player_kinematic_removal(
+    mut player: Query<&mut RigidBody, With<Player>>,
+    time: Res<Time>,
+    mut kinematic_timer: ResMut<KinematicTimer>,
+) {
+    kinematic_timer.0.tick(time.delta());
+    if kinematic_timer.0.just_finished() {
+        *player.single_mut() = RigidBody::Dynamic;
     }
 }
